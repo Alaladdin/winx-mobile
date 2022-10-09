@@ -10,7 +10,7 @@ interface IconProps extends TouchableOpacityProps {
   size?: number;
   onPress?: TouchableOpacityProps['onPress'];
 }
-
+// touachable wrapper add
 export function Icon(props: IconProps) {
   const { icon, color, size, onPress } = props;
 

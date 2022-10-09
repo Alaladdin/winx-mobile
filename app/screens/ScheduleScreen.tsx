@@ -1,15 +1,12 @@
 import React from 'react';
-import { Screen } from '../components';
+import { ScrollView } from 'react-native';
+import { Text } from 'react-native-paper';
+import { Route } from '../navigators/MainNavigator';
 
-export function ScheduleScreen() {
+export function ScheduleScreen({ route }: { route: Route }) {
   return (
-    <Screen
-      preset="scroll"
-      HeaderProps={ {
-        title    : 'mainNavigator.scheduleTab',
-        leftIcon : 'bell',
-        rightIcon: 'user-astronaut',
-      } }
-    />
+    <ScrollView>
+      <Text>asd</Text>
+    </ScrollView>
   );
 }

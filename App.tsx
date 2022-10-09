@@ -1,4 +1,4 @@
-import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import { StatusBar, StyleSheet, View } from 'react-native';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
@@ -9,12 +9,12 @@ export default function App() {
   library.add(fas);
 
   return (
-    <SafeAreaView style={ styles.container }>
+    <PaperProvider theme={ theme }>
       <StatusBar barStyle="light-content" backgroundColor={ theme.colors.background } />
-      <PaperProvider theme={ theme }>
+      <View style={ styles.container }>
         <MainNavigator />
-      </PaperProvider>
-    </SafeAreaView>
+      </View>
+    </PaperProvider>
   );
 }
 

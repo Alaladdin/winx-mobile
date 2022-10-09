@@ -1,49 +1,95 @@
-import { BottomNavigation, Text } from 'react-native-paper';
-import { useState } from 'react';
-import { ScheduleScreen } from '../screens';
-import { translate } from '../i18n';
-import { Icon } from '../components';
+import { BottomNavigation } from 'react-native-paper';
+import React, { useState } from 'react';
+import type { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { StyleSheet, View } from 'react-native';
+import { map, keys } from 'lodash';
+import { ActualityScreen, BarsScreen, ScheduleScreen, SettingsScreen } from '../screens';
+import { translate, TxKeyPath } from '../i18n';
+import { Icon, Screen } from '../components';
+import theme from '../theme';
 
-function AlbumsRoute() {
-  return <Text>Albums</Text>;
+export type Route = {
+  key: string
+  title: TxKeyPath
+  focusedIcon: IconProp
+  unfocusedIcon?: IconProp
+  component: React.Component
 }
 
-function RecentsRoute() {
-  return <Text>Recents</Text>;
-}
+export type Routes = [Route]
+const rawRoutes = {
+  schedule: {
+    title      : 'mainNavigator.scheduleTab',
+    focusedIcon: 'calendar-days',
+    component  : ScheduleScreen,
+  },
+  actuality: {
+    title      : 'mainNavigator.actualityTab',
+    focusedIcon: 'newspaper',
+    component  : ActualityScreen,
+  },
+  bars: {
+    title      : 'mainNavigator.barsTab',
+    focusedIcon: 'book',
+    component  : BarsScreen,
+  },
+  settings: {
+    title      : 'mainNavigator.settingsTab',
+    focusedIcon: 'bars',
+    component  : SettingsScreen,
+  },
+};
 
-function NotificationsRoute() {
-  return <Text>Notifications</Text>;
-}
+const routes = map(keys(rawRoutes), (key) => ({ key, ...rawRoutes[key] }));
+
+const renderIcon = (params: { route: Route, color: string, focused: boolean }) => {
+  const { focusedIcon, unfocusedIcon } = params.route;
+  const icon = (!params.focused && unfocusedIcon) ? unfocusedIcon : focusedIcon;
+
+  return (
+    <View style={ styles.iconContainer }>
+      <Icon
+        icon={ icon }
+        color={ params.color }
+        size={ 16 }
+      />
+    </View>
+  );
+};
+
+const renderScene = ({ route, jumpTo }) => (
+  <Screen
+    headerProps={ {
+      title    : route.title,
+      leftIcon : 'bell',
+      rightIcon: 'user-astronaut',
+    } }
+  >
+    <route.component route={ route } jumpTo={ jumpTo } />
+  </Screen>
+);
 
 export function MainNavigator() {
   const [index, setIndex] = useState(0);
-  const [routes] = useState([
-    { key: 'schedule', title: 'mainNavigator.scheduleTab', focusedIcon: 'calendar-days' },
-    { key: 'actuality', title: 'mainNavigator.actualityTab', focusedIcon: 'newspaper' },
-    { key: 'bars', title: 'mainNavigator.barsTab', focusedIcon: 'book' },
-    { key: 'settings', title: 'mainNavigator.settingsTab', focusedIcon: 'bars' },
-  ]);
-
-  const renderScene = BottomNavigation.SceneMap({
-    schedule : ScheduleScreen,
-    actuality: AlbumsRoute,
-    bars     : RecentsRoute,
-    settings : NotificationsRoute,
-  });
 
   return (
     <BottomNavigation
       navigationState={ { index, routes } }
-      getLabelText={ ({ route }) => translate(route.title) }
-      renderIcon={ ({ route, color, focused }) => {
-        const { focusedIcon, unfocusedIcon } = route;
-        const icon = (!focused && unfocusedIcon) ? unfocusedIcon : focusedIcon;
-
-        return <Icon icon={ icon } color={ color } size={ 20 } />;
-      } }
-      onIndexChange={ setIndex }
       renderScene={ renderScene }
+      getLabelText={ ({ route }) => translate(route.title) }
+      activeColor={ theme.colors.primary }
+      renderIcon={ renderIcon }
+      onIndexChange={ setIndex }
+      compact
     />
   );
 }
+
+const styles = StyleSheet.create({
+  iconContainer: {
+    flex          : 1,
+    display       : 'flex',
+    alignItems    : 'center',
+    justifyContent: 'center',
+  },
+});

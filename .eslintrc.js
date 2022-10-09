@@ -56,9 +56,10 @@ module.exports = {
     }],
 
     // REACT
-    'react/require-default-props': 'off',
-    'react/react-in-jsx-scope'   : 'off',
-    'react/style-prop-object'    : 'off',
-    'react/jsx-curly-spacing'    : [2, 'always'],
+    'react/require-default-props' : 'off',
+    'react/react-in-jsx-scope'    : 'off',
+    'react/style-prop-object'     : 'off',
+    'react/jsx-props-no-spreading': 'off',
+    'react/jsx-curly-spacing'     : [2, 'always'],
   },
 };
