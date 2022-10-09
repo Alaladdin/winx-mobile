@@ -28,7 +28,8 @@ module.exports = {
     '@typescript-eslint/no-shadow': ['error'],
 
     // CUSTOM
-    'comma-dangle': ['error', {
+    'import/prefer-default-export': 'off',
+    'comma-dangle'                : ['error', {
       arrays   : 'always-multiline',
       objects  : 'always-multiline',
       imports  : 'never',
@@ -55,8 +56,9 @@ module.exports = {
     }],
 
     // REACT
-    'react/react-in-jsx-scope': 'off',
-    'react/style-prop-object' : 'off',
-    'react/jsx-curly-spacing' : [2, 'always'],
+    'react/require-default-props': 'off',
+    'react/react-in-jsx-scope'   : 'off',
+    'react/style-prop-object'    : 'off',
+    'react/jsx-curly-spacing'    : [2, 'always'],
   },
 };
