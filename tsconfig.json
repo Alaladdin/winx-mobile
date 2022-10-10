@@ -2,6 +2,7 @@
   "extends": "expo/tsconfig.base",
   "include": ["App.tsx", "app", ".eslintrc.js", "babel.config.js"],
   "compilerOptions": {
+    "typeRoots": ["./app/types"],
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,

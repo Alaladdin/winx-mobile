@@ -7,9 +7,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "expo:build": "eas build --profile dev",
-    "expo:build:beta": "eas build --profile beta",
-    "expo:build:prod": "eas build --profile prod"
+    "expo:build": "eas build --profile dev --platform android",
+    "expo:build:beta": "eas build --profile beta --platform android",
+    "expo:build:prod": "eas build --profile prod --platform android"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
@@ -17,6 +17,7 @@
     "@fortawesome/react-native-fontawesome": "^0.3.0",
     "@types/react": "~18.0.0",
     "@types/react-native": "~0.69.1",
+    "apisauce": "^2.1.6",
     "expo": "~46.0.13",
     "expo-localization": "~13.1.0",
     "i18n-js": "^4.1.1",
