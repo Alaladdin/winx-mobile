@@ -1,32 +1,21 @@
 import React from 'react';
-import { Appbar, MD3DarkTheme } from 'react-native-paper';
-import { TouchableOpacityProps } from 'react-native';
-import type { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { Icon } from './Icon';
+import { Appbar, Avatar, MD3DarkTheme } from 'react-native-paper';
 import { translate, TxKeyPath } from '../i18n';
+import config from '../config';
 
 export interface HeaderProps {
   title?: TxKeyPath
-  leftIcon?: IconProp
-  leftIconColor?: string
-  onLeftPress?: TouchableOpacityProps['onPress']
-  rightIcon?: IconProp
-  rightIconColor?: string
-  onRightPress?: TouchableOpacityProps['onPress']
+  onAvatarPress?: () => void
 }
 
 export function Header(props: HeaderProps) {
-  const {
-    title,
-
-    leftIcon,
-    leftIconColor,
-    onLeftPress,
-
-    rightIcon,
-    rightIconColor,
-    onRightPress,
-  } = props;
+  const { title, onAvatarPress } = props;
+  const renderAvatar = () => (
+    <Avatar.Image
+      size={ 24 }
+      source={ { uri: config.avatarBaseUrl } }
+    />
+  );
 
   return (
     <Appbar.Header
@@ -41,21 +30,10 @@ export function Header(props: HeaderProps) {
         />
       )}
 
-      {!!leftIcon && (
-        <Appbar.Action
-          icon={ () => (<Icon icon={ leftIcon } color={ leftIconColor } />) }
-          disabled
-          onPress={ onLeftPress }
-        />
-      )}
-
-      {!!rightIcon && (
-        <Appbar.Action
-          icon={ () => (<Icon icon={ rightIcon } color={ rightIconColor } />) }
-          disabled
-          onPress={ onRightPress }
-        />
-      )}
+      <Appbar.Action
+        icon={ renderAvatar }
+        onPress={ onAvatarPress }
+      />
     </Appbar.Header>
   );
 }

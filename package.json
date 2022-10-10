@@ -7,9 +7,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "expo:build": "eas build --profile dev --platform android",
-    "expo:build:beta": "eas build --profile beta --platform android",
-    "expo:build:prod": "eas build --profile prod --platform android"
+    "build": "eas build --profile prod --platform android",
+    "build:beta": "eas build --profile beta --platform android",
+    "build:dev": "eas build --profile dev --platform android"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
@@ -20,11 +20,14 @@
     "apisauce": "^2.1.6",
     "expo": "~46.0.13",
     "expo-localization": "~13.1.0",
+    "expo-updates": "~0.14.6",
     "i18n-js": "^4.1.1",
     "lodash": "^4.17.21",
+    "moment": "^2.29.4",
     "react": "18.0.0",
     "react-native": "0.69.6",
     "react-native-dotenv": "^3.3.1",
+    "react-native-gesture-handler": "^2.7.0",
     "react-native-paper": "5.0.0-rc.6",
     "react-native-svg": "12.3.0",
     "typescript": "^4.6.3"
