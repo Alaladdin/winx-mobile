@@ -4,6 +4,7 @@ import * as Updates from 'expo-updates';
 import { ScrollView, StyleSheet } from 'react-native';
 import moment from 'moment';
 import { Icon, Select } from '../components';
+import { reportCrash } from '../utils/crash-reporting';
 
 const channelsOptions = [
   { title: 'release', value: 'default', icon: 'bolt' },
@@ -55,6 +56,11 @@ export function SettingsScreen() {
             check
           </Button>
         ) }
+      />
+
+      <List.Item
+        title="Release date"
+        right={ () => <Button onPress={ () => reportCrash(new Error('test')) }>Report crash</Button> }
       />
     </ScrollView>
   );

@@ -15,10 +15,14 @@
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
     "@fortawesome/free-solid-svg-icons": "^6.2.0",
     "@fortawesome/react-native-fontawesome": "^0.3.0",
+    "@sentry/react-native": "4.2.2",
     "@types/react": "~18.0.0",
     "@types/react-native": "~0.69.1",
     "apisauce": "^2.1.6",
     "expo": "~46.0.13",
+    "expo-application": "~4.2.2",
+    "expo-constants": "~13.2.4",
+    "expo-device": "~4.3.0",
     "expo-localization": "~13.1.0",
     "expo-updates": "~0.14.6",
     "i18n-js": "^4.1.1",
@@ -30,6 +34,7 @@
     "react-native-pager-view": "5.4.24",
     "react-native-paper": "5.0.0-rc.6",
     "react-native-svg": "12.3.0",
+    "sentry-expo": "~5.0.0",
     "typescript": "^4.6.3"
   },
   "devDependencies": {
