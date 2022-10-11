@@ -1,4 +1,6 @@
 import { MD3DarkTheme, MD3LightTheme } from 'react-native-paper';
+import { merge } from 'lodash';
+import { colors } from './colors';
 
 const isDarkTheme = true;
 
@@ -14,16 +16,10 @@ const commonTheme = {
     huge      : 48,
     massive   : 64,
   },
+  colors,
 };
 
-const darkThemeConfig = {
-  ...commonTheme,
-  ...MD3DarkTheme,
-};
-
-const lightThemeConfig = {
-  ...commonTheme,
-  ...MD3LightTheme,
-};
+const darkThemeConfig = merge({}, commonTheme, MD3DarkTheme);
+const lightThemeConfig = merge({}, commonTheme, MD3LightTheme);
 
 export default isDarkTheme ? darkThemeConfig : lightThemeConfig;
