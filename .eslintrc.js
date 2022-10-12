@@ -17,6 +17,7 @@ module.exports = {
     project     : './tsconfig.json',
   },
   rules: {
+    'max-len'                     : ['error', 140],
     'import/no-unresolved'        : 0,
     'react/jsx-filename-extension': [1, {
       extensions: ['.ts', '.tsx'],
@@ -56,10 +57,11 @@ module.exports = {
     }],
 
     // REACT
-    'react/require-default-props' : 'off',
-    'react/react-in-jsx-scope'    : 'off',
-    'react/style-prop-object'     : 'off',
-    'react/jsx-props-no-spreading': 'off',
-    'react/jsx-curly-spacing'     : [2, 'always'],
+    'react/require-default-props'      : 'off',
+    'react/react-in-jsx-scope'         : 'off',
+    'react/style-prop-object'          : 'off',
+    'react/jsx-props-no-spreading'     : 'off',
+    'react/jsx-curly-spacing'          : [2, 'always'],
+    '@typescript-eslint/no-unused-vars': 'error',
   },
 };

@@ -23,12 +23,7 @@ export function Header(props: HeaderProps) {
       statusBarHeight={ 0 }
       elevated
     >
-      {!!title && (
-        <Appbar.Content
-          color={ MD3DarkTheme.colors.onBackground }
-          title={ translate(title) }
-        />
-      )}
+      {!!title && <Appbar.Content title={ translate(title) } />}
 
       <Appbar.Action
         icon={ renderAvatar }

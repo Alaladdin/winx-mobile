@@ -1,77 +1,159 @@
-import React, { useState } from 'react';
-import { Button, List, Text } from 'react-native-paper';
+import React, { useEffect, useState } from 'react';
+import { Button, List, Text, Snackbar } from 'react-native-paper';
 import * as Updates from 'expo-updates';
-import { ScrollView, StyleSheet } from 'react-native';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
 import moment from 'moment';
-import { Icon, Select } from '../components';
-import { reportCrash } from '../utils/crash-reporting';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { Icon } from '../components';
+import { reportCrash, reportMessage } from '../utils/crash-reporting';
+import theme from '../theme';
 
-const channelsOptions = [
-  { title: 'release', value: 'default', icon: 'bolt' },
-  { title: 'beta', value: 'Beta', icon: 'flask' },
-];
+const parseUpdateError = (e) => {
+  if (e.code === 'ERR_UPDATES_DISABLED')
+    return 'Updated disabled';
+
+  if (e.code === 'ERR_UPDATES_RELOAD')
+    return 'App reload error';
+
+  if (e.code === 'ERR_UPDATES_CHECK')
+    return e.message || 'Updates check error';
+
+  if (e.code === 'ERR_UPDATES_FETCH')
+    return e.message || 'Updated fetch error';
+
+  return 'Unknown error';
+};
 
 export function SettingsScreen() {
-  const [channel, setChannel] = useState(Updates.channel || Updates.releaseChannel);
-  const [hasUpdates, setHasUpdates] = useState(false);
+  const [snackBarMessage, setSnackBarMessage] = useState<string>('');
+  const [checkButtonText, setCheckButtonText] = useState<string>('check');
+  const [checkButtonIcon, setCheckButtonIcon] = useState<IconProp>('sync');
+  const [hasUpdates, setHasUpdates] = useState<boolean>(false);
+  const [isChecking, setIsChecking] = useState<boolean>(false);
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
+  const closeSnackBar = () => setSnackBarMessage('');
 
-  const releaseDate = moment(Updates.createdAt).format('HH:mm DD.MM.YY');
-  const fetchUpdates = () => {
-    setHasUpdates(null);
-    return Updates.fetchUpdateAsync()
+  useEffect(() => {
+    let newButtonText = 'check';
+    let newButtonIcon = 'sync';
+
+    if (hasUpdates) {
+      newButtonText = 'update';
+      newButtonIcon = 'download';
+    }
+
+    if (isChecking)
+      newButtonText = 'checking...';
+
+    if (isUpdating)
+      newButtonText = 'updating...';
+
+    setCheckButtonText(newButtonText);
+    setCheckButtonIcon(newButtonIcon);
+  }, [hasUpdates, isChecking, isUpdating]);
+
+  const releaseDate = moment(Updates.createdAt).format('HH:mm DD.MM');
+  const checkUpdates = () => {
+    setIsChecking(true);
+
+    Updates.checkForUpdateAsync()
       .then((result) => {
-        setHasUpdates(!result.isNew);
+        setHasUpdates(result.isAvailable);
+
+        if (!result.isAvailable)
+          setSnackBarMessage('Last version installed already');
       })
-      .catch(() => {
-        setHasUpdates(false);
+      .catch((e) => {
+        setSnackBarMessage(parseUpdateError(e));
+        reportCrash(e);
+      })
+      .finally(() => {
+        setIsChecking(false);
+      });
+  };
+
+  const downloadUpdate = () => {
+    setIsUpdating(true);
+
+    return Updates.fetchUpdateAsync()
+      .then(reportMessage)
+      .then(Updates.reloadAsync)
+      .catch((e) => {
+        setSnackBarMessage(parseUpdateError(e));
+        reportCrash(e);
+      })
+      .finally(() => {
+        setIsUpdating(false);
       });
   };
 
   return (
-    <ScrollView style={ styles.container }>
+    <SafeAreaView style={ styles.container }>
       <Text variant="headlineSmall" style={ styles.heading }>Updates</Text>
-      <List.Item
-        title="Updates channel"
-        right={ () => (
-          <Select
-            value={ channel }
-            options={ channelsOptions }
-            onChange={ setChannel }
-          />
-        ) }
-      />
-      <List.Item
-        title="Release date"
-        right={ () => <Text>{ releaseDate }</Text> }
-      />
-
       <List.Item
         title="Check updates"
         right={ () => (
           <Button
-            icon={ ({ color }) => <Icon icon="sync" color={ color } size={ 12 } /> }
-            disabled={ hasUpdates === null }
-            onPress={ fetchUpdates }
+            icon={ ({ color }) => <Icon icon={ checkButtonIcon } color={ color } size={ 12 } /> }
+            disabled={ isChecking || isUpdating }
+            onPress={ hasUpdates ? downloadUpdate : checkUpdates }
           >
-            check
+            { checkButtonText }
           </Button>
         ) }
       />
 
       <List.Item
         title="Release date"
-        right={ () => <Button onPress={ () => reportCrash(new Error('test')) }>Report crash</Button> }
+        right={ () => <Text>{ releaseDate }</Text> }
       />
-    </ScrollView>
+
+      <List.Item
+        title="Version"
+        right={ () => <Text>{ Updates.manifest.version || '?.?.?' }</Text> }
+      />
+
+      <Text variant="headlineSmall" style={ styles.heading }>Theme</Text>
+      <List.Item
+        title="Accent color"
+        right={ () => (<View style={ styles.accentColor } />) }
+      />
+
+      <Text variant="headlineSmall" style={ styles.heading }>Important</Text>
+
+      <List.Item
+        title="Most necessary"
+        right={ () => (
+          <Button onPress={ () => { setSnackBarMessage('Not yet'); } }>
+            Troll Hera
+          </Button>
+        ) }
+      />
+
+      <Snackbar
+        visible={ !!snackBarMessage }
+        duration={ 3000 }
+        onDismiss={ closeSnackBar }
+      >
+        { snackBarMessage }
+      </Snackbar>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 20,
+    minHeight: '100%',
   },
   heading: {
+    marginTop   : 30,
     marginBottom: 15,
     paddingLeft : 15,
+  },
+  accentColor: {
+    height         : 15,
+    width          : 15,
+    borderRadius   : 50,
+    backgroundColor: theme.colors.primary,
   },
 });
