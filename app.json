@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "mpei-fukkkkking-mobile",
-    "slug": "mpei-fukkkkking-mobile",
+    "name": "WINX",
+    "slug": "winx-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/app-icon.png",
+    "userInterfaceStyle": "dark",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash-logo-universal.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#2a2831"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -19,25 +19,23 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.alaladdin.mpeifukkkkkingmobile"
+      "bundleIdentifier": "com.alaladdin.winx"
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+      "splash": {
+        "image": "./assets/splash-logo-universal.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#2a2831"
       },
-      "package": "com.alaladdin.mpeifukkkkkingmobile"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "a4b50510-3ca1-4855-90ea-b8a2719f730d"
-      }
+      "package": "com.alaladdin.winx"
     },
     "plugins": [
       "sentry-expo"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "a9966b77-4fb0-48cd-b472-8df9d317ba42"
+      }
+    }
   }
 }
