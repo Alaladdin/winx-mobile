@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Button, List, Text, Snackbar } from 'react-native-paper';
+import { Button, List, Text, Snackbar, Switch } from 'react-native-paper';
 import * as Updates from 'expo-updates';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
 import moment from 'moment';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Icon } from '../components';
-import { reportCrash, reportMessage } from '../utils/crash-reporting';
+import { reportCrash } from '../utils/crash-reporting';
 import theme from '../theme';
 
 const parseUpdateError = (e) => {
@@ -76,7 +76,6 @@ export function SettingsScreen() {
     setIsUpdating(true);
 
     return Updates.fetchUpdateAsync()
-      .then(reportMessage)
       .then(Updates.reloadAsync)
       .catch((e) => {
         setSnackBarMessage(parseUpdateError(e));
@@ -89,46 +88,76 @@ export function SettingsScreen() {
 
   return (
     <SafeAreaView style={ styles.container }>
-      <Text variant="headlineSmall" style={ styles.heading }>Updates</Text>
-      <List.Item
-        title="Check updates"
-        right={ () => (
-          <Button
-            icon={ ({ color }) => <Icon icon={ checkButtonIcon } color={ color } size={ 12 } /> }
-            disabled={ isChecking || isUpdating }
-            onPress={ hasUpdates ? downloadUpdate : checkUpdates }
-          >
-            { checkButtonText }
-          </Button>
-        ) }
-      />
+      <>
+        <Text variant="headlineSmall" style={ styles.heading }>Updates</Text>
+        <List.Item
+          title="Check updates"
+          right={ () => (
+            <Button
+              icon={ ({ color }) => <Icon icon={ checkButtonIcon } color={ color } size={ 12 } /> }
+              disabled={ isChecking || isUpdating }
+              onPress={ hasUpdates ? downloadUpdate : checkUpdates }
+            >
+              { checkButtonText }
+            </Button>
+          ) }
+        />
 
-      <List.Item
-        title="Release date"
-        right={ () => <Text>{ releaseDate }</Text> }
-      />
+        <List.Item
+          title="Release date"
+          right={ () => <Text>{ releaseDate }</Text> }
+        />
 
-      <List.Item
-        title="Version"
-        right={ () => <Text>{ Updates.manifest.version || '?.?.?' }</Text> }
-      />
+        <List.Item
+          title="Version"
+          right={ () => <Text>{ Updates.manifest.version || '?.?.?' }</Text> }
+        />
+      </>
 
-      <Text variant="headlineSmall" style={ styles.heading }>Theme</Text>
-      <List.Item
-        title="Accent color"
-        right={ () => (<View style={ styles.accentColor } />) }
-      />
+      <>
+        <Text variant="headlineSmall" style={ styles.heading }>Notifications</Text>
 
-      <Text variant="headlineSmall" style={ styles.heading }>Important</Text>
+        <List.Item
+          title="Notify about lessons"
+          right={ () => (<Switch value={ false } disabled />) }
+        />
 
-      <List.Item
-        title="Most necessary"
-        right={ () => (
-          <Button onPress={ () => { setSnackBarMessage('Not yet'); } }>
-            Troll Hera
-          </Button>
-        ) }
-      />
+        <List.Item
+          title="Notify about bars marks change"
+          right={ () => (<Switch value={ false } disabled />) }
+        />
+      </>
+
+      <>
+        <Text variant="headlineSmall" style={ styles.heading }>Theme</Text>
+
+        <List.Item
+          title="Accent color"
+          right={ () => (<View style={ styles.accentColor } />) }
+        />
+
+        <List.Item
+          title="Most necessary"
+          right={ () => (
+            <Button onPress={ () => { setSnackBarMessage('Not yet'); } }>
+              Troll Hera
+            </Button>
+          ) }
+        />
+      </>
+
+      <>
+        <Text variant="headlineSmall" style={ styles.heading }>Important</Text>
+
+        <List.Item
+          title="Most necessary"
+          right={ () => (
+            <Button onPress={ () => { setSnackBarMessage('Not yet'); } }>
+              Troll Hera
+            </Button>
+          ) }
+        />
+      </>
 
       <Snackbar
         visible={ !!snackBarMessage }
