@@ -29,6 +29,7 @@ module.exports = {
     '@typescript-eslint/no-shadow': ['error'],
 
     // CUSTOM
+    'global-require'              : 'off',
     'import/prefer-default-export': 'off',
     'comma-dangle'                : ['error', {
       arrays   : 'always-multiline',
