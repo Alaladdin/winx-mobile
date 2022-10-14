@@ -126,7 +126,12 @@ export function SettingsScreen() {
         </>
 
         <>
-          <Text variant="headlineSmall" style={ styles.heading }>Theme</Text>
+          <Text variant="headlineSmall" style={ styles.heading }>Appearance</Text>
+
+          <List.Item
+            title="Language"
+            right={ () => <Text>English</Text> }
+          />
 
           <List.Item
             title="Slow down loading (better animations)"
@@ -150,7 +155,7 @@ export function SettingsScreen() {
           <List.Item
             title="Most necessary"
             right={ () => (
-              <Button onPress={ () => { setSnackBarMessage('Not yet'); } }>
+              <Button onPress={ () => { setSnackBarMessage('Not yet :('); } }>
                 Troll Hera
               </Button>
             ) }
