@@ -22,8 +22,13 @@ module.exports = {
     'react/jsx-filename-extension': [1, {
       extensions: ['.ts', '.tsx'],
     }],
-    'no-use-before-define'        : 'off',
-    'import/extensions'           : ['error', 'never'],
+    'no-use-before-define': 'off',
+    'import/extensions'   : ['error', 'never', {
+      ignorePackages: true,
+      pattern       : {
+        json: 'always',
+      },
+    }],
     'react/prop-types'            : 0,
     'no-shadow'                   : 'off',
     '@typescript-eslint/no-shadow': ['error'],

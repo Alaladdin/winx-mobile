@@ -84,7 +84,7 @@ export function ScheduleScreen(): JSX.Element {
 
   return (
     <PagerView
-      style={ styles.pagerView }
+      style={ styles.container }
       pageMargin={ 20 }
       scrollEnabled
     >
@@ -94,7 +94,7 @@ export function ScheduleScreen(): JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  pagerView: {
+  container: {
     width : '100%',
     height: '93%', // todo fix
   },
