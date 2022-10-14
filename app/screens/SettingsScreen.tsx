@@ -129,6 +129,11 @@ export function SettingsScreen() {
           <Text variant="headlineSmall" style={ styles.heading }>Theme</Text>
 
           <List.Item
+            title="Slow down loading (better animations)"
+            right={ () => (<Switch value disabled />) }
+          />
+
+          <List.Item
             title="Dark"
             right={ () => (<Switch value disabled />) }
           />

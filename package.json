@@ -4,6 +4,8 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
+    "adb": "adb reverse tcp:9090 tcp:9090 && adb reverse tcp:3000 tcp:3000 && adb reverse tcp:9001 tcp:9001 && adb reverse tcp:8081 tcp:8081",
+    "adb:wireless": "adb connect 192.168.1.4:38595",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
@@ -15,6 +17,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
     "@fortawesome/free-solid-svg-icons": "^6.2.0",
     "@fortawesome/react-native-fontawesome": "^0.3.0",
+    "@react-native-async-storage/async-storage": "^1.17.10",
     "@sentry/react-native": "4.2.2",
     "@types/react": "~18.0.0",
     "@types/react-native": "~0.69.1",
@@ -24,9 +27,13 @@
     "expo-constants": "~13.2.4",
     "expo-device": "~4.3.0",
     "expo-localization": "~13.1.0",
+    "expo-splash-screen": "~0.16.2",
     "expo-updates": "~0.14.6",
     "i18n-js": "^4.1.1",
     "lodash": "^4.17.21",
+    "mobx": "^6.6.2",
+    "mobx-react": "^7.5.3",
+    "mobx-state-tree": "^5.1.6",
     "moment": "^2.29.4",
     "react": "18.0.0",
     "react-native": "0.69.6",
@@ -34,6 +41,9 @@
     "react-native-pager-view": "5.4.24",
     "react-native-paper": "5.0.0-rc.6",
     "react-native-svg": "12.3.0",
+    "reactotron-mst": "^3.1.4",
+    "reactotron-react-js": "^3.3.7",
+    "reactotron-react-native": "5.0.2",
     "sentry-expo": "~5.0.0",
     "typescript": "^4.6.3"
   },
@@ -47,7 +57,8 @@
     "eslint-plugin-import": "2.25.3",
     "eslint-plugin-jsx-a11y": "6.5.1",
     "eslint-plugin-react": "7.28.0",
-    "eslint-plugin-react-hooks": "4.3.0"
+    "eslint-plugin-react-hooks": "4.3.0",
+    "reactotron-core-client": "^2.8.10"
   },
   "private": true
 }

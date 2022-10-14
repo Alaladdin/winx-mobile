@@ -7,6 +7,7 @@ import PagerView from 'react-native-pager-view';
 import { api } from '../services/api';
 import config from '../config';
 import theme from '../theme';
+import { LoaderScreen } from '../components';
 
 interface IScheduleItem {
   auditorium: string
@@ -69,12 +70,12 @@ export function ScheduleScreen(): JSX.Element {
         );
       })
       .finally(() => {
-        setLoading(false);
+        setTimeout(() => setLoading(false), 500);
       });
   }
 
   if (isLoading || !schedules)
-    return <ActivityIndicator animating />;
+    return <LoaderScreen />;
 
   const views = map(schedules, (weeklySchedules, index) => (
     <ScrollView key={ index }>

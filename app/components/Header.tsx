@@ -1,6 +1,7 @@
 import React from 'react';
 import { Appbar, Avatar, MD3DarkTheme } from 'react-native-paper';
 import config from '../config';
+import appConfig from '../../app.json';
 
 export interface HeaderProps {
   onAvatarPress?: () => void
@@ -21,7 +22,7 @@ export function Header(props: HeaderProps) {
       statusBarHeight={ 0 }
       elevated
     >
-      <Appbar.Content title="WINX" />
+      <Appbar.Content title={ appConfig.expo.name } />
 
       <Appbar.Action
         icon={ renderAvatar }
