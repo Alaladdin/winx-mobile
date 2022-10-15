@@ -70,7 +70,7 @@ export function ScheduleScreen(): JSX.Element {
         );
       })
       .finally(() => {
-        setTimeout(() => setLoading(false), 500);
+        setTimeout(() => setLoading(false), 1000);
       });
   }
 
