@@ -12,7 +12,7 @@ import Config from './app/config';
 import { ErrorBoundary } from './app/screens';
 import { initCrashReporting, reportCrash } from './app/utils/crash-reporting';
 import { Header } from './app/components';
-import { useInitialRootStore } from './app/models';
+import { useInitialRootStore, RootStoreProvider } from './app/models';
 import { setupReactotron } from './app/services/reactotron';
 
 setupReactotron({
@@ -50,16 +50,18 @@ function App() {
   if (!rehydrated) return null;
 
   return (
-    <PaperProvider theme={ theme }>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor={ styles.statusBar.backgroundColor }
-      />
-      <ErrorBoundary catchErrors={ Config.catchErrors }>
-        <Header />
-        <MainNavigator badges={ { settings: settingsBadges } } />
-      </ErrorBoundary>
-    </PaperProvider>
+    <RootStoreProvider value={ rootStore }>
+      <PaperProvider theme={ theme }>
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor={ styles.statusBar.backgroundColor }
+        />
+        <ErrorBoundary catchErrors={ Config.catchErrors }>
+          <Header />
+          <MainNavigator badges={ { settings: settingsBadges } } />
+        </ErrorBoundary>
+      </PaperProvider>
+    </RootStoreProvider>
   );
 }
 

@@ -18,7 +18,7 @@ module.exports = {
   },
   rules: {
     'max-len'                     : ['error', 140],
-    'import/no-unresolved'        : 0,
+    'import/no-unresolved'        : 'off',
     'react/jsx-filename-extension': [1, {
       extensions: ['.ts', '.tsx'],
     }],
@@ -29,11 +29,12 @@ module.exports = {
         json: 'always',
       },
     }],
-    'react/prop-types'            : 0,
+    'react/prop-types'            : 'off',
     'no-shadow'                   : 'off',
     '@typescript-eslint/no-shadow': ['error'],
 
     // CUSTOM
+    'no-param-reassign'           : 'off',
     'global-require'              : 'off',
     'import/prefer-default-export': 'off',
     'comma-dangle'                : ['error', {
@@ -51,7 +52,7 @@ module.exports = {
       multiLine: { align: 'colon' },
     }],
     curly                             : ['error', 'multi-or-nest', 'consistent'],
-    'no-underscore-dangle'            : 0,
+    'no-underscore-dangle'            : 'off',
     'no-console'                      : process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger'                     : process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'nonblock-statement-body-position': ['error', 'any'],

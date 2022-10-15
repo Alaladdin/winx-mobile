@@ -8,6 +8,7 @@ const en = {
     scheduleTab : 'Schedule',
     actualityTab: 'Actuality',
     barsTab     : 'Bars',
+    mailTab     : 'Mail',
     settingsTab : 'Settings',
   },
   errorScreen: {

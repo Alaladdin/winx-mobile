@@ -4,10 +4,11 @@ import * as Updates from 'expo-updates';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import moment from 'moment';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { Icon } from '../components';
-import { reportCrash } from '../utils/crash-reporting';
-import theme from '../theme';
-import { version } from '../../package.json';
+import { Icon } from '../../components';
+import { reportCrash } from '../../utils/crash-reporting';
+import theme from '../../theme';
+import { version } from '../../../package.json';
+import { SettingsDev } from './SettingsDev';
 
 const parseUpdateError = (e) => {
   if (e.code === 'ERR_UPDATES_DISABLED')
@@ -150,17 +151,10 @@ export function SettingsScreen() {
         </>
 
         <>
-          <Text variant="headlineSmall" style={ styles.heading }>Important</Text>
 
-          <List.Item
-            title="Most necessary"
-            right={ () => (
-              <Button onPress={ () => { setSnackBarMessage('Not yet :('); } }>
-                Troll Hera
-              </Button>
-            ) }
-          />
         </>
+
+        <SettingsDev headingStyle={ styles.heading } />
 
         <View style={ styles.footerContainer }>
           <Text style={ styles.footerText }>

@@ -18,18 +18,20 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "platforms": ["android"],
+    "platforms": [
+      "android"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.alaladdin.winx"
     },
     "android": {
+      "package": "com.alaladdin.winx",
       "splash": {
         "image": "./assets/splash-logo-universal.png",
         "resizeMode": "contain",
         "backgroundColor": "#2a2831"
-      },
-      "package": "com.alaladdin.winx"
+      }
     },
     "plugins": [
       "sentry-expo"

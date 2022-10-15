@@ -1,48 +1,16 @@
 import { BottomNavigation } from 'react-native-paper';
 import React, { useState } from 'react';
-import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { StyleSheet, View } from 'react-native';
-import { map, keys } from 'lodash';
-import { ActualityScreen, BarsScreen, ScheduleScreen, SettingsScreen } from '../screens';
-import { translate, TxKeyPath } from '../i18n';
-import { Icon, Screen } from '../components';
+import { observer } from 'mobx-react';
+import { reject } from 'lodash/collection';
+import { reaction } from 'mobx';
+import { translate } from '../i18n';
+import { Icon } from '../components';
 import theme from '../theme';
+import { routesList, INavRoute, routesMapForMav } from './routes';
+import { useStores } from '../models';
 
-export type Route = {
-  key: string
-  title: TxKeyPath
-  focusedIcon: IconProp
-  unfocusedIcon?: IconProp
-  component: React.Component
-}
-
-export type Routes = [Route]
-const rawRoutes = {
-  schedule: {
-    title      : 'mainNavigator.scheduleTab',
-    focusedIcon: 'calendar-days',
-    component  : ScheduleScreen,
-  },
-  actuality: {
-    title      : 'mainNavigator.actualityTab',
-    focusedIcon: 'newspaper',
-    component  : ActualityScreen,
-  },
-  bars: {
-    title      : 'mainNavigator.barsTab',
-    focusedIcon: 'book',
-    component  : BarsScreen,
-  },
-  settings: {
-    title      : 'mainNavigator.settingsTab',
-    focusedIcon: 'bars',
-    component  : SettingsScreen,
-  },
-};
-
-const routes = map(keys(rawRoutes), (key) => ({ key, ...rawRoutes[key] }));
-
-const renderIcon = (params: { route: Route, color: string, focused: boolean }) => {
+const renderIcon = (params: { route: INavRoute, color: string, focused: boolean }) => {
   const { focusedIcon, unfocusedIcon } = params.route;
   const icon = (!params.focused && unfocusedIcon) ? unfocusedIcon : focusedIcon;
 
@@ -57,39 +25,38 @@ const renderIcon = (params: { route: Route, color: string, focused: boolean }) =
   );
 };
 
-const renderScene = ({ route, jumpTo }) => (
-  <Screen
-    headerProps={ {
-      title    : route.title,
-      leftIcon : 'bell',
-      rightIcon: 'user-astronaut',
-    } }
-  >
-    <route.component route={ route } jumpTo={ jumpTo } />
-  </Screen>
-);
+interface IMainNavProps {
+  badges?: {
+    [key: string]: number | null
+  }
+}
 
-export function MainNavigator() {
+export const MainNavigator = observer(({ badges = {} }: IMainNavProps) => {
+  const { mainStore } = useStores();
   const [index, setIndex] = useState(0);
+  const routesWithAuth = mainStore.isAuthenticated ? routesList : reject(routesList, 'withAuth');
+  const renderScene = BottomNavigation.SceneMap(routesMapForMav);
+
+  reaction(() => mainStore.isAuthenticated, (isAuthenticated) => {
+    setIndex(index + (isAuthenticated ? 2 : -2));
+  });
 
   return (
     <BottomNavigation
-      navigationState={ { index, routes } }
+      navigationState={ { index, routes: routesWithAuth } }
       renderScene={ renderScene }
       getLabelText={ ({ route }) => translate(route.title) }
       activeColor={ theme.colors.primary }
+      getBadge={ ({ route }) => badges[route.key] } // todo remove
       renderIcon={ renderIcon }
       onIndexChange={ setIndex }
-      compact
     />
   );
-}
+});
 
 const styles = StyleSheet.create({
   iconContainer: {
     flex          : 1,
-    display       : 'flex',
-    alignItems    : 'center',
     justifyContent: 'center',
   },
 });

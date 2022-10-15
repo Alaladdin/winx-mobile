@@ -1,8 +1,9 @@
 import React, { ErrorInfo } from 'react';
 import { ScrollView, TextStyle, View, ViewStyle } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import { Icon, Screen } from '../../components';
+import { Icon } from '../../components';
 import theme from '../../theme';
+import { translate } from '../../i18n';
 
 export interface ErrorDetailsProps {
   error: Error
@@ -10,35 +11,34 @@ export interface ErrorDetailsProps {
   onReset(): void
 }
 
-export function ErrorDetails(props: ErrorDetailsProps) {
+export function ErrorDetails({ error, errorInfo: { componentStack }, onReset }: ErrorDetailsProps) {
   return (
-    <Screen
+    <View
       preset="fixed"
       safeAreaEdges={ ['top', 'bottom'] }
       contentContainerStyle={ $contentContainer }
     >
       <View style={ $topSection }>
         <Icon icon="bug" size={ 64 } />
-        <Text style={ $heading } preset="subheading" tx="errorScreen.title" />
-        <Text tx="errorScreen.friendlySubtitle" />
+        <Text style={ $heading }>
+          { translate('errorScreen.title') }
+        </Text>
+        <Text>{ translate('errorScreen.friendlySubtitle') }</Text>
       </View>
 
       <ScrollView style={ $errorSection } contentContainerStyle={ $errorSectionContentContainer }>
-        <Text style={ $errorContent } weight="bold" text={ `${props.error}`.trim() } />
-        <Text
-          selectable
-          style={ $errorBacktrace }
-          text={ `${props.errorInfo.componentStack}`.trim() }
-        />
+        <Text style={ $errorContent }>
+          { error?.toString()?.trim() }
+        </Text>
+        <Text selectable style={ $errorBacktrace }>
+          { componentStack.trim() }
+        </Text>
       </ScrollView>
 
-      <Button
-        preset="reversed"
-        style={ $resetButton }
-        onPress={ props.onReset }
-        tx="errorScreen.reset"
-      />
-    </Screen>
+      <Button style={ $resetButton } onPress={ onReset }>
+        { translate('errorScreen.reset') }
+      </Button>
+    </View>
   );
 }
 
@@ -71,7 +71,8 @@ const $errorSectionContentContainer: ViewStyle = {
 };
 
 const $errorContent: TextStyle = {
-  color: theme.colors.error,
+  color     : theme.colors.error,
+  fontWeight: 'bold',
 };
 
 const $errorBacktrace: TextStyle = {

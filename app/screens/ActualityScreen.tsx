@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, List } from 'react-native-paper';
+import { List } from 'react-native-paper';
 import { ScrollView } from 'react-native';
 import { map, reject } from 'lodash/collection';
 import { api } from '../services/api';
+import { LoaderScreen } from '../components';
 
 interface IActuality {
   _id: string
@@ -40,9 +41,13 @@ export function ActualityScreen() {
         // todo error
       })
       .finally(() => {
-        setLoading(false);
+        setTimeout(() => setLoading(false), 1000);
       });
   }
+
+  if (isLoading || !actualities)
+    return <LoaderScreen />;
+
   const handlePress = (sectionIndex) => {
     if (expanded.includes(sectionIndex))
       setExpanded(reject(expanded, (index) => index === sectionIndex));
@@ -52,35 +57,24 @@ export function ActualityScreen() {
 
   return (
     <ScrollView>
-      {
-        isLoading
-          ? <ActivityIndicator animating />
-          : (
-            <List.Section>
-              {
-                map(actualities, (section: IActualitySection, sectionIndex) => (
-                  <List.Accordion
-                    key={ sectionIndex }
-                    title={ section.name }
-                    left={ (props) => <List.Icon { ...props } icon="folder" /> }
-                    expanded={ expanded.includes(sectionIndex) }
-                    onPress={ () => handlePress(sectionIndex) }
-                  >
-                    {
-                      map(section.actualities, (actuality: IActuality, actualityIndex) => (
-                        <List.Item
-                          key={ actualityIndex }
-                          title={ actuality.name }
-                        />
-                      ))
-                    }
-                  </List.Accordion>
-                ))
-              }
-
-            </List.Section>
-          )
-      }
+      <List.Section>
+        { map(actualities, (section: IActualitySection, sectionIndex) => (
+          <List.Accordion
+            key={ sectionIndex }
+            title={ section.name }
+            left={ (props) => <List.Icon { ...props } icon="folder" /> }
+            expanded={ expanded.includes(sectionIndex) }
+            onPress={ () => handlePress(sectionIndex) }
+          >
+            { map(section.actualities, (actuality: IActuality, actualityIndex) => (
+              <List.Item
+                key={ actualityIndex }
+                title={ actuality.name }
+              />
+            ))}
+          </List.Accordion>
+        ))}
+      </List.Section>
     </ScrollView>
   );
 }
