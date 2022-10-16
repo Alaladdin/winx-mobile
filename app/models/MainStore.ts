@@ -4,7 +4,7 @@ export const MainStoreModel = types
   .model('MainStore')
   .props({
     _authToken: types.maybe(types.string),
-    _hasUpdate: types.maybe(types.boolean),
+    _hasUpdate: types.optional(types.boolean, false),
   })
   .views((store) => ({
     get isAuthenticated() {
