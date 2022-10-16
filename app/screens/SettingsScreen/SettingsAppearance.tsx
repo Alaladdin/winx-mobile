@@ -1,8 +1,24 @@
 import React from 'react';
 import { List, Text, Switch } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
+import { observer } from 'mobx-react';
 import theme from '../../theme';
 import { ISettingSection } from './ISettingSection';
+import { useStores } from '../../models';
+
+const SlowDownAnimationSwitch = observer(() => {
+  const { settingsStore } = useStores();
+  const onValueChange = (newVal: boolean) => {
+    settingsStore.setSlowDownAnimation(newVal);
+  };
+
+  return (
+    <Switch
+      value={ settingsStore.needSlowDownAnimation }
+      onValueChange={ onValueChange }
+    />
+  );
+});
 
 export function SettingsAppearance({ headingStyle }: ISettingSection) {
   return (
@@ -16,7 +32,7 @@ export function SettingsAppearance({ headingStyle }: ISettingSection) {
 
       <List.Item
         title="Slow down loading (better animations)"
-        right={ () => (<Switch value disabled />) }
+        right={ () => (<SlowDownAnimationSwitch />) }
       />
 
       <List.Item

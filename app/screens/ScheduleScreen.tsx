@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { View, ScrollView, StyleSheet, RefreshControl, } from 'react-native';
 import { Text, Surface } from 'react-native-paper';
 import { groupBy, map } from 'lodash';
 import moment from 'moment';
@@ -8,6 +8,7 @@ import { api } from '../services/api';
 import config from '../config';
 import theme from '../theme';
 import { LoaderScreen } from '../components';
+import { useStores } from '../models';
 
 interface IScheduleItem {
   auditorium: string
@@ -72,6 +73,13 @@ export function ScheduleScreen(): JSX.Element {
   const [start, finish] = getDatesRanges();
   const [schedules, setSchedule] = useState(null);
   const [isLoading, setLoading] = useState(false);
+  const [isRefreshing, setRefreshing] = React.useState(false);
+  const { settingsStore } = useStores();
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setSchedule(null);
+  }, []);
 
   if (schedules === null && !isLoading) {
     setLoading(true);
@@ -82,7 +90,12 @@ export function ScheduleScreen(): JSX.Element {
         );
       })
       .finally(() => {
-        setTimeout(() => setLoading(false), 1000);
+        const delay = settingsStore.needSlowDownAnimation ? 1000 : 0;
+
+        setTimeout(() => {
+          setRefreshing(false);
+          setLoading(false);
+        }, delay);
       });
   }
 
@@ -90,7 +103,11 @@ export function ScheduleScreen(): JSX.Element {
     return <LoaderScreen />;
 
   const views = map(schedules, (weeklySchedules, index) => (
-    <ScrollView contentContainerStyle={ { padding: 20 } } key={ index }>
+    <ScrollView
+      refreshControl={ <RefreshControl refreshing={ isRefreshing } onRefresh={ onRefresh } /> }
+      contentContainerStyle={ { padding: 20 } }
+      key={ index }
+    >
       { map(weeklySchedules, renderSchedule) }
     </ScrollView>
   ));
