@@ -27,6 +27,7 @@
     },
     "android": {
       "package": "com.alaladdin.winx",
+      "googleServicesFile": "./google-services.json",
       "splash": {
         "image": "./assets/splash-logo-universal.png",
         "resizeMode": "contain",
@@ -34,7 +35,14 @@
       }
     },
     "plugins": [
-      "sentry-expo"
+      "sentry-expo",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/splash-logo-universal.png",
+          "color": "#ffffff"
+        }
+      ]
     ],
     "extra": {
       "eas": {

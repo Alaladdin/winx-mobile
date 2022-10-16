@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, Snackbar } from 'react-native-paper';
+import { Text, Snackbar, MD3DarkTheme } from 'react-native-paper';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import theme from '../../theme';
 import { version } from '../../../package.json';
@@ -11,17 +11,18 @@ import { SettingsNotifications } from './SettingsNotifications';
 export function SettingsScreen() {
   const [snackBarMessage, setSnackBarMessage] = useState<string>('');
   const closeSnackBar = () => setSnackBarMessage('');
+  const sectionProps = {
+    headingStyle: styles.heading,
+    setSnackBarMessage,
+  };
 
   return (
     <SafeAreaView style={ styles.container }>
       <ScrollView>
-        <SettingsUpdates
-          headingStyle={ styles.heading }
-          setSnackBarMessage={ setSnackBarMessage }
-        />
-        <SettingsNotifications headingStyle={ styles.heading } />
-        <SettingsAppearance headingStyle={ styles.heading } />
-        <SettingsDev headingStyle={ styles.heading } />
+        <SettingsUpdates { ...sectionProps } />
+        <SettingsNotifications { ...sectionProps } />
+        <SettingsAppearance { ...sectionProps } />
+        <SettingsDev { ...sectionProps } />
 
         <View style={ styles.footerContainer }>
           <Text style={ styles.footerText }>

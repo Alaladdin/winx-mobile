@@ -6,6 +6,7 @@ import * as Sentry from 'sentry-expo';
 import React, { useState } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Updates from 'expo-updates';
+import * as Notifications from 'expo-notifications';
 import { MainNavigator } from './app/navigators';
 import theme from './app/theme';
 import Config from './app/config';
@@ -25,10 +26,21 @@ setupReactotron({
 
 SplashScreen.preventAutoHideAsync();
 
-function App() {
-  const [settingsBadges, setSettingsBadges] = useState<number>(null);
+const init = () => {
   initCrashReporting();
   library.add(fas);
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: false,
+      shouldSetBadge : false,
+    }),
+  });
+};
+
+function App() {
+  const [settingsBadges, setSettingsBadges] = useState<number>(null);
+  init();
 
   const { rootStore, rehydrated } = useInitialRootStore(() => {
     SplashScreen.hideAsync();
