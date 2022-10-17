@@ -4,26 +4,12 @@ import { Text, Surface } from 'react-native-paper';
 import { groupBy, map } from 'lodash';
 import moment from 'moment';
 import PagerView from 'react-native-pager-view';
-import { api } from '../services/api';
-import config from '../config';
-import theme from '../theme';
-import { LoaderScreen } from '../components';
-import { useStores } from '../models';
-
-interface IScheduleItem {
-  auditorium: string
-  beginLesson: string,
-  building: string,
-  date: string,
-  dayOfWeekString: string,
-  discipline: string,
-  disciplineAbbr: string,
-  endLesson: string,
-  group: null | string,
-  kindOfWork: string,
-  kindOfWorkId: number,
-  lecturer: string,
-}
+import { api } from '@/services/api';
+import config from '@/config';
+import theme from '@/theme';
+import { LoaderScreen } from '@/components';
+import { useStores } from '@/models';
+import { IScheduleItem } from './IScheduleItem';
 
 const getDatesRanges = () => {
   const start = moment().startOf('isoWeek').format(config.serverDateFormat);
@@ -84,6 +70,7 @@ export function ScheduleScreen(): JSX.Element {
 
   if (schedules === null && !isLoading) {
     setLoading(true);
+
     api.get('/getSchedule', { start, finish })
       .then((data) => {
         setSchedule(
