@@ -3,9 +3,9 @@ import React from 'react';
 import { View } from 'react-native';
 import { observer } from 'mobx-react';
 import * as Notifications from 'expo-notifications';
-import { useStores } from '../../models';
+import { useStores } from '@/models';
 import { ISettingSection } from './ISettingSection';
-import { reportCrash } from '../../utils/crash-reporting';
+import { reportCrash } from '@/utils/crash-reporting';
 
 const AuthenticationSwitch = observer(() => {
   const { mainStore } = useStores();

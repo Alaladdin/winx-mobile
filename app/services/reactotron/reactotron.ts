@@ -18,8 +18,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { onSnapshot } from 'mobx-state-tree';
 import { mst } from 'reactotron-mst';
 import { Reactotron } from './reactotron-client';
-import { RootStore } from '../../models';
-import { clear } from '../../utils/storage';
+import { RootStore } from '@/models';
+import { clear } from '@/utils/storage';
 import { ReactotronConfig, DEFAULT_REACTOTRON_CONFIG } from './reactotron-config';
 // import { goBack, resetRoot, navigate } from '../../navigators/navigation-utilities';
 import { fakeReactotron } from './reactotron-fake';
@@ -97,7 +97,7 @@ export function setupReactotron(customConfig: ReactotronConfig = {}) {
 
     // configure reactotron
     Reactotron.configure({
-      name: config.name || require('../../../package.json').name,
+      name: config.name || require('@/../package.json').name,
       host: config.host,
     });
 

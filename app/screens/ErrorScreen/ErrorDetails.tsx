@@ -1,9 +1,9 @@
 import React, { ErrorInfo } from 'react';
 import { ScrollView, TextStyle, View, ViewStyle } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import { Icon } from '../../components';
-import theme from '../../theme';
-import { translate } from '../../i18n';
+import { Icon } from '@/components';
+import theme from '@/theme';
+import { translate } from '@/i18n';
 
 export interface ErrorDetailsProps {
   error: Error

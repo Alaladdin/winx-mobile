@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Text, Snackbar, MD3DarkTheme } from 'react-native-paper';
+import { Text, Snackbar } from 'react-native-paper';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import theme from '../../theme';
-import { version } from '../../../package.json';
+import theme from '@/theme';
+import { version } from '@/../package.json';
 import { SettingsDev } from './SettingsDev';
 import { SettingsUpdates } from './SettingsUpdates';
 import { SettingsAppearance } from './SettingsAppearance';

@@ -1,8 +1,8 @@
 import { keys, map } from 'lodash';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import React from 'react';
-import * as screens from '../screens';
-import { TxKeyPath } from '../i18n';
+import * as screens from '@/screens';
+import { TxKeyPath } from '@/i18n';
 
 export interface INavRoute {
   key: string

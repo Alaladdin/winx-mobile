@@ -3,12 +3,12 @@ import { List, Text } from 'react-native-paper';
 import { ScrollView, StyleSheet, RefreshControl, View, Image } from 'react-native';
 import { map, reject } from 'lodash/collection';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import { api } from '../../services/api';
-import { LoaderScreen } from '../../components';
-import { useStores } from '../../models';
+import { api } from '@/services/api';
+import { LoaderScreen } from '@/components';
+import { useStores } from '@/models';
 import { IActuality, IActualitySection } from './ActualityScreen.interfaces';
-import theme from '../../theme';
-import config from '../../config';
+import theme from '@/theme';
+import config from '@/config';
 
 export function ActualityScreen() {
   const { settingsStore } = useStores();

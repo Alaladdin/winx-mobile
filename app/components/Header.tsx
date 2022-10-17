@@ -1,7 +1,7 @@
 import React from 'react';
 import { Appbar, Avatar, MD3DarkTheme } from 'react-native-paper';
-import config from '../config';
-import appConfig from '../../app.json';
+import config from '@/config';
+import appConfig from '@/../app.json';
 
 export interface HeaderProps {
   onAvatarPress?: () => void

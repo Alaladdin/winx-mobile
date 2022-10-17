@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-import theme from '../theme';
+import theme from '@/theme';
 
 export function MailScreen() {
   const [username, setUsername] = React.useState('');

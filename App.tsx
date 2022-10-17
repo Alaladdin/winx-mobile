@@ -8,14 +8,14 @@ import * as SplashScreen from 'expo-splash-screen';
 import * as Updates from 'expo-updates';
 import * as Notifications from 'expo-notifications';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { MainNavigator } from './app/navigators';
-import theme from './app/theme';
-import Config from './app/config';
-import { ErrorBoundary } from './app/screens';
-import { initCrashReporting, reportCrash } from './app/utils/crash-reporting';
-import { Header } from './app/components';
-import { useInitialRootStore, RootStoreProvider } from './app/models';
-import { setupReactotron } from './app/services/reactotron';
+import { MainNavigator } from '@/navigators';
+import theme from '@/theme';
+import Config from '@/config';
+import { ErrorBoundary } from '@/screens';
+import { initCrashReporting, reportCrash } from '@/utils/crash-reporting';
+import { Header } from '@/components';
+import { useInitialRootStore, RootStoreProvider } from '@/models';
+import { setupReactotron } from '@/services/reactotron';
 
 setupReactotron({
   clearOnLoad    : true,

@@ -2,9 +2,9 @@ import React from 'react';
 import { List, Text, Switch } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 import { observer } from 'mobx-react';
-import theme from '../../theme';
+import theme from '@/theme';
 import { ISettingSection } from './ISettingSection';
-import { useStores } from '../../models';
+import { useStores } from '@/models';
 
 const SlowDownAnimationSwitch = observer(() => {
   const { settingsStore } = useStores();

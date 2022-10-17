@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { StyleProp, TouchableOpacityProps, ViewStyle } from 'react-native';
 import { TouchableRipple, TouchableRippleProps } from 'react-native-paper';
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
-import theme from '../theme';
+import theme from '@/theme';
 
 interface IconProps extends TouchableOpacityProps {
   ripperProps?: TouchableRippleProps;

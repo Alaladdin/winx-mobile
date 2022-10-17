@@ -4,11 +4,11 @@ import { StyleSheet, View } from 'react-native';
 import { observer } from 'mobx-react';
 import { reject } from 'lodash/collection';
 import { reaction } from 'mobx';
-import { translate } from '../i18n';
-import { Icon } from '../components';
-import theme from '../theme';
+import { translate } from '@/i18n';
+import { Icon } from '@/components';
+import theme from '@/theme';
 import { routesList, INavRoute, routesMapForMav } from './routes';
-import { useStores } from '../models';
+import { useStores } from '@/models';
 
 const renderIcon = (params: { route: INavRoute, color: string, focused: boolean }) => {
   const { focusedIcon, unfocusedIcon } = params.route;

@@ -1,7 +1,7 @@
 import { Instance, SnapshotIn, SnapshotOut, types } from 'mobx-state-tree';
 import { withSetPropAction } from './helpers/with-set-prop-action';
-import { formatDate } from '../utils/format-date';
-import { translate } from '../i18n';
+import { formatDate } from '@/utils/format-date';
+import { translate } from '@/i18n';
 
 interface Enclosure {
   link: string

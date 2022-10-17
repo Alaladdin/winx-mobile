@@ -6,10 +6,10 @@
  * documentation for more details.
  */
 import { ApiResponse, ApisauceInstance, create } from 'apisauce';
-import Config from '../../config';
+import Config from '@/config';
 import { GeneralApiProblem, getGeneralApiProblem } from './api-problem';
 import type { ApiConfig } from './api.types';
-import { reportCrash } from '../../utils/crash-reporting';
+import { reportCrash } from '@/utils/crash-reporting';
 
 export const DEFAULT_API_CONFIG: ApiConfig = {
   apiUrl   : Config.apiUrl,

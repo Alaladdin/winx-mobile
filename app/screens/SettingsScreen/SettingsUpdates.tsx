@@ -1,13 +1,13 @@
 import { Button, List, Text } from 'react-native-paper';
 import React, { useEffect, useMemo, useState } from 'react';
 import { View } from 'react-native';
-import moment from 'moment/moment';
+import moment from 'moment';
 import * as Updates from 'expo-updates';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { ISettingSection } from './ISettingSection';
-import { Icon } from '../../components';
-import { reportCrash } from '../../utils/crash-reporting';
-import { useStores } from '../../models';
+import { Icon } from '@/components';
+import { reportCrash } from '@/utils/crash-reporting';
+import { useStores } from '@/models';
 
 const parseUpdateError = (e) => {
   if (e.code === 'ERR_UPDATES_DISABLED')

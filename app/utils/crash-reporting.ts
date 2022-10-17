@@ -1,13 +1,9 @@
 import * as Sentry from 'sentry-expo';
-import Config from '../config';
+import Config from '@/config';
 
 export const initCrashReporting = () => {
-  if (!__DEV__) {
-    Sentry.init({
-      dsn  : Config.sentryDsn,
-      debug: true,
-    });
-  }
+  if (!__DEV__)
+    Sentry.init({ dsn: Config.sentryDsn });
 };
 
 export const reportCrash = (error: Error) => {
