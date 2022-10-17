@@ -10,7 +10,7 @@ export const MainStoreModel = types
     get isAuthenticated() {
       return !!store._authToken;
     },
-    get hasUpdate() {
+    get hasUpdates() {
       return !!store._hasUpdate;
     },
   }))

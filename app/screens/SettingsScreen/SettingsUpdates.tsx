@@ -1,5 +1,5 @@
 import { Button, List, Text } from 'react-native-paper';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View } from 'react-native';
 import moment from 'moment/moment';
 import * as Updates from 'expo-updates';
@@ -7,6 +7,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { ISettingSection } from './ISettingSection';
 import { Icon } from '../../components';
 import { reportCrash } from '../../utils/crash-reporting';
+import { useStores } from '../../models';
 
 const parseUpdateError = (e) => {
   if (e.code === 'ERR_UPDATES_DISABLED')
@@ -25,9 +26,10 @@ const parseUpdateError = (e) => {
 };
 
 export function SettingsUpdates({ headingStyle, setSnackBarMessage }: ISettingSection) {
+  const { mainStore } = useStores();
   const [checkButtonText, setCheckButtonText] = useState<string>('check');
   const [checkButtonIcon, setCheckButtonIcon] = useState<IconProp>('sync');
-  const [hasUpdates, setHasUpdates] = useState<boolean>(false);
+  const [hasUpdates, setHasUpdates] = useState<boolean>(mainStore.hasUpdates);
   const [isChecking, setIsChecking] = useState<boolean>(false);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
 
@@ -84,20 +86,22 @@ export function SettingsUpdates({ headingStyle, setSnackBarMessage }: ISettingSe
       });
   };
 
+  const checkUpdateButton = useMemo(() => (
+    <Button
+      icon={ ({ color }) => <Icon icon={ checkButtonIcon } color={ color } size={ 12 } /> }
+      disabled={ isChecking || isUpdating }
+      onPress={ hasUpdates ? downloadUpdate : checkUpdates }
+    >
+      { checkButtonText }
+    </Button>
+  ), [checkButtonText, checkButtonIcon]);
+
   return (
     <View>
       <Text variant="headlineSmall" style={ headingStyle }>Updates</Text>
       <List.Item
         title="Check updates"
-        right={ () => (
-          <Button
-            icon={ ({ color }) => <Icon icon={ checkButtonIcon } color={ color } size={ 12 } /> }
-            disabled={ isChecking || isUpdating }
-            onPress={ hasUpdates ? downloadUpdate : checkUpdates }
-          >
-            { checkButtonText }
-          </Button>
-        ) }
+        right={ () => checkUpdateButton }
       />
 
       <List.Item

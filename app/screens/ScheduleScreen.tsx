@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, ScrollView, StyleSheet, RefreshControl } from 'react-native';
 import { Text, Surface } from 'react-native-paper';
 import { groupBy, map } from 'lodash';
@@ -70,11 +70,12 @@ const renderSchedule = (schedule: IScheduleItem, key) => (
 );
 
 export function ScheduleScreen(): JSX.Element {
+  const { settingsStore } = useStores();
   const [start, finish] = getDatesRanges();
   const [schedules, setSchedule] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const [isRefreshing, setRefreshing] = React.useState(false);
-  const { settingsStore } = useStores();
+  const loaderScreenMemoized = useMemo(() => <LoaderScreen />, [isLoading]);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -100,7 +101,7 @@ export function ScheduleScreen(): JSX.Element {
   }
 
   if (isLoading || !schedules)
-    return <LoaderScreen />;
+    return loaderScreenMemoized;
 
   const views = map(schedules, (weeklySchedules, index) => (
     <ScrollView

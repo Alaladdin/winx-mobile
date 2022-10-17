@@ -11,14 +11,15 @@ import theme from '../../theme';
 import config from '../../config';
 
 export function ActualityScreen() {
+  const { settingsStore } = useStores();
   const [expanded, setExpanded] = useState([]);
   const [actualities, setActualities] = useState<IActualitySection[]>(null);
   const [actuality, setActuality] = useState<IActuality>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [isLoading, setLoading] = useState(false);
   const [isRefreshing, setRefreshing] = React.useState(false);
-  const { settingsStore } = useStores();
   const snapPoints = useMemo(() => ['33%', '66%', '100%'], []);
+  const loaderScreenMemoized = useMemo(() => <LoaderScreen />, [isLoading]);
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     setActualities(null);
@@ -61,7 +62,7 @@ export function ActualityScreen() {
   );
 
   if (isLoading || !actualities)
-    return <LoaderScreen />;
+    return loaderScreenMemoized;
 
   const handlePress = (sectionIndex) => {
     if (expanded.includes(sectionIndex))
