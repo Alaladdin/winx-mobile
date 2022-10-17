@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, StyleSheet, RefreshControl, } from 'react-native';
+import { View, ScrollView, StyleSheet, RefreshControl } from 'react-native';
 import { Text, Surface } from 'react-native-paper';
 import { groupBy, map } from 'lodash';
 import moment from 'moment';

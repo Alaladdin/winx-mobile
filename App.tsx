@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Updates from 'expo-updates';
 import * as Notifications from 'expo-notifications';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { MainNavigator } from './app/navigators';
 import theme from './app/theme';
 import Config from './app/config';
@@ -63,16 +64,19 @@ function App() {
 
   return (
     <RootStoreProvider value={ rootStore }>
-      <PaperProvider theme={ theme }>
-        <StatusBar
-          barStyle="light-content"
-          backgroundColor={ styles.statusBar.backgroundColor }
-        />
-        <ErrorBoundary catchErrors={ Config.catchErrors }>
-          <Header />
-          <MainNavigator badges={ { settings: settingsBadges } } />
-        </ErrorBoundary>
-      </PaperProvider>
+      <GestureHandlerRootView style={ styles.screen }>
+        <PaperProvider theme={ theme }>
+          <StatusBar
+            barStyle="light-content"
+            backgroundColor={ styles.statusBar.backgroundColor }
+          />
+
+          <ErrorBoundary catchErrors={ Config.catchErrors }>
+            <Header />
+            <MainNavigator badges={ { settings: settingsBadges } } />
+          </ErrorBoundary>
+        </PaperProvider>
+      </GestureHandlerRootView>
     </RootStoreProvider>
   );
 }

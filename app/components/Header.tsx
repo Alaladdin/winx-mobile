@@ -9,10 +9,11 @@ export interface HeaderProps {
 
 export function Header(props: HeaderProps) {
   const { onAvatarPress } = props;
+  const avatarSourceOptions = { uri: `${config.avatarBaseUrl}avatar/default`, width: 24, height: 24 };
   const renderAvatar = () => (
     <Avatar.Image
       size={ 24 }
-      source={ { uri: config.avatarBaseUrl } }
+      source={ avatarSourceOptions }
     />
   );
 

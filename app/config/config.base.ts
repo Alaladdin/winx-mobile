@@ -15,7 +15,7 @@ const BaseConfig: ConfigBaseProps = {
   persistNavigation: 'always',
   catchErrors      : 'prod',
   exitRoutes       : ['Schedule'],
-  avatarBaseUrl    : `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_webp,q_80,c_fill,r_max,w_64,h_64/avatar/default`,
+  avatarBaseUrl    : `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_webp,q_80,c_fill,r_max,w_128,h_128/`,
   defaultDateFormat: 'DD.MM',
   serverDateFormat : 'YYYY.MM.DD',
 };
