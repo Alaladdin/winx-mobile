@@ -1,4 +1,4 @@
-import { API_URL, SENTRY_DSN, SENTRY_AUTH_TOKEN, AUTH_TOKEN } from '@env';
+import { API_URL, AUTH_TOKEN, SENTRY_DSN, SENTRY_AUTH_TOKEN } from '@env';
 
 export default {
   apiUrl         : API_URL,
