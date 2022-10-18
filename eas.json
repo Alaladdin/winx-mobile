@@ -8,12 +8,18 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "APP_VARIANT": "development"
       }
     },
     "beta": {
       "releaseChannel": "beta",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "APP_VARIANT": "beta"
       }
     },
     "prod": {

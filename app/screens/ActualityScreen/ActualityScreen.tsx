@@ -46,7 +46,7 @@ export function ActualityScreen() {
     api.get('/getActuality', { actualityId })
       .then((data) => {
         setActuality(data.actuality);
-        bottomSheetRef.current.snapToIndex(1);
+        bottomSheetRef.current.snapToIndex(0);
       });
   };
 
