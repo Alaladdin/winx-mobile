@@ -13,13 +13,9 @@ export interface ErrorDetailsProps {
 
 export function ErrorDetails({ error, errorInfo: { componentStack }, onReset }: ErrorDetailsProps) {
   return (
-    <View
-      preset="fixed"
-      safeAreaEdges={ ['top', 'bottom'] }
-      contentContainerStyle={ $contentContainer }
-    >
+    <View style={ $contentContainer }>
       <View style={ $topSection }>
-        <Icon icon="bug" size={ 64 } />
+        <Icon ripperStyle={ $icon } icon="bug" size={ 64 } />
         <Text style={ $heading }>
           { translate('errorScreen.title') }
         </Text>
@@ -28,14 +24,14 @@ export function ErrorDetails({ error, errorInfo: { componentStack }, onReset }: 
 
       <ScrollView style={ $errorSection } contentContainerStyle={ $errorSectionContentContainer }>
         <Text style={ $errorContent }>
-          { error?.toString()?.trim() }
+          { `${error}`?.trim() }
         </Text>
-        <Text selectable style={ $errorBacktrace }>
+        <Text style={ $errorBacktrace } selectable>
           { componentStack.trim() }
         </Text>
       </ScrollView>
 
-      <Button style={ $resetButton } onPress={ onReset }>
+      <Button mode="elevated" onPress={ onReset }>
         { translate('errorScreen.reset') }
       </Button>
     </View>
@@ -43,15 +39,19 @@ export function ErrorDetails({ error, errorInfo: { componentStack }, onReset }: 
 }
 
 const $contentContainer: ViewStyle = {
+  flex             : 1,
   alignItems       : 'center',
   paddingHorizontal: theme.spacing.large,
   paddingTop       : theme.spacing.extraLarge,
-  flex             : 1,
 };
 
 const $topSection: ViewStyle = {
-  flex      : 1,
-  alignItems: 'center',
+  alignItems  : 'center',
+  marginBottom: theme.spacing.large,
+};
+
+const $icon: ViewStyle = {
+  marginBottom: 20,
 };
 
 const $heading: TextStyle = {
@@ -60,10 +60,10 @@ const $heading: TextStyle = {
 };
 
 const $errorSection: ViewStyle = {
-  flex           : 2,
-  backgroundColor: theme.colors.background,
-  marginVertical : theme.spacing.medium,
+  maxHeight      : '65%',
+  marginBottom   : theme.spacing.medium,
   borderRadius   : 6,
+  backgroundColor: theme.colors.background,
 };
 
 const $errorSectionContentContainer: ViewStyle = {
@@ -78,9 +78,4 @@ const $errorContent: TextStyle = {
 const $errorBacktrace: TextStyle = {
   marginTop: theme.spacing.medium,
   color    : theme.colors.error,
-};
-
-const $resetButton: ViewStyle = {
-  backgroundColor  : theme.colors.error,
-  paddingHorizontal: theme.spacing.huge,
 };
