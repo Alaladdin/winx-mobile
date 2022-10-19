@@ -1,11 +1,39 @@
-const IS_DEV = process.env.APP_VARIANT === 'development';
+const getConfig = () => {
+  const IS_DEV = process.env.APP_VARIANT === 'development';
+  const IS_BETA = process.env.APP_VARIANT === 'beta';
+
+  if (IS_DEV) {
+    return {
+      name          : 'WINX (Dev)',
+      icon          : './assets/app-icon-dev.png',
+      androidPackage: 'com.alaladdin.winx.dev',
+    };
+  }
+
+  if (IS_BETA) {
+    return {
+      name          : 'WINX (Beta)',
+      icon          : './assets/app-icon-dev.png',
+      androidPackage: 'com.alaladdin.winx.beta',
+    };
+  }
+
+  return {
+    name              : 'WINX',
+    icon              : './assets/app-icon.png',
+    androidPackage    : 'com.alaladdin.winx',
+    googleServicesFile: './google-services.json',
+  };
+};
+
+const config = getConfig();
 
 export default {
-  name              : IS_DEV ? 'WINX (Dev)' : 'WINX',
+  name              : config.name,
   slug              : 'winx-mobile',
   version           : '2.0.0',
   orientation       : 'portrait',
-  icon              : IS_DEV ? './assets/app-icon-dev.png' : './assets/app-icon.png',
+  icon              : config.icon,
   userInterfaceStyle: 'dark',
   backgroundColor   : '#2a2831',
   splash            : {
@@ -23,8 +51,8 @@ export default {
     bundleIdentifier: 'com.alaladdin.winx',
   },
   android: {
-    package           : IS_DEV ? 'com.alaladdin.winx.dev' : 'com.alaladdin.winx',
-    googleServicesFile: !IS_DEV && './google-services.json',
+    package           : config.androidPackage,
+    googleServicesFile: config.googleServicesFile,
   },
   plugins: [
     'sentry-expo',
