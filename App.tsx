@@ -3,11 +3,13 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import * as Sentry from 'sentry-expo';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Updates from 'expo-updates';
 import * as Notifications from 'expo-notifications';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
+import * as Linking from 'expo-linking';
 import { MainNavigator } from '@/navigators';
 import theme from '@/theme';
 import Config from '@/config';
@@ -40,25 +42,30 @@ const init = () => {
 };
 
 function App() {
+  const prefix = Linking.createURL('/');
+  const linking = { prefixes: [prefix, 'https://winx.mpei.space'] };
   const [settingsBadges, setSettingsBadges] = useState<number>(null);
+
   init();
 
   const { rootStore, rehydrated } = useInitialRootStore(() => {
     SplashScreen.hideAsync();
   });
 
-  if (!__DEV__) {
-    Updates.checkForUpdateAsync()
-      .then((result: Updates.UpdateCheckResult) => {
-        const { isAvailable } = result;
-        rootStore.mainStore.setHasUpdate(isAvailable);
-        if (isAvailable)
-          setSettingsBadges(1);
-      })
-      .catch((e) => {
-        reportCrash(e);
-      });
-  }
+  useEffect(() => {
+    if (!__DEV__) {
+      Updates.checkForUpdateAsync()
+        .then((result: Updates.UpdateCheckResult) => {
+          const { isAvailable } = result;
+
+          rootStore.mainStore.setHasUpdate(isAvailable);
+
+          if (isAvailable)
+            setSettingsBadges(1);
+        })
+        .catch(reportCrash);
+    }
+  }, []);
 
   if (!rehydrated) return null;
 
@@ -72,8 +79,10 @@ function App() {
           />
 
           <ErrorBoundary catchErrors={ Config.catchErrors }>
-            <Header />
-            <MainNavigator badges={ { settings: settingsBadges } } />
+            <NavigationContainer linking={ linking } theme={ theme }>
+              <Header />
+              <MainNavigator badges={ { settings: settingsBadges } } />
+            </NavigationContainer>
           </ErrorBoundary>
         </PaperProvider>
       </GestureHandlerRootView>
