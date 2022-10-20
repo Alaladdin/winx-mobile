@@ -41,11 +41,6 @@ export function SettingsAppearance({ headingStyle }: ISettingSection) {
       />
 
       <List.Item
-        title="Slow down loading (better animations)"
-        right={ () => (<SlowDownAnimationSwitch />) }
-      />
-
-      <List.Item
         title="Dark"
         right={ () => (<Switch value disabled />) }
       />
@@ -64,6 +59,11 @@ export function SettingsAppearance({ headingStyle }: ISettingSection) {
             disabled
           />
         ) }
+      />
+
+      <List.Item
+        title="Slow down loading (better animations)"
+        right={ () => (<SlowDownAnimationSwitch />) }
       />
     </View>
   );

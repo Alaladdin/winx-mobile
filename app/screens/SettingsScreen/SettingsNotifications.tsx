@@ -16,6 +16,11 @@ export function SettingsNotifications({ headingStyle }: ISettingSection) {
       />
 
       <List.Item
+        title="About new mail"
+        right={ () => disabledSwitch }
+      />
+
+      <List.Item
         title="About bars marks change"
         right={ () => disabledSwitch }
       />
