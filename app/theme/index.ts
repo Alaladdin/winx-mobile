@@ -3,7 +3,6 @@ import { merge } from 'lodash';
 import { colors } from './colors';
 
 const isDarkTheme = true;
-
 const commonTheme = {
   spacing: {
     micro     : 2,

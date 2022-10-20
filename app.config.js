@@ -30,6 +30,7 @@ const config = getConfig();
 
 export default {
   name              : config.name,
+  scheme            : 'winx',
   slug              : 'winx-mobile',
   version           : '2.0.0',
   orientation       : 'portrait',

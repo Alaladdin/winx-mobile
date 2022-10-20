@@ -11,11 +11,17 @@ const en = {
     mailTab     : 'Mail',
     settingsTab : 'Settings',
   },
+  emptyStateComponent: {
+    generic: {
+      heading: 'So empty... so sad',
+      content: 'No data found yet. Try clicking the button to refresh or reload the app.',
+      button : "Let's try this again",
+    },
+  },
   errorScreen: {
     title           : 'Something went wrong!',
     friendlySubtitle: 'Wooops. So sorry',
     reset           : 'RESET APP',
-    traceTitle      : 'Error from %{name} stack', // @demo remove-current-line
   },
 };
 
