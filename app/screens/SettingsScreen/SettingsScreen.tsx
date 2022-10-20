@@ -19,9 +19,9 @@ export function SettingsScreen() {
   return (
     <SafeAreaView style={ styles.container }>
       <ScrollView>
-        <SettingsUpdates { ...sectionProps } />
         <SettingsNotifications { ...sectionProps } />
         <SettingsAppearance { ...sectionProps } />
+        <SettingsUpdates { ...sectionProps } />
         <SettingsDev { ...sectionProps } />
 
         <View style={ styles.footerContainer }>

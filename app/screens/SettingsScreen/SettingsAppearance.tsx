@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { List, Text, Switch } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 import { observer } from 'mobx-react';
+import { map, reject } from 'lodash/collection';
 import theme from '@/theme';
 import { ISettingSection } from './ISettingSection';
 import { useStores } from '@/models';
+import { Select } from '@/components';
+import { routesList } from '@/navigators/routes';
+import { translate } from '@/i18n';
 
 const SlowDownAnimationSwitch = observer(() => {
   const { settingsStore } = useStores();
@@ -21,6 +25,12 @@ const SlowDownAnimationSwitch = observer(() => {
 });
 
 export function SettingsAppearance({ headingStyle }: ISettingSection) {
+  const initialPageOptions = useMemo(() => map(reject(routesList, { key: 'settings' }), (route) => ({
+    ...route,
+    value: route.key,
+    title: translate(route.title),
+  })), []);
+
   return (
     <View>
       <Text variant="headlineSmall" style={ headingStyle }>Appearance</Text>
@@ -43,6 +53,17 @@ export function SettingsAppearance({ headingStyle }: ISettingSection) {
       <List.Item
         title="Accent color"
         right={ () => (<View style={ styles.accentColor } />) }
+      />
+
+      <List.Item
+        title="Initial page"
+        right={ () => (
+          <Select
+            value="schedule"
+            options={ initialPageOptions }
+            disabled
+          />
+        ) }
       />
     </View>
   );

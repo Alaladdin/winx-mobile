@@ -14,14 +14,15 @@ interface ISelectOption {
 interface ISelectProps {
   value: string;
   options: ISelectOption[];
-  onChange: (string) => void
+  disabled?: boolean
+  onChange?: (string) => void
 }
 
 export function Select(props: ISelectProps) {
-  const { value, options, onChange } = props;
+  const { value, options, disabled, onChange } = props;
   const [visible, setVisible] = useState(false);
   const setValue = (newVal) => {
-    onChange(newVal);
+    onChange?.(newVal);
     closeMenu();
   };
   const openMenu = () => setVisible(true);
@@ -41,6 +42,7 @@ export function Select(props: ISelectProps) {
             ...currentValue,
             size: 12,
           }) }
+          disabled={ disabled }
         >
           { currentValue.title }
         </Button>
