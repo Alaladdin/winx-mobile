@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sheetBackgroundColor: {
-    backgroundColor: theme.colors.neutral20,
+    backgroundColor: theme.colors.elevation.level3,
   },
   sheetHeader: {
     flexDirection : 'row',

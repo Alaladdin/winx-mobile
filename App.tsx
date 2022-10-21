@@ -94,7 +94,7 @@ export default Sentry.Native.wrap(App);
 
 const styles = StyleSheet.create({
   statusBar: {
-    backgroundColor: '#2a2831',
+    backgroundColor: theme.colors.elevation.level2,
   },
   screen: {
     height: '100%',
