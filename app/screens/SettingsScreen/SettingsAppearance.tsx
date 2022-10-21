@@ -8,7 +8,6 @@ import { ISettingSection } from './ISettingSection';
 import { useStores } from '@/models';
 import { Select } from '@/components';
 import { routesList } from '@/navigators/routes';
-import { translate } from '@/i18n';
 
 const SlowDownAnimationSwitch = observer(() => {
   const { settingsStore } = useStores();
@@ -25,11 +24,14 @@ const SlowDownAnimationSwitch = observer(() => {
 });
 
 export function SettingsAppearance({ headingStyle }: ISettingSection) {
-  const initialPageOptions = useMemo(() => map(reject(routesList, { key: 'settings' }), (route) => ({
-    ...route,
-    value: route.key,
-    title: translate(route.title),
-  })), []);
+  const initialPageOptions = useMemo(() => map(
+    reject(routesList, { name: 'settings' }),
+    (route) => ({
+      title: route.title,
+      value: route.name,
+      icon : route.icon,
+    })
+  ), []);
 
   return (
     <View>

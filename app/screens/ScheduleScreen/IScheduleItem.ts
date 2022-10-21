@@ -11,4 +11,5 @@ export interface IScheduleItem {
   kindOfWork: string,
   kindOfWorkId: number,
   lecturer: string,
+  isEmpty?: boolean,
 }
