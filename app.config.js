@@ -14,8 +14,8 @@ const getConfig = () => {
   if (IS_BETA) {
     return {
       name          : 'WINX (Beta)',
-      icon          : './assets/app-icon-dev.png',
-      splash        : './assets/splash-dev.png',
+      icon          : './assets/app-icon-beta.png',
+      splash        : './assets/splash-beta.png',
       androidPackage: 'com.alaladdin.winx.beta',
     };
   }
