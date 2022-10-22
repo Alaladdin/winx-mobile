@@ -61,7 +61,7 @@ export default {
   plugins: [
     'sentry-expo',
     ['expo-notifications', {
-      icon : './assets/app-icon.png',
+      icon : config.icon,
       color: '#ffffff',
     }],
   ],
