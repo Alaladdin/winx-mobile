@@ -6,6 +6,7 @@ const getConfig = () => {
     return {
       name          : 'WINX (Dev)',
       icon          : './assets/app-icon-dev.png',
+      splash        : './assets/splash-dev.png',
       androidPackage: 'com.alaladdin.winx.dev',
     };
   }
@@ -14,6 +15,7 @@ const getConfig = () => {
     return {
       name          : 'WINX (Beta)',
       icon          : './assets/app-icon-dev.png',
+      splash        : './assets/splash-dev.png',
       androidPackage: 'com.alaladdin.winx.beta',
     };
   }
@@ -21,6 +23,7 @@ const getConfig = () => {
   return {
     name              : 'WINX',
     icon              : './assets/app-icon.png',
+    splash            : './assets/splash.png',
     androidPackage    : 'com.alaladdin.winx',
     googleServicesFile: './google-services.json',
   };
@@ -38,7 +41,7 @@ export default {
   userInterfaceStyle: 'dark',
   backgroundColor   : '#2a2831',
   splash            : {
-    image          : './assets/splash-logo-universal.png',
+    image          : config.splash,
     resizeMode     : 'contain',
     backgroundColor: '#2a2831',
   },
