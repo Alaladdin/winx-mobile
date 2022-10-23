@@ -6,6 +6,12 @@ import { map } from 'lodash';
 import { Icon } from '@/components';
 import { routesList } from './routes';
 
+interface IMainNavProps {
+  badges?: {
+    [key: string]: number | null
+  }
+}
+
 const renderIcon = (params: { route, color: string, focused: boolean }) => {
   const { route, color } = params;
 
@@ -19,12 +25,6 @@ const renderIcon = (params: { route, color: string, focused: boolean }) => {
     </View>
   );
 };
-
-interface IMainNavProps {
-  badges?: {
-    [key: string]: number | null
-  }
-}
 
 const Tab = createMaterialBottomTabNavigator();
 export const MainNavigator = observer(({ badges = {} }: IMainNavProps) => (
