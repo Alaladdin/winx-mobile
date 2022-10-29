@@ -51,14 +51,16 @@ export default {
   assetBundlePatterns: ['**/*'],
   platforms          : ['android'],
   ios                : {
-    supportsTablet  : true,
-    bundleIdentifier: 'com.alaladdin.winx',
+    bundleIdentifier  : 'com.alaladdin.winx',
+    googleServicesFile: config.googleServicesFile,
   },
   android: {
     package           : config.androidPackage,
     googleServicesFile: config.googleServicesFile,
   },
   plugins: [
+    '@react-native-firebase/app',
+    '@react-native-firebase/crashlytics',
     'sentry-expo',
     ['expo-notifications', {
       icon : config.icon,

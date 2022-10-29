@@ -48,12 +48,14 @@ export class Api {
         if (!response.ok) {
           const problem = getGeneralApiProblem(response);
 
-          if (problem) return problem;
+          throw problem || response.originalError;
         }
+
         return response.data;
       })
       .catch((err) => {
         reportCrash(err);
+
         throw err;
       });
   }
