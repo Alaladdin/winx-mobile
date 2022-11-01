@@ -14,7 +14,7 @@ import { MainNavigator } from '@/navigators';
 import theme from '@/theme';
 import Config from '@/config';
 import { ErrorBoundary } from '@/screens';
-import { initCrashReporting, reportCrash } from '@/utils/crash-reporting';
+import { reportCrash } from '@/utils/crash-reporting';
 import { Header } from '@/components';
 import { useInitialRootStore, RootStoreProvider } from '@/models';
 import { setupReactotron } from '@/services/reactotron';
@@ -30,7 +30,6 @@ setupReactotron({
 SplashScreen.preventAutoHideAsync();
 
 const init = () => {
-  initCrashReporting();
   library.add(fas);
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -41,7 +40,7 @@ const init = () => {
   });
 };
 
-function App() {
+export default function App() {
   const prefix = Linking.createURL('/');
   const linking = { prefixes: [prefix, 'https://winx.mpei.space'] };
   const [settingsBadges, setSettingsBadges] = useState<number>(null);
@@ -89,8 +88,6 @@ function App() {
     </RootStoreProvider>
   );
 }
-
-export default Sentry.Native.wrap(App);
 
 const styles = StyleSheet.create({
   statusBar: {
