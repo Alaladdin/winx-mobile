@@ -66,6 +66,10 @@ export default {
       icon : config.icon,
       color: '#ffffff',
     }],
+    [
+      'expo-build-properties',
+      { ios: { useFrameworks: 'static' } },
+    ],
   ],
   extra: {
     eas: {

@@ -2,14 +2,15 @@ import { StatusBar, StyleSheet } from 'react-native';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
-import * as Sentry from 'sentry-expo';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Updates from 'expo-updates';
 import * as Notifications from 'expo-notifications';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationState } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
+import * as Analytics from 'expo-firebase-analytics';
+
 import { MainNavigator } from '@/navigators';
 import theme from '@/theme';
 import Config from '@/config';
@@ -66,6 +67,16 @@ export default function App() {
     }
   }, []);
 
+  const trackScreen = useCallback((state: NavigationState) => {
+    if (state) {
+      const { routeNames, index } = state;
+      const routeName = routeNames[index];
+
+      if (routeName)
+        Analytics.logEvent('screen_view', { screen: routeName });
+    }
+  }, []);
+
   if (!rehydrated) return null;
 
   return (
@@ -78,7 +89,7 @@ export default function App() {
           />
 
           <ErrorBoundary catchErrors={ Config.catchErrors }>
-            <NavigationContainer linking={ linking } theme={ theme }>
+            <NavigationContainer linking={ linking } theme={ theme } onStateChange={ trackScreen }>
               <Header />
               <MainNavigator badges={ { settings: settingsBadges } } />
             </NavigationContainer>
