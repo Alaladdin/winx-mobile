@@ -4,19 +4,21 @@ const getConfig = () => {
 
   if (IS_DEV) {
     return {
-      name          : 'WINX (Dev)',
-      icon          : './assets/app-icon-dev.png',
-      splash        : './assets/splash-dev.png',
-      androidPackage: 'com.alaladdin.winx.dev',
+      name              : 'WINX (Dev)',
+      icon              : './assets/app-icon-dev.png',
+      splash            : './assets/splash-dev.png',
+      packageName       : 'com.alaladdin.winx.dev',
+      googleServicesFile: './conf/google-services.dev.json',
     };
   }
 
   if (IS_BETA) {
     return {
-      name          : 'WINX (Beta)',
-      icon          : './assets/app-icon-beta.png',
-      splash        : './assets/splash-beta.png',
-      androidPackage: 'com.alaladdin.winx.beta',
+      name              : 'WINX (Beta)',
+      icon              : './assets/app-icon-beta.png',
+      splash            : './assets/splash-beta.png',
+      packageName       : 'com.alaladdin.winx.beta',
+      googleServicesFile: './conf/google-services.beta.json',
     };
   }
 
@@ -24,23 +26,22 @@ const getConfig = () => {
     name              : 'WINX',
     icon              : './assets/app-icon.png',
     splash            : './assets/splash.png',
-    androidPackage    : 'com.alaladdin.winx',
-    googleServicesFile: './google-services.json',
+    packageName       : 'com.alaladdin.winx',
+    googleServicesFile: './conf/google-services.json',
   };
 };
 
 const config = getConfig();
 
 export default {
-  name              : config.name,
-  scheme            : 'winx',
-  slug              : 'winx-mobile',
-  version           : '2.0.0',
-  orientation       : 'portrait',
-  icon              : config.icon,
-  userInterfaceStyle: 'dark',
-  backgroundColor   : '#2a2831',
-  splash            : {
+  name           : config.name,
+  scheme         : 'winx',
+  slug           : 'winx-mobile',
+  version        : '2.0.0',
+  orientation    : 'portrait',
+  icon           : config.icon,
+  backgroundColor: '#2a2831',
+  splash         : {
     image          : config.splash,
     resizeMode     : 'contain',
     backgroundColor: '#2a2831',
@@ -49,19 +50,18 @@ export default {
     fallbackToCacheTimeout: 0,
   },
   assetBundlePatterns: ['**/*'],
-  platforms          : ['android'],
+  platforms          : ['android', 'ios'],
   ios                : {
-    bundleIdentifier  : 'com.alaladdin.winx',
-    googleServicesFile: config.googleServicesFile,
+    bundleIdentifier: config.packageName,
+    // googleServicesFile: config.googleServicesFile,
   },
   android: {
-    package           : config.androidPackage,
+    package           : config.packageName,
     googleServicesFile: config.googleServicesFile,
   },
   plugins: [
     '@react-native-firebase/app',
     '@react-native-firebase/crashlytics',
-    'sentry-expo',
     ['expo-notifications', {
       icon : config.icon,
       color: '#ffffff',
