@@ -13,6 +13,7 @@
  * @refresh reset
  */
 import { Platform } from 'react-native';
+import { ArgType } from 'reactotron-core-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { onSnapshot } from 'mobx-state-tree';
 import { mst } from 'reactotron-mst';
@@ -20,7 +21,7 @@ import { Reactotron } from './reactotron-client';
 import { RootStore } from '@/models';
 import { clear } from '@/utils/storage';
 import { ReactotronConfig, DEFAULT_REACTOTRON_CONFIG } from './reactotron-config';
-// import { goBack, resetRoot, navigate } from '../../navigators/navigation-utilities';
+import { goBack, resetRoot, navigate } from '@/navigators/navigation-utilities';
 import { fakeReactotron } from './reactotron-fake';
 
 /**
@@ -44,7 +45,7 @@ declare global {
 }
 
 // in dev, we attach Reactotron, in prod we attach a interface-compatible mock.
-if (__DEV__) {
+if (!__DEV__) {
   console.tron = Reactotron; // attach reactotron to `console.tron`
 } else {
   // attach a mock so if things sneak by our __DEV__ guards, we won't crash.
@@ -59,7 +60,7 @@ const config = DEFAULT_REACTOTRON_CONFIG;
  * @param rootStore The root store
  */
 export function setReactotronRootStore(rootStore: RootStore, initialData: any) {
-  if (__DEV__) {
+  if (!__DEV__) {
     const { logInitialState, logSnapshots } = config;
     const name = 'ROOT STORE';
 
@@ -87,7 +88,7 @@ let _reactotronIsSetUp = false;
  */
 export function setupReactotron(customConfig: ReactotronConfig = {}) {
   // only run this in dev... metro bundler will ignore this block: 🎉
-  if (__DEV__) {
+  if (!__DEV__) {
     // only setup once.
     if (_reactotronIsSetUp) return;
 
@@ -141,46 +142,46 @@ export function setupReactotron(customConfig: ReactotronConfig = {}) {
       },
     });
 
-    // Reactotron.onCustomCommand({
-    //   title      : 'Reset Navigation State',
-    //   description: 'Resets the navigation state',
-    //   command    : 'resetNavigation',
-    //   handler    : () => {
-    //     Reactotron.log('resetting navigation state');
-    //     resetRoot({ index: 0, routes: [] });
-    //   },
-    // });
-    //
-    // Reactotron.onCustomCommand({
-    //   command: 'navigateTo',
-    //   handler: (args) => {
-    //     const { route } = args;
-    //     if (route) {
-    //       console.log(`Navigating to: ${route}`);
-    //       navigate(route);
-    //     } else {
-    //       console.log('Could not navigate. No route provided.');
-    //     }
-    //   },
-    //   title      : 'Navigate To Screen',
-    //   description: 'Navigates to a screen by name.',
-    //   args       : [
-    //     {
-    //       name: 'route',
-    //       type: ArgType.String,
-    //     },
-    //   ],
-    // });
-    //
-    // Reactotron.onCustomCommand({
-    //   title      : 'Go Back',
-    //   description: 'Goes back',
-    //   command    : 'goBack',
-    //   handler    : () => {
-    //     Reactotron.log('Going back');
-    //     goBack();
-    //   },
-    // });
+    Reactotron.onCustomCommand({
+      title      : 'Reset Navigation State',
+      description: 'Resets the navigation state',
+      command    : 'resetNavigation',
+      handler    : () => {
+        Reactotron.log('resetting navigation state');
+        resetRoot({ index: 0, routes: [] });
+      },
+    });
+
+    Reactotron.onCustomCommand({
+      command: 'navigateTo',
+      handler: (args) => {
+        const { route } = args;
+        if (route) {
+          console.log(`Navigating to: ${route}`);
+          navigate(route);
+        } else {
+          console.log('Could not navigate. No route provided.');
+        }
+      },
+      title      : 'Navigate To Screen',
+      description: 'Navigates to a screen by name.',
+      args       : [
+        {
+          name: 'route',
+          type: ArgType.String,
+        },
+      ],
+    });
+
+    Reactotron.onCustomCommand({
+      title      : 'Go Back',
+      description: 'Goes back',
+      command    : 'goBack',
+      handler    : () => {
+        Reactotron.log('Going back');
+        goBack();
+      },
+    });
 
     // clear if we should
     if (config.clearOnLoad)

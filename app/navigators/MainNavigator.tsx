@@ -34,7 +34,7 @@ export const MainNavigator = observer(({ badges = {} }: IMainNavProps) => (
           <Tab.Screen
             name={ route.title }
             key={ route.name }
-            component={ route.component }
+            getComponent={ () => route.component }
             options={ {
               tabBarBadge: badges[route.name],
               tabBarIcon : (params) => renderIcon({ ...params, route }),

@@ -1,26 +1,18 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { View, ScrollView, StyleSheet, RefreshControl } from 'react-native';
 import { Text, Surface } from 'react-native-paper';
 import { each, groupBy, map, some } from 'lodash';
 import moment from 'moment';
 import PagerView from 'react-native-pager-view';
+import { useQuery } from '@tanstack/react-query';
 import { api } from '@/services/api';
 import config from '@/config';
 import theme from '@/theme';
 import { LoaderScreen } from '@/components';
-import { useStores } from '@/models';
 import { IScheduleItem } from './IScheduleItem';
 import { EmptyState } from '@/components/EmptyState';
 
 const weekDays = ['пн', 'вт', 'ср', 'чт', 'пт'];
-
-const getDatesRanges = () => {
-  const start = moment().startOf('isoWeek').format(config.serverDateFormat);
-  const end = moment().add(2, 'months').endOf('isoWeek').format(config.serverDateFormat);
-
-  return [start, end];
-};
-
 const todayCompare = moment().format(config.serverDateFormat);
 const isDayBeforeToday = (one) => todayCompare > moment(one, config.defaultDateFormat).format(config.serverDateFormat);
 
@@ -71,58 +63,46 @@ const renderSchedule = (schedule: IScheduleItem, key) => (
   </View>
 );
 
-export function ScheduleScreen({ navigation }): JSX.Element {
-  const { settingsStore } = useStores();
-  const pagerViewRef = useRef<PagerView>(null);
-  const [start, finish] = getDatesRanges();
-  const [schedules, setSchedule] = useState(null);
-  const [isLoading, setLoading] = useState(false);
-  const [isRefreshing, setRefreshing] = React.useState(false);
+const getDatesRanges = () => {
+  const start = moment().add(2, 'days').startOf('isoWeek').format(config.serverDateFormat);
+  const end = moment().add(2, 'months').endOf('isoWeek').format(config.serverDateFormat);
 
-  const loaderScreenMemoized = useMemo(() => <LoaderScreen />, [isLoading]);
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    setSchedule(null);
-  }, []);
+  return [start, end];
+};
+
+const loadSchedule = () => {
+  const [start, finish] = getDatesRanges();
+
+  return api.get('/getSchedule', { start, finish })
+    .then((data) => {
+      const formattedSchedules = map(data.schedule, (i) => ({ ...i, dayOfWeekString: i.dayOfWeekString.toLowerCase() }));
+      const groupedSchedules = groupBy(formattedSchedules, ({ date }) => moment(date, config.defaultDateFormat).startOf('isoWeek').format('MM_DD'));
+
+      each(groupedSchedules, (weeklySchedules) => {
+        each(weekDays, (weekDay, i) => {
+          if (!some(weeklySchedules, { dayOfWeekString: weekDay }))
+            weeklySchedules.splice(i, 0, { isEmpty: true });
+        });
+      });
+
+      return groupedSchedules;
+    });
+};
+
+export function ScheduleScreen({ navigation }): JSX.Element {
+  const pagerViewRef = useRef<PagerView>(null);
+  const { data, refetch, isLoading, isRefetching, isError, isRefetchError } = useQuery(['schedule'], loadSchedule);
+  const loaderScreenMemoized = useMemo(() => <LoaderScreen />, []);
 
   React.useEffect(() => navigation.addListener('tabPress', () => {
     pagerViewRef?.current.setPage(0);
   }), [navigation]);
 
-  useEffect(() => {
-    if (!isLoading) {
-      setLoading(true);
-
-      api.get('/getSchedule', { start, finish })
-        .then((data) => {
-          const formattedSchedules = map(data.schedule, (i) => ({ ...i, dayOfWeekString: i.dayOfWeekString.toLowerCase() }));
-          const groupedSchedules = groupBy(formattedSchedules, ({ date }) => moment(date, config.defaultDateFormat).startOf('isoWeek').format('MM_DD'));
-
-          each(groupedSchedules, (weeklySchedules) => {
-            each(weekDays, (weekDay, i) => {
-              if (!some(weeklySchedules, { dayOfWeekString: weekDay }))
-                weeklySchedules.splice(i, 0, { isEmpty: true });
-            });
-          });
-
-          setSchedule(groupedSchedules);
-        })
-        .finally(() => {
-          const delay = settingsStore.needSlowDownAnimation ? 1000 : 0;
-
-          setTimeout(() => {
-            setRefreshing(false);
-            setLoading(false);
-          }, delay);
-        });
-    }
-  }, [isRefreshing]);
-
-  if (isLoading)
+  if (isLoading || isRefetching)
     return loaderScreenMemoized;
 
-  if (!schedules)
-    return <EmptyState buttonProps={ { onPress: onRefresh } } />;
+  if (!data || isError || isRefetchError)
+    return <EmptyState buttonProps={ { onPress: refetch } } />;
 
   return (
     <PagerView
@@ -132,9 +112,9 @@ export function ScheduleScreen({ navigation }): JSX.Element {
       scrollEnabled
     >
       {
-        map(schedules, (weeklySchedules, index) => (
+        map(data, (weeklySchedules, index) => (
           <ScrollView
-            refreshControl={ <RefreshControl refreshing={ isRefreshing } onRefresh={ onRefresh } /> }
+            refreshControl={ <RefreshControl refreshing={ isRefetching } onRefresh={ refetch } /> }
             contentContainerStyle={ { padding: 20 } }
             key={ index }
           >

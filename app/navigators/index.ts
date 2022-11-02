@@ -1,4 +1,2 @@
-import { MainNavigator } from './MainNavigator';
-
-export default MainNavigator;
-export { MainNavigator };
+export * from './navigation-utilities';
+export { MainNavigator } from './MainNavigator';
