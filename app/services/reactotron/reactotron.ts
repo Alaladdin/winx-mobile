@@ -13,7 +13,6 @@
  * @refresh reset
  */
 import { Platform } from 'react-native';
-import { ArgType } from 'reactotron-core-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { onSnapshot } from 'mobx-state-tree';
 import { mst } from 'reactotron-mst';
