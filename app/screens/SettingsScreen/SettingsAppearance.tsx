@@ -1,27 +1,11 @@
 import React, { useMemo } from 'react';
 import { List, Text, Switch } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
-import { observer } from 'mobx-react';
 import { map, reject } from 'lodash/collection';
 import theme from '@/theme';
 import { ISettingSection } from './ISettingSection';
-import { useStores } from '@/models';
 import { Select } from '@/components';
 import { routesList } from '@/navigators/routes';
-
-const SlowDownAnimationSwitch = observer(() => {
-  const { settingsStore } = useStores();
-  const onValueChange = (newVal: boolean) => {
-    settingsStore.setSlowDownAnimation(newVal);
-  };
-
-  return (
-    <Switch
-      value={ settingsStore.needSlowDownAnimation }
-      onValueChange={ onValueChange }
-    />
-  );
-});
 
 export function SettingsAppearance({ headingStyle }: ISettingSection) {
   const initialPageOptions = useMemo(() => map(
@@ -61,11 +45,6 @@ export function SettingsAppearance({ headingStyle }: ISettingSection) {
             disabled
           />
         ) }
-      />
-
-      <List.Item
-        title="Slow down loading (better animations)"
-        right={ () => (<SlowDownAnimationSwitch />) }
       />
     </View>
   );

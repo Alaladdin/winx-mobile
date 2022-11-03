@@ -5,13 +5,11 @@ import { map, reject } from 'lodash/collection';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { api } from '@/services/api';
 import { LoaderScreen } from '@/components';
-import { useStores } from '@/models';
 import { IActuality, IActualitySection } from './ActualityScreen.interfaces';
 import theme from '@/theme';
 import config from '@/config';
 
 export function ActualityScreen() {
-  const { settingsStore } = useStores();
   const [expanded, setExpanded] = useState([]);
   const [actualities, setActualities] = useState<IActualitySection[]>(null);
   const [actuality, setActuality] = useState<IActuality>(null);
@@ -33,12 +31,8 @@ export function ActualityScreen() {
         setActualities(data.sections);
       })
       .finally(() => {
-        const delay = settingsStore.needSlowDownAnimation ? 1000 : 0;
-
-        setTimeout(() => {
-          setRefreshing(false);
-          setLoading(false);
-        }, delay);
+        setRefreshing(false);
+        setLoading(false);
       });
   }
 
