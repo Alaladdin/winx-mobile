@@ -44,13 +44,7 @@ declare global {
   }
 }
 
-// in dev, we attach Reactotron, in prod we attach a interface-compatible mock.
-if (!__DEV__) {
-  console.tron = Reactotron; // attach reactotron to `console.tron`
-} else {
-  // attach a mock so if things sneak by our __DEV__ guards, we won't crash.
-  console.tron = fakeReactotron;
-}
+console.tron = __DEV__ ? Reactotron : fakeReactotron;
 
 const config = DEFAULT_REACTOTRON_CONFIG;
 
@@ -60,7 +54,7 @@ const config = DEFAULT_REACTOTRON_CONFIG;
  * @param rootStore The root store
  */
 export function setReactotronRootStore(rootStore: RootStore, initialData: any) {
-  if (!__DEV__) {
+  if (__DEV__) {
     const { logInitialState, logSnapshots } = config;
     const name = 'ROOT STORE';
 
@@ -88,7 +82,7 @@ let _reactotronIsSetUp = false;
  */
 export function setupReactotron(customConfig: ReactotronConfig = {}) {
   // only run this in dev... metro bundler will ignore this block: 🎉
-  if (!__DEV__) {
+  if (__DEV__) {
     // only setup once.
     if (_reactotronIsSetUp) return;
 
