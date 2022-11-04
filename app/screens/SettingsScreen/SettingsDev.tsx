@@ -5,6 +5,7 @@ import * as Notifications from 'expo-notifications';
 import crashlytics from '@react-native-firebase/crashlytics';
 import { ISettingSection } from './ISettingSection';
 import { reportCrash } from '@/utils/crash-reporting';
+import { clear } from '@/utils/storage';
 
 export function SettingsDev({ headingStyle }: ISettingSection) {
   const sendNotification = async () => {
@@ -26,6 +27,10 @@ export function SettingsDev({ headingStyle }: ISettingSection) {
     <Button onPress={ () => crashlytics().crash() }>Crash app</Button>
   ), []);
 
+  const clearStorageButton = useMemo(() => (
+    <Button onPress={ clear }>Clear</Button>
+  ), []);
+
   return (
     <View>
       <Text variant="headlineSmall" style={ headingStyle }>Dev</Text>
@@ -36,8 +41,13 @@ export function SettingsDev({ headingStyle }: ISettingSection) {
       />
 
       <List.Item
-        title="Test notification"
+        title="Analytics"
         right={ () => crashAppButton }
+      />
+
+      <List.Item
+        title="Storage"
+        right={ () => clearStorageButton }
       />
     </View>
   );
