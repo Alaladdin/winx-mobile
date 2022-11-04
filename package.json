@@ -5,7 +5,7 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start -c",
-    "start:dev": "npx expo start --dev-client",
+    "start:dev": "npx expo start --dev-client --clear",
     "adb": "adb reverse tcp:9090 tcp:9090 && adb reverse tcp:3000 tcp:3000 && adb reverse tcp:9001 tcp:9001 && adb reverse tcp:8081 tcp:8081",
     "adb:connect": "adb connect ",
     "android": "expo start --android",

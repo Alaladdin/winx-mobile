@@ -12,7 +12,6 @@ import { LoaderScreen } from '@/components';
 import { IScheduleItem } from './IScheduleItem';
 import { EmptyState } from '@/components/EmptyState';
 
-const weekDays = ['пн', 'вт', 'ср', 'чт', 'пт'];
 const todayCompare = moment().format(config.serverDateFormat);
 const isDayBeforeToday = (one) => todayCompare > moment(one, config.defaultDateFormat).format(config.serverDateFormat);
 
@@ -63,20 +62,20 @@ const renderSchedule = (schedule: IScheduleItem, key) => (
   </View>
 );
 
-const getDatesRanges = () => {
-  const start = moment().add(2, 'days').startOf('isoWeek').format(config.serverDateFormat);
-  const end = moment().add(2, 'months').endOf('isoWeek').format(config.serverDateFormat);
-
-  return [start, end];
-};
-
 const loadSchedule = () => {
-  const [start, finish] = getDatesRanges();
+  const weekDays = ['пн', 'вт', 'ср', 'чт', 'пт'];
+  const start = moment().add(2, 'days').startOf('isoWeek').format(config.serverDateFormat);
+  const finish = moment().add(2, 'months').endOf('isoWeek').format(config.serverDateFormat);
 
   return api.get('/getSchedule', { start, finish })
     .then((data) => {
       const formattedSchedules = map(data.schedule, (i) => ({ ...i, dayOfWeekString: i.dayOfWeekString.toLowerCase() }));
-      const groupedSchedules = groupBy(formattedSchedules, ({ date }) => moment(date, config.defaultDateFormat).startOf('isoWeek').format('MM_DD'));
+      const groupedSchedules = groupBy(
+        formattedSchedules,
+        ({ date }) => moment(date, config.defaultDateFormat)
+          .startOf('isoWeek')
+          .format('MM_DD')
+      );
 
       each(groupedSchedules, (weeklySchedules) => {
         each(weekDays, (weekDay, i) => {
@@ -93,15 +92,17 @@ export function ScheduleScreen({ navigation }): JSX.Element {
   const pagerViewRef = useRef<PagerView>(null);
   const { data, refetch, isLoading, isRefetching, isError, isRefetchError } = useQuery(['schedule'], loadSchedule);
   const loaderScreenMemoized = useMemo(() => <LoaderScreen />, []);
+  const showLoader = useMemo(() => isLoading || isRefetching, [isLoading, isRefetching]);
+  const showEmptyState = useMemo(() => !data || isError || isRefetchError, [data, isError, isRefetchError]);
 
   React.useEffect(() => navigation.addListener('tabPress', () => {
-    pagerViewRef?.current.setPage(0);
+    pagerViewRef?.current?.setPage(0);
   }), [navigation]);
 
-  if (isLoading || isRefetching)
+  if (showLoader)
     return loaderScreenMemoized;
 
-  if (!data || isError || isRefetchError)
+  if (showEmptyState)
     return <EmptyState buttonProps={ { onPress: refetch } } />;
 
   return (
