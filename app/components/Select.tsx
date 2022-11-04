@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Button, Menu } from 'react-native-paper';
 import { map, find } from 'lodash/collection';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Icon } from './Icon';
 
 interface ISelectOption {
   title: string
   value: string
-  icon: IconProp
+  icon?: IconProp
 }
 
 interface ISelectProps {
@@ -29,6 +29,11 @@ export function Select(props: ISelectProps) {
   const closeMenu = () => setVisible(false);
   const currentValue = find(options, { value });
   const renderIcon = ({ icon, color, size }) => icon && <Icon icon={ icon } color={ color } size={ size } />;
+
+  useEffect(() => {
+    if (!currentValue && options.length)
+      setValue(options[0].value);
+  }, []);
 
   return (
     <Menu

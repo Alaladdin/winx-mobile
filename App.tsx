@@ -67,8 +67,10 @@ export default function App() {
     SplashScreen.hideAsync();
   });
 
-  useEffect(() => {
-    if (!__DEV__) {
+  const checkAppUpdates = () => {
+    if (__DEV__) return;
+
+    setTimeout(() => {
       Updates.checkForUpdateAsync()
         .then((result: Updates.UpdateCheckResult) => {
           const { isAvailable } = result;
@@ -79,17 +81,13 @@ export default function App() {
             setSettingsBadges(1);
         })
         .catch(reportCrash);
-    }
-  }, []);
+    }, 2000);
+  };
 
   const trackScreen = useCallback((state: NavigationState) => {
-    if (state) {
-      const { routeNames, index } = state;
-      const routeName = routeNames[index];
+    const { routeNames, index } = state;
 
-      if (routeName)
-        Analytics.logEvent('screen_view', { screen: routeName });
-    }
+    Analytics.logEvent('screen_view', { screen: routeNames[index] });
   }, []);
 
   if (!rehydrated) return null;
@@ -112,6 +110,7 @@ export default function App() {
                 linking={ linking }
                 theme={ theme }
                 onStateChange={ trackScreen }
+                onReady={ checkAppUpdates }
               >
                 <Header />
                 <MainNavigator badges={ { settings: settingsBadges } } />

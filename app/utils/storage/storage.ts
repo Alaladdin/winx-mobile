@@ -12,16 +12,18 @@ export async function loadString(key: string): Promise<string | null> {
 export async function saveString(key: string, value: string): Promise<boolean> {
   try {
     await AsyncStorage.setItem(key, value);
+
     return true;
   } catch {
     return false;
   }
 }
 
-export async function load(key: string): Promise<any | null> {
+export async function load(key: string, defaultValue: any = null): Promise<any | null> {
   try {
-    const almostThere = await AsyncStorage.getItem(key);
-    return JSON.parse(almostThere);
+    const savedValue = await AsyncStorage.getItem(key);
+
+    return savedValue ? JSON.parse(savedValue) : defaultValue;
   } catch {
     return null;
   }
@@ -30,20 +32,29 @@ export async function load(key: string): Promise<any | null> {
 export async function save(key: string, value: any): Promise<boolean> {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(value));
+
     return true;
   } catch {
     return false;
   }
 }
 
-export async function remove(key: string): Promise<void> {
+export async function remove(key: string): Promise<boolean> {
   try {
     await AsyncStorage.removeItem(key);
-  } catch {}
+
+    return true;
+  } catch {
+    return false;
+  }
 }
 
-export async function clear(): Promise<void> {
+export async function clear(): Promise<boolean> {
   try {
     await AsyncStorage.clear();
-  } catch {}
+
+    return true;
+  } catch {
+    return false;
+  }
 }

@@ -15,19 +15,19 @@ export interface IRoute {
 
 export const routesMap: IRoute = {
   schedule: {
-    name     : 'schedule',
+    name     : 'Schedule',
     title    : translate('mainNavigator.scheduleTab'),
     icon     : 'calendar-days',
     component: screens.ScheduleScreen,
   },
   actuality: {
-    name     : 'actuality',
+    name     : 'Actuality',
     title    : translate('mainNavigator.actualityTab'),
     icon     : 'newspaper',
     component: screens.ActualityScreen,
   },
   settings: {
-    name     : 'settings',
+    name     : 'Settings',
     title    : translate('mainNavigator.settingsTab'),
     icon     : 'bars',
     component: screens.SettingsScreen,
