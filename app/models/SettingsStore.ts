@@ -3,17 +3,17 @@ import { Instance, SnapshotOut, types } from 'mobx-state-tree';
 export const SettingsStoreModel = types
   .model('SettingsStore')
   .props({
-    // _slowDownAnimation: types.optional(types.boolean, false),
+    _initialRoute: types.optional(types.string, 'schedule'),
   })
   .views((store) => ({
-    // get needSlowDownAnimation() {
-    //   return !!store._slowDownAnimation;
-    // },
+    get initialRoute() {
+      return store._initialRoute;
+    },
   }))
   .actions((store) => ({
-    // setSlowDownAnimation(value?: boolean) {
-    //   store._slowDownAnimation = value;
-    // },
+    setInitialRoute(value: string) {
+      store._initialRoute = value;
+    },
   }));
 
 export type SettingsStore = Instance<typeof SettingsStoreModel>

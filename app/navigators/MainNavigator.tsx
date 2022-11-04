@@ -5,6 +5,7 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import { map } from 'lodash';
 import { Icon } from '@/components';
 import { routesList } from './routes';
+import { useStores } from '@/models';
 
 interface IMainNavProps {
   badges?: {
@@ -27,23 +28,31 @@ const renderIcon = (params: { route, color: string, focused: boolean }) => {
 };
 
 const Tab = createMaterialBottomTabNavigator();
-export const MainNavigator = observer(({ badges = {} }: IMainNavProps) => (
-  <Tab.Navigator backBehavior="history">
-    {
-        map(routesList, (route) => (
-          <Tab.Screen
-            name={ route.title }
-            key={ route.name }
-            getComponent={ () => route.component }
-            options={ {
-              tabBarBadge: badges[route.name],
-              tabBarIcon : (params) => renderIcon({ ...params, route }),
-            } }
-          />
-        ))
-      }
-  </Tab.Navigator>
-));
+
+export const MainNavigator = observer(({ badges = {} }: IMainNavProps) => {
+  const { settingsStore } = useStores();
+
+  return (
+    <Tab.Navigator
+      backBehavior="history"
+      initialRouteName={ settingsStore.initialRoute }
+    >
+      {
+          map(routesList, (route) => (
+            <Tab.Screen
+              name={ route.title }
+              key={ route.name }
+              getComponent={ () => route.component }
+              options={ {
+                tabBarBadge: badges[route.name],
+                tabBarIcon : (params) => renderIcon({ ...params, route }),
+              } }
+            />
+          ))
+        }
+    </Tab.Navigator>
+  );
+});
 
 const styles = StyleSheet.create({
   iconContainer: {

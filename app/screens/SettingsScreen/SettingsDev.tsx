@@ -1,5 +1,5 @@
 import { Button, List, Text } from 'react-native-paper';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { View } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import crashlytics from '@react-native-firebase/crashlytics';
@@ -7,7 +7,7 @@ import { ISettingSection } from './ISettingSection';
 import { reportCrash } from '@/utils/crash-reporting';
 import { clear } from '@/utils/storage';
 
-export function SettingsDev({ headingStyle }: ISettingSection) {
+export function SettingsDev({ headingStyle, setSnackBarMessage }: ISettingSection) {
   const sendNotification = async () => {
     await Notifications.scheduleNotificationAsync({
       content: {
@@ -19,6 +19,16 @@ export function SettingsDev({ headingStyle }: ISettingSection) {
       .catch(reportCrash);
   };
 
+  const clearStorage = useCallback(() => {
+    clear()
+      .then(() => {
+        setSnackBarMessage('Now, you need to reload app');
+      })
+      .catch(() => {
+        setSnackBarMessage('Storage clearing error');
+      });
+  }, []);
+
   const sendNotificationButton = useMemo(() => (
     <Button onPress={ sendNotification }>Send notification</Button>
   ), []);
@@ -28,7 +38,7 @@ export function SettingsDev({ headingStyle }: ISettingSection) {
   ), []);
 
   const clearStorageButton = useMemo(() => (
-    <Button onPress={ clear }>Clear</Button>
+    <Button onPress={ clearStorage }>Clear</Button>
   ), []);
 
   return (
@@ -36,7 +46,7 @@ export function SettingsDev({ headingStyle }: ISettingSection) {
       <Text variant="headlineSmall" style={ headingStyle }>Dev</Text>
 
       <List.Item
-        title="Test notification"
+        title="Notifications"
         right={ () => sendNotificationButton }
       />
 
