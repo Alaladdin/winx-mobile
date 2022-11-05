@@ -1,48 +1,51 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { List, Text } from 'react-native-paper';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { List, Text, ActivityIndicator } from 'react-native-paper';
 import { ScrollView, StyleSheet, RefreshControl, View, Image } from 'react-native';
 import { map, reject } from 'lodash/collection';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { useQuery } from '@tanstack/react-query';
 import { api } from '@/services/api';
-import { LoaderScreen } from '@/components';
+import { Icon, LoaderScreen } from '@/components';
 import { IActuality, IActualitySection } from './ActualityScreen.interfaces';
 import theme from '@/theme';
 import config from '@/config';
+import { EmptyState } from '@/components/EmptyState';
+import * as storage from '@/utils/storage';
+
+const OPENED_ITEMS_KEY = 'opened_actualities_sections';
+
+const folderIcon = <Icon ripperStyle={ { padding: 15 } } size={ 20 } icon="folder" />;
+const loaderScreen = <LoaderScreen />;
+const loadActualitiesSections = (): Promise<IActualitySection[]> => api.get('/getActualitiesSections')
+  .then((data) => data.sections);
+
+const loadActuality = (actualityId): Promise<IActuality> => api.get('/getActuality', { actualityId })
+  .then((data) => data.actuality);
 
 export function ActualityScreen() {
-  const [expanded, setExpanded] = useState([]);
-  const [actualities, setActualities] = useState<IActualitySection[]>(null);
-  const [actuality, setActuality] = useState<IActuality>(null);
+  const [openedItems, setOpenedItems] = useState([]);
+  const [actualityId, setActualityId] = useState(null);
+  const { data, refetch, isLoading, isRefetching, isError, isRefetchError } = useQuery(['actualities_sections'], loadActualitiesSections);
+  const { data: actualityItem } = useQuery(
+    ['actuality_item', actualityId],
+    ({ queryKey }) => loadActuality(queryKey[1]),
+    { enabled: !!actualityId }
+  );
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const [isLoading, setLoading] = useState(false);
-  const [isRefreshing, setRefreshing] = React.useState(false);
-  const snapPoints = useMemo(() => ['33%', '66%', '100%'], []);
-  const loaderScreenMemoized = useMemo(() => <LoaderScreen />, [isLoading]);
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    setActualities(null);
+  const snapPoints = useMemo(() => ['50%', '100%'], []);
+  const showLoader = useMemo(() => isLoading || isRefetching, [isLoading, isRefetching]);
+  const showEmptyState = useMemo(() => !data || isError || isRefetchError, [data, isError, isRefetchError]);
+
+  useEffect(() => {
+    storage
+      .load(OPENED_ITEMS_KEY, [])
+      .then(setOpenedItems);
   }, []);
 
-  if (actualities === null && !isLoading) {
-    setLoading(true);
-
-    api.get('/getActualitiesSections')
-      .then((data) => {
-        setActualities(data.sections);
-      })
-      .finally(() => {
-        setRefreshing(false);
-        setLoading(false);
-      });
-  }
-
-  const loadActuality = (actualityId: string) => {
-    api.get('/getActuality', { actualityId })
-      .then((data) => {
-        setActuality(data.actuality);
-        bottomSheetRef.current.snapToIndex(0);
-      });
-  };
+  useEffect(() => {
+    if (actualityId)
+      bottomSheetRef.current.snapToIndex(0);
+  }, [actualityId]);
 
   const renderBackdrop = useCallback(
     (props) => (
@@ -55,36 +58,42 @@ export function ActualityScreen() {
     []
   );
 
-  if (isLoading || !actualities)
-    return loaderScreenMemoized;
+  const toggleSection = (sectionIndex) => {
+    const isOpened = openedItems.includes(sectionIndex);
+    const newOpenedItems = isOpened
+      ? reject(openedItems, (index) => index === sectionIndex)
+      : [...openedItems, sectionIndex];
 
-  const handlePress = (sectionIndex) => {
-    if (expanded.includes(sectionIndex))
-      setExpanded(reject(expanded, (index) => index === sectionIndex));
-    else
-      setExpanded([...expanded, sectionIndex]);
+    setOpenedItems(newOpenedItems);
+    storage.save(OPENED_ITEMS_KEY, newOpenedItems);
   };
+
+  if (showLoader)
+    return loaderScreen;
+
+  if (showEmptyState)
+    return <EmptyState buttonProps={ { onPress: refetch } } />;
 
   return (
     <View style={ styles.container }>
       <ScrollView
         style={ { minHeight: '100%' } }
-        refreshControl={ <RefreshControl refreshing={ isRefreshing } onRefresh={ onRefresh } /> }
+        refreshControl={ <RefreshControl refreshing={ isRefetching } onRefresh={ refetch } /> }
       >
         <List.Section>
-          { map(actualities, (section, sectionIndex) => (
+          { map(data, (section, index) => (
             <List.Accordion
-              key={ sectionIndex }
+              key={ index }
               title={ section.name }
-              left={ (props) => <List.Icon { ...props } icon="folder" /> }
-              expanded={ expanded.includes(sectionIndex) }
-              onPress={ () => handlePress(sectionIndex) }
+              left={ () => folderIcon }
+              expanded={ openedItems.includes(index) }
+              onPress={ () => toggleSection(index) }
             >
-              { map(section.actualities, (actuality, actualityIndex) => (
+              { map(section.actualities, (actuality, childIndex) => (
                 <List.Item
-                  key={ actualityIndex }
+                  key={ childIndex }
                   title={ actuality.name }
-                  onPress={ () => loadActuality(actuality._id) }
+                  onPress={ () => setActualityId(actuality._id) }
                 />
               ))}
             </List.Accordion>
@@ -98,17 +107,22 @@ export function ActualityScreen() {
         snapPoints={ snapPoints }
         backdropComponent={ renderBackdrop }
         backgroundStyle={ styles.sheetBackgroundColor }
+        onClose={ () => setActualityId(null) }
         enablePanDownToClose
       >
         {
-          actuality && (
+          actualityItem ? (
             <BottomSheetScrollView style={ [styles.sheetContainer, styles.sheetBackgroundColor] }>
               <View style={ styles.sheetHeader }>
-                <Text>{ actuality.updatedBy.displayName || actuality.updatedBy.username || 'DELETED' }</Text>
-                <Image source={ { uri: config.avatarBaseUrl + actuality.updatedBy.avatar, width: 32, height: 32 } } />
+                <Text>{ actualityItem.updatedBy.displayName || actualityItem.updatedBy.username || 'DELETED' }</Text>
+                <Image source={ { uri: config.avatarBaseUrl + actualityItem.updatedBy.avatar, width: 32, height: 32 } } />
               </View>
-              <Text>{ actuality.data || 'No content :(' }</Text>
+              <Text>{ actualityItem.data || 'No content :(' }</Text>
             </BottomSheetScrollView>
+          ) : (
+            <View style={ { marginTop: 150 } }>
+              <ActivityIndicator size="large" animating />
+            </View>
           )
         }
       </BottomSheet>
