@@ -49,7 +49,7 @@ export function Select(props: ISelectProps) {
           }) }
           disabled={ disabled }
         >
-          { currentValue.title }
+          { currentValue?.title || 'nothing selected' }
         </Button>
     ) }
     >
