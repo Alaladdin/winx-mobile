@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, Snackbar } from 'react-native-paper';
+import { Text, Snackbar, Modal, TouchableRipple } from 'react-native-paper';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import theme from '@/theme';
 import { version } from '@/../package.json';
@@ -10,6 +10,7 @@ import { SettingsNotifications } from './SettingsNotifications';
 
 export function SettingsScreen() {
   const [snackBarMessage, setSnackBarMessage] = useState<string>('');
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const closeSnackBar = () => setSnackBarMessage('');
   const sectionProps = {
     headingStyle: styles.heading,
@@ -24,13 +25,28 @@ export function SettingsScreen() {
         <SettingsUpdates { ...sectionProps } />
         <SettingsDev { ...sectionProps } />
 
-        <View style={ styles.footerContainer }>
+        <TouchableRipple
+          style={ styles.footerContainer }
+          onPress={ () => setIsModalVisible(true) }
+        >
           <Text style={ styles.footerText }>
             { `v${version}` }
           </Text>
-        </View>
-
+        </TouchableRipple>
       </ScrollView>
+
+      <Modal
+        visible={ isModalVisible }
+        onDismiss={ () => setIsModalVisible(false) }
+      >
+        <View style={ styles.modalContainer }>
+          <Text>
+            ChangeLog?
+            Hidden options?
+          </Text>
+        </View>
+      </Modal>
+
       <Snackbar
         visible={ !!snackBarMessage }
         duration={ 3000 }
@@ -57,5 +73,13 @@ const styles = StyleSheet.create({
   },
   footerText: {
     color: theme.colors.neutral50,
+  },
+  modalContainer: {
+    alignSelf      : 'center',
+    padding        : theme.spacing.medium,
+    borderRadius   : 4,
+    width          : '95%',
+    minHeight      : '50%',
+    backgroundColor: theme.colors.elevation.level5,
   },
 });

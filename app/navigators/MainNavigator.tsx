@@ -66,11 +66,14 @@ export const MainNavigator = observer(() => {
       screenOptions={ {
         animation: 'fade_from_bottom',
         header   : ({ navigation, route }) => {
-          const showBackButton = route.name === 'profile';
+          const showBackButton = ['auth', 'profile'].includes(route.name);
+          const showAvatar = route.name !== 'profile' && isLoggedIn;
+          const showLoginIcon = route.name !== 'auth' && !isLoggedIn;
 
           return (
             <Header
-              avatar={ avatar }
+              avatar={ showAvatar && avatar }
+              icon={ showLoginIcon ? 'arrow-right-to-bracket' : undefined }
               onBackPress={ showBackButton && navigation.navigate.bind(this, 'main') }
               onAvatarPress={ () => navigation.navigate(isLoggedIn ? 'profile' : 'auth') }
             />
