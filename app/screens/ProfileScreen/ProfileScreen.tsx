@@ -1,15 +1,17 @@
-import { StyleSheet, View } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { Avatar, List, Text, TouchableRipple, Button } from 'react-native-paper';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { map, noop } from 'lodash';
 import moment from 'moment';
 import { useStores } from '@/models';
 import config from '@/config';
 import theme from '@/theme';
+import { api } from '@/services/api';
 
 export function ProfileScreen({ navigation }) {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { authStore } = useStores();
-  const { avatar, username, displayName, lastOnline, lastLoggedAt, createdAt, scope } = authStore.user;
+  const { avatar, username, displayName, lastOnline, lastLoggedAt, createdAt, scope, token } = authStore.user;
   const avatarSourceOptions = { uri: `${config.avatarBaseUrl}${avatar}`, width: 128, height: 128 };
   const currentDisplayName = displayName || username;
 
@@ -22,15 +24,37 @@ export function ProfileScreen({ navigation }) {
     { title: 'Last logged at', value: lastLoggedDate },
     { title: 'Last online', value: lastOnlineDate },
     { title: 'Access level', value: scope.join(', ') },
-  ]), []);
+  ]), [accountAge, lastLoggedDate, lastOnlineDate, scope]);
 
   const logout = () => {
     authStore.setUser(null);
     navigation.navigate('main');
   };
 
+  const reFetchUser = () => {
+    setIsLoading(true);
+
+    // todo remove manual tokn pass
+    api.get('/auth/user', null, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((data) => {
+        authStore.setUser(data.user);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        if (err.kind === 'unauthorized')
+          logout();
+      });
+  };
+
   return (
-    <View style={ styles.container }>
+    <ScrollView
+      contentContainerStyle={ styles.container }
+      refreshControl={ <RefreshControl refreshing={ isLoading } onRefresh={ reFetchUser } /> }
+    >
       <Avatar.Image
         size={ 128 }
         source={ avatarSourceOptions }
@@ -61,7 +85,7 @@ export function ProfileScreen({ navigation }) {
       ))}
 
       <Button onPress={ logout }>Log out</Button>
-    </View>
+    </ScrollView>
   );
 }
 

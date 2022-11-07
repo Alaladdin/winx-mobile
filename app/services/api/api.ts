@@ -57,8 +57,8 @@ export class Api {
     throw err;
   }
 
-  async get(url, params = {}) {
-    return this.apisauce.get(url, params)
+  async get(url, params = {}, config = {}) {
+    return this.apisauce.get(url, params, config)
       .then(Api.onRequestSuccess)
       .catch(Api.onRequestError);
   }
