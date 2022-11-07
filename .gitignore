@@ -14,4 +14,3 @@ web-build/
 .env.development
 .env.production
 *.log
-google-services.json
