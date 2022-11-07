@@ -1,34 +1,40 @@
-import React from 'react';
-import { Appbar, Avatar, MD3DarkTheme } from 'react-native-paper';
+import { useMemo } from 'react';
+import { Appbar, Avatar } from 'react-native-paper';
+import { observer } from 'mobx-react';
 import config from '@/config';
 import appConfig from '../../app.config';
 
 export interface HeaderProps {
-  onAvatarPress?: () => void
+  avatar?: string;
+  onBackPress?: () => void;
+  onAvatarPress?: () => void;
 }
 
-export function Header(props: HeaderProps) {
-  const { onAvatarPress } = props;
-  const avatarSourceOptions = { uri: `${config.avatarBaseUrl}avatar/default`, width: 24, height: 24 };
-  const renderAvatar = () => (
+export const Header = observer((props: HeaderProps) => {
+  const { avatar, onBackPress, onAvatarPress } = props;
+  const HeaderAvatar = () => useMemo(() => (
     <Avatar.Image
       size={ 24 }
-      source={ avatarSourceOptions }
+      source={ {
+        uri   : `${config.avatarBaseUrl}${avatar}`,
+        width : 24,
+        height: 24,
+      } }
     />
-  );
+  ), [avatar]);
 
   return (
-    <Appbar.Header
-      theme={ MD3DarkTheme }
-      statusBarHeight={ 0 }
-      elevated
-    >
+    <Appbar.Header statusBarHeight={ 0 } elevated>
+      { !!onBackPress && (<Appbar.BackAction onPress={ onBackPress } />) }
+
       <Appbar.Content title={ appConfig.name } />
 
-      <Appbar.Action
-        icon={ renderAvatar }
-        onPress={ onAvatarPress }
-      />
+      { !!avatar && (
+        <Appbar.Action
+          icon={ HeaderAvatar }
+          onPress={ onAvatarPress }
+        />
+      )}
     </Appbar.Header>
   );
-}
+});

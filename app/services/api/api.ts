@@ -41,23 +41,32 @@ export class Api {
     });
   }
 
-  // kind: 'ok', ApiResponse;
-  async get(url, params = {}): Promise<{ ApiResponse } | GeneralApiProblem> {
+  static onRequestSuccess(response: ApiResponse<any>): { ApiResponse: any } | GeneralApiProblem {
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response);
+
+      throw problem || response.originalError;
+    }
+
+    return response.data;
+  }
+
+  static onRequestError(err: Error): Error {
+    reportCrash(err);
+
+    throw err;
+  }
+
+  async get(url, params = {}) {
     return this.apisauce.get(url, params)
-      .then((response: ApiResponse<any>) => {
-        if (!response.ok) {
-          const problem = getGeneralApiProblem(response);
+      .then(Api.onRequestSuccess)
+      .catch(Api.onRequestError);
+  }
 
-          throw problem || response.originalError;
-        }
-
-        return response.data;
-      })
-      .catch((err) => {
-        reportCrash(err);
-
-        throw err;
-      });
+  async post(url, data, config?) {
+    return this.apisauce.post(url, data, config)
+      .then(Api.onRequestSuccess)
+      .catch(Api.onRequestError);
   }
 }
 

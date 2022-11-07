@@ -6,7 +6,7 @@ import { translate } from '@/i18n';
 const imageSource = require('../../assets/gifs/lazy_cat_sleeping.gif');
 
 interface IEmptyStateProps {
-  buttonProps: Omit<ButtonProps, 'children' | 'theme'>;
+  buttonProps?: Omit<ButtonProps, 'children' | 'theme'>;
 }
 
 export function EmptyState({ buttonProps }: IEmptyStateProps) {
@@ -21,12 +21,13 @@ export function EmptyState({ buttonProps }: IEmptyStateProps) {
 
       <Image source={ imageSource } style={ styles.image } />
 
-      <Text variant="titleSmall" style={ styles.bodyText }>
-        { bodyText }
-      </Text>
-
       {
         buttonProps && (
+        <>
+          <Text variant="titleSmall" style={ styles.bodyText }>
+            { bodyText }
+          </Text>
+
           <Button
             style={ styles.button }
             mode="contained-tonal"
@@ -34,6 +35,7 @@ export function EmptyState({ buttonProps }: IEmptyStateProps) {
           >
             { translate('emptyStateComponent.generic.button') }
           </Button>
+        </>
         )
       }
     </View>

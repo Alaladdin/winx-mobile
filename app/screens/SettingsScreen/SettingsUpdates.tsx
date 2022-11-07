@@ -7,7 +7,6 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { ISettingSection } from './ISettingSection';
 import { Icon } from '@/components';
 import { reportCrash } from '@/utils/crash-reporting';
-import { useStores } from '@/models';
 
 const parseUpdateError = (e) => {
   if (e.code === 'ERR_UPDATES_DISABLED')
@@ -26,10 +25,9 @@ const parseUpdateError = (e) => {
 };
 
 export function SettingsUpdates({ headingStyle, setSnackBarMessage }: ISettingSection) {
-  const { mainStore } = useStores();
   const [checkButtonText, setCheckButtonText] = useState<string>('check');
   const [checkButtonIcon, setCheckButtonIcon] = useState<IconProp>('sync');
-  const [hasUpdates, setHasUpdates] = useState<boolean>(mainStore.hasUpdates);
+  const [hasUpdates, setHasUpdates] = useState<boolean>(false);
   const [isChecking, setIsChecking] = useState<boolean>(false);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
 

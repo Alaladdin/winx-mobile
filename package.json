@@ -12,9 +12,10 @@
     "ios": "expo start --ios",
     "publish": "expo publish",
     "publish:beta": "expo publish --release-channel beta",
-    "build:android": "eas build --profile prod --platform android",
-    "build:android:beta": "eas build --profile beta --platform android",
-    "build:android:dev": "eas build --profile dev --platform android"
+    "build": "npm run build:android",
+    "build:android": "eas build --profile prod --platform android --non-interactive",
+    "build:android:beta": "eas build --profile beta --platform android --non-interactive",
+    "build:android:dev": "eas build --profile dev --platform android --non-interactive"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
@@ -79,5 +80,8 @@
     "eslint-plugin-react": "7.28.0",
     "eslint-plugin-react-hooks": "4.3.0",
     "reactotron-core-client": "^2.8.10"
+  },
+  "engines": {
+    "node": "16.x"
   }
 }

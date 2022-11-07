@@ -1,3 +1,5 @@
+import { version } from './package.json';
+
 const getConfig = () => {
   const IS_DEV = process.env.APP_VARIANT === 'development';
   const IS_BETA = process.env.APP_VARIANT === 'beta';
@@ -37,7 +39,7 @@ export default {
   name           : config.name,
   scheme         : 'winx',
   slug           : 'winx-mobile',
-  version        : '2.0.0',
+  version,
   orientation    : 'portrait',
   icon           : config.icon,
   backgroundColor: '#2a2831',

@@ -1,11 +1,40 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
+import { useQuery } from '@tanstack/react-query';
 import theme from '@/theme';
+import { api } from '@/services/api';
+import { useStores } from '@/models';
+import { EmptyState } from '@/components/EmptyState';
+import { LoaderScreen } from '@/components';
+
+// todo
+// refresh marks
+// set user
+// delete user
+// fetch data
+
+const loadBarsData = () => api
+  .get('/bars/user')
+  .then((data) => data.barsUser);
+
+const loaderScreen = <LoaderScreen />;
 
 export function BarsScreen() {
+  const { authStore } = useStores();
+  const { data, refetch, isLoading, isRefetching, isError, isRefetchError } = useQuery(['bars'], loadBarsData, { enabled: !!authStore.user.barsUser });
+
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
+
+  const showLoader = useMemo(() => isLoading || isRefetching, [isLoading, isRefetching]);
+  const showEmptyState = useMemo(() => !data || isError || isRefetchError, [data, isError, isRefetchError]);
+
+  if (showLoader)
+    return loaderScreen;
+
+  if (showEmptyState)
+    return <EmptyState buttonProps={ { onPress: refetch } } />;
 
   return (
     <ScrollView style={ styles.container } contentContainerStyle={ [styles.container, styles.containerContent] }>

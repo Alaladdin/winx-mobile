@@ -1,33 +1,12 @@
 import React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import { Button, TextInput } from 'react-native-paper';
 import theme from '@/theme';
+import { EmptyState } from '@/components/EmptyState';
 
 export function MailScreen() {
-  const [username, setUsername] = React.useState('');
-  const [password, setPassword] = React.useState('');
-
   return (
     <ScrollView style={ styles.container } contentContainerStyle={ [styles.container, styles.containerContent] }>
-      <TextInput
-        style={ styles.input }
-        label="Login"
-        value={ username }
-        disabled
-        onChangeText={ setUsername }
-      />
-
-      <TextInput
-        style={ styles.input }
-        label="Password"
-        value={ password }
-        disabled
-        onChangeText={ setPassword }
-      />
-
-      <Button mode="elevated" disabled>
-        Login
-      </Button>
+      <EmptyState />
     </ScrollView>
   );
 }
