@@ -3,11 +3,13 @@ import { I18n } from 'i18n-js';
 
 // if English isn't your default language, move Translations to the appropriate language file.
 import en, { Translations } from './en';
+import ru from './ru';
 
 export const i18n = new I18n(
   {
     'en-US': en,
     en,
+    ru,
   },
   {
     locale        : 'en' || Localization.locale,
