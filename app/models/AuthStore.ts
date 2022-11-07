@@ -1,4 +1,5 @@
 import { Instance, SnapshotOut, types } from 'mobx-state-tree';
+import assign from 'lodash/assign';
 
 const User = types.model('User', {
   token       : types.maybeNull(types.string),
@@ -34,7 +35,7 @@ export const AuthStoreModel = types
   }))
   .actions((store) => ({
     setUser(user) {
-      store._user = user;
+      store._user = assign({}, user, store._user);
     },
   }));
 
