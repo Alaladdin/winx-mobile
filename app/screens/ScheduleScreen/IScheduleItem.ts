@@ -3,6 +3,7 @@ export interface IScheduleItem {
   beginLesson: string,
   building: string,
   date: string,
+  fullDate: Date,
   dayOfWeekString: string,
   discipline: string,
   disciplineAbbr: string,
