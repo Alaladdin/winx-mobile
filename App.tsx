@@ -2,10 +2,10 @@ import { StatusBar, StyleSheet } from 'react-native';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
-import * as Updates from 'expo-updates';
 import * as Notifications from 'expo-notifications';
+import { AndroidImportance } from 'expo-notifications';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer, NavigationState } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
@@ -18,9 +18,7 @@ import { MainNavigator } from '@/navigators';
 import theme from '@/theme';
 import Config from '@/config';
 import { ErrorBoundary } from '@/screens';
-import { reportCrash } from '@/utils/crash-reporting';
-import { Header } from '@/components';
-import { useInitialRootStore, RootStoreProvider } from '@/models';
+import { RootStoreProvider, useInitialRootStore } from '@/models';
 import { setupReactotron } from '@/services/reactotron';
 
 setupReactotron({
@@ -51,12 +49,12 @@ const asyncStoragePersister = createAsyncStoragePersister({
 export default function App() {
   const prefix = Linking.createURL('/');
   const linking = { prefixes: [prefix, 'https://winx.mpei.space'] };
-  const [settingsBadges, setSettingsBadges] = useState<number>(null);
+  const hour = 1000 * 60 * 60;
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        cacheTime: 1000 * 60 * 60 * 24, // 24 hours
-        staleTime: 1000 * 60 * 60 * 24, // 24 hours
+        cacheTime: hour * 24,
+        staleTime: hour * 3,
       },
     },
   });
@@ -67,22 +65,14 @@ export default function App() {
     SplashScreen.hideAsync();
   });
 
-  const checkAppUpdates = () => {
-    if (__DEV__) return;
+  useEffect(() => {
+    const baseOptions = { importance: AndroidImportance.DEFAULT, enableVibrate: true };
 
-    setTimeout(() => {
-      Updates.checkForUpdateAsync()
-        .then((result: Updates.UpdateCheckResult) => {
-          const { isAvailable } = result;
-
-          rootStore.mainStore.setHasUpdate(isAvailable);
-
-          if (isAvailable)
-            setSettingsBadges(1);
-        })
-        .catch(reportCrash);
-    }, 2000);
-  };
+    Notifications.setNotificationChannelAsync('schedule', { ...baseOptions, name: 'Lessons' });
+    Notifications.setNotificationChannelAsync('actuality', { ...baseOptions, name: 'Actuality changes' });
+    Notifications.setNotificationChannelAsync('mail', { ...baseOptions, name: 'New mails' });
+    Notifications.setNotificationChannelAsync('bars', { ...baseOptions, name: 'New bars marks' });
+  });
 
   const trackScreen = useCallback((state: NavigationState) => {
     const { routeNames, index } = state;
@@ -110,10 +100,8 @@ export default function App() {
                 linking={ linking }
                 theme={ theme }
                 onStateChange={ trackScreen }
-                onReady={ checkAppUpdates }
               >
-                <Header />
-                <MainNavigator badges={ { settings: settingsBadges } } />
+                <MainNavigator />
               </NavigationContainer>
             </ErrorBoundary>
           </PaperProvider>

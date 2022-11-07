@@ -1,16 +1,17 @@
 import { StyleSheet, View } from 'react-native';
 import { observer } from 'mobx-react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import { map } from 'lodash';
-import { Icon } from '@/components';
+import { map, reject } from 'lodash/collection';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useMemo } from 'react';
+import { Header, Icon } from '@/components';
 import { routesList } from './routes';
 import { useStores } from '@/models';
+import { AuthScreen } from '@/screens/AuthScreen';
+import { ProfileScreen } from '@/screens/ProfileScreen';
 
-interface IMainNavProps {
-  badges?: {
-    [key: string]: number | null
-  }
-}
+const Tab = createMaterialBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
 const renderIcon = (params: { route, color: string, focused: boolean }) => {
   const { route, color } = params;
@@ -26,10 +27,14 @@ const renderIcon = (params: { route, color: string, focused: boolean }) => {
   );
 };
 
-const Tab = createMaterialBottomTabNavigator();
-
-export const MainNavigator = observer(({ badges = {} }: IMainNavProps) => {
+export const MainScreen = observer(() => {
   const { settingsStore } = useStores();
+  const { authStore } = useStores();
+  const userScope = authStore.user.scope;
+  const currentRoutes = useMemo(
+    () => reject(routesList, ({ scope }) => scope && !userScope.includes(scope)),
+    [userScope]
+  );
 
   return (
     <Tab.Navigator
@@ -37,19 +42,49 @@ export const MainNavigator = observer(({ badges = {} }: IMainNavProps) => {
       initialRouteName={ settingsStore.initialRoute }
     >
       {
-          map(routesList, (route) => (
-            <Tab.Screen
-              name={ route.title }
-              key={ route.name }
-              getComponent={ () => route.component }
-              options={ {
-                tabBarBadge: badges[route.name],
-                tabBarIcon : (params) => renderIcon({ ...params, route }),
-              } }
-            />
-          ))
+            map(currentRoutes, (route) => (
+              <Tab.Screen
+                name={ route.title }
+                key={ route.name }
+                getComponent={ () => route.component }
+                options={ {
+                  tabBarIcon: (params) => renderIcon({ ...params, route }),
+                } }
+              />
+            ))
         }
     </Tab.Navigator>
+  );
+});
+
+export const MainNavigator = observer(() => {
+  const { authStore } = useStores();
+  const { avatar, isLoggedIn } = authStore.user;
+
+  return (
+    <Stack.Navigator
+      screenOptions={ {
+        animation: 'fade_from_bottom',
+        header   : ({ navigation, route }) => {
+          const showBackButton = route.name === 'profile';
+
+          return (
+            <Header
+              avatar={ avatar }
+              onBackPress={ showBackButton && navigation.navigate.bind(this, 'main') }
+              onAvatarPress={ () => navigation.navigate(isLoggedIn ? 'profile' : 'auth') }
+            />
+          );
+        },
+      } }
+    >
+      <Stack.Screen name="main" component={ MainScreen } />
+      {
+        isLoggedIn
+          ? (<Stack.Screen name="profile" component={ ProfileScreen } />)
+          : (<Stack.Screen name="auth" component={ AuthScreen } />)
+      }
+    </Stack.Navigator>
   );
 });
 
