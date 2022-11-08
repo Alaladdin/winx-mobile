@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { View, ScrollView, StyleSheet, RefreshControl } from 'react-native';
 import { Text, Surface } from 'react-native-paper';
 import { each, groupBy, map, some } from 'lodash';
@@ -95,7 +95,7 @@ export function ScheduleScreen({ navigation }): JSX.Element {
   const showLoader = useMemo(() => isLoading || isRefetching, [isLoading, isRefetching]);
   const showEmptyState = useMemo(() => !data || isError || isRefetchError, [data, isError, isRefetchError]);
 
-  React.useEffect(() => navigation.addListener('tabPress', () => {
+  useEffect(() => navigation.addListener('tabPress', () => {
     pagerViewRef?.current?.setPage(0);
   }), [navigation]);
 
