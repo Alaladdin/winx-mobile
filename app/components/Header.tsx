@@ -1,18 +1,23 @@
 import { useMemo } from 'react';
 import { Appbar, Avatar } from 'react-native-paper';
 import { observer } from 'mobx-react';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { StyleSheet, View } from 'react-native';
 import config from '@/config';
 import appConfig from '../../app.config';
+import { Icon } from '@/components/Icon';
 
 export interface HeaderProps {
   avatar?: string;
+  icon?: IconProp;
   onBackPress?: () => void;
   onAvatarPress?: () => void;
 }
 
 export const Header = observer((props: HeaderProps) => {
-  const { avatar, onBackPress, onAvatarPress } = props;
-  const HeaderAvatar = () => useMemo(() => (
+  const { avatar, icon, onBackPress, onAvatarPress } = props;
+  const headerIcon = useMemo(() => <View style={ styles.iconContainer }><Icon icon={ icon } /></View>, [icon]);
+  const headerAvatar = useMemo(() => (
     <Avatar.Image
       size={ 24 }
       source={ {
@@ -29,12 +34,23 @@ export const Header = observer((props: HeaderProps) => {
 
       <Appbar.Content title={ appConfig.name } />
 
-      { !!avatar && (
-        <Appbar.Action
-          icon={ HeaderAvatar }
-          onPress={ onAvatarPress }
-        />
-      )}
+      {
+          (!!avatar || !!icon) && (
+          <Appbar.Action
+            icon={ () => (avatar ? headerAvatar : headerIcon) }
+            onPress={ onAvatarPress }
+          />
+          )
+        }
+
     </Appbar.Header>
   );
+});
+
+const styles = StyleSheet.create({
+  iconContainer: {
+    flex          : 1,
+    justifyContent: 'center',
+    alignItems    : 'center',
+  },
 });

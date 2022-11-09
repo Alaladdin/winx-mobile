@@ -35,7 +35,7 @@ export const AuthStoreModel = types
   }))
   .actions((store) => ({
     setUser(user) {
-      store._user = assign({}, store._user, user);
+      store._user = user ? assign({}, store._user, user) : null;
     },
   }));
 
