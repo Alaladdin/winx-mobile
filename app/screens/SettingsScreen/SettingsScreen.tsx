@@ -23,7 +23,6 @@ export function SettingsScreen() {
         <SettingsNotifications { ...sectionProps } />
         <SettingsAppearance { ...sectionProps } />
         <SettingsUpdates { ...sectionProps } />
-        <SettingsDev { ...sectionProps } />
 
         <TouchableRipple
           style={ styles.footerContainer }
@@ -40,10 +39,7 @@ export function SettingsScreen() {
         onDismiss={ () => setIsModalVisible(false) }
       >
         <View style={ styles.modalContainer }>
-          <Text>
-            ChangeLog?
-            Hidden options?
-          </Text>
+          <SettingsDev { ...sectionProps } />
         </View>
       </Modal>
 
