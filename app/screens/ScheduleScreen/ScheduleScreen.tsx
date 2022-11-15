@@ -8,10 +8,11 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '@/services/api';
 import config from '@/config';
 import theme from '@/theme';
-import { LoaderScreen } from '@/components';
+import { Loader } from '@/components';
 import { IScheduleItem } from './IScheduleItem';
 import { EmptyState } from '@/components/EmptyState';
 
+const loaderScreen = <Loader />;
 const todayCompare = moment().format(config.serverDateFormat);
 const isDayBeforeToday = (one) => todayCompare > moment(one, config.defaultDateFormat).format(config.serverDateFormat);
 
@@ -91,7 +92,6 @@ const loadSchedule = () => {
 export function ScheduleScreen({ navigation }): JSX.Element {
   const pagerViewRef = useRef<PagerView>(null);
   const { data, refetch, isLoading, isRefetching, isError, isRefetchError } = useQuery(['schedule'], loadSchedule);
-  const loaderScreenMemoized = useMemo(() => <LoaderScreen />, []);
   const showLoader = useMemo(() => isLoading || isRefetching, [isLoading, isRefetching]);
   const showEmptyState = useMemo(() => !data || isError || isRefetchError, [data, isError, isRefetchError]);
 
@@ -100,7 +100,7 @@ export function ScheduleScreen({ navigation }): JSX.Element {
   }), [navigation]);
 
   if (showLoader)
-    return loaderScreenMemoized;
+    return loaderScreen;
 
   if (showEmptyState)
     return <EmptyState buttonProps={ { onPress: refetch } } />;

@@ -1,4 +1,3 @@
-import { ProgressBar } from 'react-native-paper';
 import { Image, StyleSheet, View } from 'react-native';
 import { random } from 'lodash';
 
@@ -14,7 +13,6 @@ const images = [
 export function LoaderScreen() {
   return (
     <View style={ styles.container }>
-      <ProgressBar progress={ 0.5 } indeterminate />
       <Image style={ styles.image } source={ images[random(images.length - 1)] } />
     </View>
   );
