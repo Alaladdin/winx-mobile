@@ -1,7 +1,7 @@
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { Avatar, List, Text, TouchableRipple, Button } from 'react-native-paper';
 import { useMemo, useState } from 'react';
-import { map, noop } from 'lodash';
+import { map } from 'lodash';
 import moment from 'moment';
 import { useStores } from '@/models';
 import config from '@/config';
@@ -70,7 +70,6 @@ export function ProfileScreen({ navigation }) {
         <TouchableRipple
           key={ index }
           style={ styles.fullWidth }
-          onPress={ noop }
         >
           <List.Item
             title={ option.title }

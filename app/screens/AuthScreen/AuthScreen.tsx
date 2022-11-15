@@ -5,12 +5,12 @@ import { api } from '@/services/api';
 import { useStores } from '@/models';
 
 export function AuthScreen({ navigation }) {
-  const [username, setUsername] = useState<string>('');
+  const { authStore } = useStores();
+  const [username, setUsername] = useState<string>(authStore.lastUsername);
   const [password, setPassword] = useState<string>('');
   const [isError, setIsError] = useState<boolean>(false);
   const [isAuthenticating, setIsAuthenticating] = useState<boolean>(false);
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
-  const { authStore } = useStores();
 
   const isFormDisabled = useMemo(() => isAuthenticating || isRegistering, [isAuthenticating, isRegistering]);
   const isButtonsDisabled = useMemo(() => isFormDisabled || !username || !password, [isFormDisabled, username, password]);

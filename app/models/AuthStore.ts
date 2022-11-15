@@ -18,7 +18,8 @@ const User = types.model('User', {
 export const AuthStoreModel = types
   .model('AuthStore')
   .props({
-    _user: types.maybeNull(User),
+    _user        : types.maybeNull(User),
+    _lastUsername: types.optional(types.string, ''),
   })
   .views((store) => ({
     get user() {
@@ -32,10 +33,18 @@ export const AuthStoreModel = types
         isLoggedIn: !!currentUser._id,
       };
     },
+    get lastUsername() {
+      return store._lastUsername;
+    },
   }))
   .actions((store) => ({
     setUser(user) {
-      store._user = user ? assign({}, store._user, user) : null;
+      if (user) {
+        store._user = assign({}, store._user, user);
+        store._lastUsername = user.username;
+      } else {
+        store._user = null;
+      }
     },
   }));
 
