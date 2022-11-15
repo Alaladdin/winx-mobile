@@ -5,7 +5,7 @@ import { map, reject } from 'lodash/collection';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/services/api';
-import { Icon, LoaderScreen } from '@/components';
+import { Icon, Loader } from '@/components';
 import { IActuality, IActualitySection } from './ActualityScreen.interfaces';
 import theme from '@/theme';
 import config from '@/config';
@@ -15,7 +15,7 @@ import * as storage from '@/utils/storage';
 const OPENED_ITEMS_KEY = 'opened_actualities_sections';
 
 const folderIcon = <Icon ripperStyle={ { padding: 15 } } size={ 20 } icon="folder" />;
-const loaderScreen = <LoaderScreen />;
+const loaderScreen = <Loader />;
 const loadActualitiesSections = (): Promise<IActualitySection[]> => api.get('/getActualitiesSections')
   .then((data) => data.sections);
 
