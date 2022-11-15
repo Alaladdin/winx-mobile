@@ -1,12 +1,10 @@
 import { StyleSheet, View } from 'react-native';
-import { Banner, Button, Text, TextInput } from 'react-native-paper';
+import { Button, Text, TextInput } from 'react-native-paper';
 import { useMemo, useState } from 'react';
 import theme from '@/theme';
 import { useStores } from '@/models';
 import { useRequest } from '@/hooks/useRequest';
 import { Icon } from '@/components';
-
-const InfoCircleIcon = <Icon icon="info-circle" />;
 
 export function BarsLogin() {
   const { authStore } = useStores();
@@ -44,14 +42,10 @@ export function BarsLogin() {
         MPEI user
       </Text>
 
-      <Banner
-        actions={ [] }
-        style={ styles.bannerContainer }
-        icon={ () => InfoCircleIcon }
-        visible
-      >
-        Fill mpei credentials
-      </Banner>
+      <View style={ styles.banner }>
+        <Icon icon="info-circle" ripperStyle={ { marginRight: theme.spacing.extraSmall } } />
+        <Text>Your data will be encrypted</Text>
+      </View>
 
       <TextInput
         style={ styles.spacing }
@@ -97,9 +91,14 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.medium,
     textAlign   : 'center',
   },
-  bannerContainer: {
-    borderRadius: 4,
-    marginBottom: theme.spacing.medium,
+  banner: {
+    flexDirection  : 'row',
+    alignItems     : 'center',
+    borderRadius   : 4,
+    marginBottom   : theme.spacing.medium,
+    padding        : theme.spacing.medium,
+    backgroundColor: theme.colors.elevation.level2,
+
   },
   spacing: {
     marginBottom: theme.spacing.medium,
