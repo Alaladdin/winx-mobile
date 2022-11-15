@@ -10,7 +10,7 @@ const images = [
   require('../../assets/gifs/lazy_cat_in_hands.gif'),
 ];
 
-export function LoaderScreen() {
+export function Loader() {
   return (
     <View style={ styles.container }>
       <Image style={ styles.image } source={ images[random(images.length - 1)] } />
