@@ -43,8 +43,6 @@ export function SettingsDev({ headingStyle, setSnackBarMessage }: ISettingSectio
 
   return (
     <View>
-      <Text variant="headlineSmall" style={ headingStyle }>Dev</Text>
-
       <List.Item
         title="Notifications"
         right={ () => sendNotificationButton }
