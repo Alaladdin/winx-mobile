@@ -25,7 +25,7 @@ const loadActuality = (actualityId): Promise<IActuality> => api.get('/getActuali
 export function ActualityScreen() {
   const [openedItems, setOpenedItems] = useState([]);
   const [actualityId, setActualityId] = useState(null);
-  const { data, refetch, isLoading, isRefetching, isError, isRefetchError } = useQuery(['actualities_sections'], loadActualitiesSections);
+  const { data, refetch, isLoading, isRefetching, isError } = useQuery(['actualities_sections'], loadActualitiesSections);
   const { data: actualityItem } = useQuery(
     ['actuality_item', actualityId],
     ({ queryKey }) => loadActuality(queryKey[1]),
@@ -34,7 +34,7 @@ export function ActualityScreen() {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['50%', '100%'], []);
   const showLoader = useMemo(() => isLoading || isRefetching, [isLoading, isRefetching]);
-  const showEmptyState = useMemo(() => !data || isError || isRefetchError, [data, isError, isRefetchError]);
+  const showEmptyState = useMemo(() => !data || isError, [data, isError]);
 
   useEffect(() => {
     storage
