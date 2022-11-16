@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
   cardEmpty: {
     justifyContent: 'center',
     alignItems    : 'center',
-    marginBottom  : 30,
+    marginBottom  : theme.spacing.extraLarge,
     borderRadius  : 20,
     borderStyle   : 'dashed',
     borderColor   : theme.colors.neutralVariant50,
