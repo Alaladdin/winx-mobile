@@ -16,20 +16,18 @@ const loaderScreen = <Loader />;
 const todayCompare = moment().format(config.serverDateFormat);
 const isDayBeforeToday = (date) => todayCompare > moment(date, config.defaultDateFormat).format(config.serverDateFormat);
 const renderSchedule = (schedule: IScheduleItem, key) => {
-  if (!schedule.isEmpty) {
-    const cardStyle = isDayBeforeToday(schedule.date) && styles.cardDisabled;
-
+  if (schedule.isEmpty) {
     return (
-      <ScheduleItem
-        key={ key }
-        schedule={ schedule }
-        style={ cardStyle }
-      />
+      <ScheduleEmptyItem key={ key } />
     );
   }
 
   return (
-    <ScheduleEmptyItem key={ key } />
+    <ScheduleItem
+      key={ key }
+      schedule={ schedule }
+      disabled={ isDayBeforeToday(schedule.date) }
+    />
   );
 };
 
@@ -109,8 +107,5 @@ const styles = StyleSheet.create({
   container: {
     width : '100%',
     height: '100%',
-  },
-  cardDisabled: {
-    opacity: 0.4,
   },
 });
