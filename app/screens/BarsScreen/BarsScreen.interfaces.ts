@@ -1,4 +1,4 @@
-export interface IBarsUserMark {
+export interface IBarsMark {
     discipline: string;
     semester: string[],
     final: string[]
@@ -8,6 +8,6 @@ export interface IBarsUser {
     _id: string;
     username: string;
     updatedAt: string;
-    marks: IBarsUserMark[];
+    marks: IBarsMark[];
     isCredentialsError: boolean;
 }
