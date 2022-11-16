@@ -28,7 +28,7 @@ const loaderScreen = <Loader />;
 export const BarsScreen = observer(() => {
   const { user, setUser } = useStores().authStore;
   const [snackBarMessage, setSnackBarMessage] = useState<string>('');
-  const [isMenuOpened, setMenuOpened] = useState(false);
+  const [isMenuOpened, setMenuOpened] = useState<boolean>(false);
   const refreshBarsUserData = useRequest({ method: 'post', url: '/bars/user/refreshMarks' });
   const removeBarsUser = useRequest({ method: 'delete', url: '/bars/user' });
   const loadBarsUserData = useRequest({ method: 'get', url: '/bars/user', afterResponse: formatBarsUserData });
