@@ -6,10 +6,10 @@ import { IScheduleItem } from '@/screens/ScheduleScreen/IScheduleItem';
 
 interface ScheduleItemProps {
   schedule: IScheduleItem;
-  style?: ViewStyle
+  disabled?: boolean;
 }
 
-export function ScheduleItem({ schedule, style }: ScheduleItemProps) {
+export function ScheduleItem({ schedule, disabled }: ScheduleItemProps) {
   const cardHeaderStyles = useMemo(() => {
     const stylesList: ViewStyle[] = [styles.cardHeader, styles.bgRed];
 
@@ -23,7 +23,7 @@ export function ScheduleItem({ schedule, style }: ScheduleItemProps) {
   }, [schedule.kindOfWorkId]);
 
   return (
-    <View style={ style }>
+    <View style={ [disabled && styles.cardDisabled] }>
       <View style={ styles.cardBefore }>
         <Text variant="titleSmall">
           { `${schedule.beginLesson} – ${schedule.endLesson}` }
@@ -38,12 +38,10 @@ export function ScheduleItem({ schedule, style }: ScheduleItemProps) {
         </View>
 
         <View style={ styles.cardBody }>
-          <View style={ { alignItems: 'center', width: '100%' } }>
-            <Text style={ { marginBottom: 10 } } variant="labelLarge">{ schedule.discipline }</Text>
-            <View style={ { flexDirection: 'row', alignItems: 'center', width: '100%' } }>
-              <Text style={ styles.cardBadge }>{ schedule.auditorium }</Text>
-              <Text style={ { color: theme.colors.onSurfaceDisabled, marginRight: 'auto' } }>{ schedule.lecturer }</Text>
-            </View>
+          <Text style={ { marginBottom: 10 } } variant="labelLarge">{ schedule.discipline }</Text>
+          <View style={ { flexDirection: 'row', alignItems: 'center', width: '100%' } }>
+            <Text style={ styles.cardBadge }>{ schedule.auditorium }</Text>
+            <Text style={ { color: theme.colors.onSurfaceDisabled, marginRight: 'auto' } }>{ schedule.lecturer }</Text>
           </View>
         </View>
       </Surface>
@@ -52,8 +50,11 @@ export function ScheduleItem({ schedule, style }: ScheduleItemProps) {
 }
 
 const styles = StyleSheet.create({
+  cardDisabled: {
+    opacity: 0.4,
+  },
   cardBefore: {
-    marginBottom: 10,
+    marginBottom: theme.spacing.extraSmall,
   },
   card: {
     marginBottom: theme.spacing.extraLarge,
@@ -79,7 +80,6 @@ const styles = StyleSheet.create({
   cardBody: {
     paddingVertical  : 15,
     paddingHorizontal: 20,
-    flexDirection    : 'row',
     alignItems       : 'center',
   },
   cardBadge: {
