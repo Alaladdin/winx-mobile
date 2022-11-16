@@ -4,13 +4,12 @@ import { useStores } from '@/models';
 import Config from '@/config';
 import { reportCrash } from '@/utils/crash-reporting';
 
-interface IRequestConfig {
+export interface IRequestConfig {
   url: string;
   method?: Method;
   data?: object;
   params?: object;
   afterResponse?: (res) => Array<any> | object
-  isEnabled?: boolean;
 }
 
 // export const useRequest = <T>(config: IRequestConfig): Promise<{ data: T }> => {
@@ -22,7 +21,6 @@ export const useRequest = (config: IRequestConfig) => {
     data   : config.data,
     params : config.params,
     baseURL: Config.apiUrl,
-    // timeout: 10000,
     headers: {
       authToken    : Config.authToken,
       authorization: user?.token && `Bearer ${user.token}`,
