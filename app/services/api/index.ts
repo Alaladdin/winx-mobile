@@ -1,2 +1,3 @@
-export * from './api';
-export * from './api.types';
+import api from './api';
+
+export default api;
