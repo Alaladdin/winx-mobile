@@ -1,74 +1,36 @@
-/**
- * This Api class lets you define an API endpoint and methods to request
- * data and process it.
- *
- * See the [Backend API Integration](https://github.com/infinitered/ignite/blob/master/docs/Backend-API-Integration.md)
- * documentation for more details.
- */
-import { ApiResponse, ApisauceInstance, create } from 'apisauce';
-import Config from '@/config';
-import { GeneralApiProblem, getGeneralApiProblem } from './api-problem';
-import type { ApiConfig } from './api.types';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import config from '@/config';
 import { reportCrash } from '@/utils/crash-reporting';
+import { loadString, remove } from '@/utils/storage';
+import { getApiProblem } from '@/services/api/api-problem';
+import { ApiProblem } from '@/services/api/api-problem.types';
 
-export const DEFAULT_API_CONFIG: ApiConfig = {
-  apiUrl   : Config.apiUrl,
-  authToken: Config.authToken,
-  timeout  : 10000,
+const onSuccess = (res: AxiosResponse) => res.data;
+const onError = async (error: AxiosError): Promise<ApiProblem> => {
+  const problem = getApiProblem(error);
+
+  reportCrash(problem);
+
+  if (problem.kind === 'unauthorized')
+    await remove('token');
+
+  throw problem;
 };
 
-/**
- * Manages all requests to the API. You can use this class to build out
- * various requests that you need to call from your backend API.
- */
-export class Api {
-  apisauce: ApisauceInstance;
+const apiInstance = axios.create({
+  baseURL: config.apiUrl,
+  timeout: 10000,
+  headers: {
+    authToken: config.authToken,
+  },
+});
 
-  config: ApiConfig;
+apiInstance.interceptors.request.use(async (request) => {
+  request.headers.authorization = await loadString('token');
 
-  /**
-   * Set up our API instance. Keep this lightweight!
-   */
-  constructor(config: ApiConfig = DEFAULT_API_CONFIG) {
-    this.config = config;
-    this.apisauce = create({
-      baseURL: this.config.apiUrl,
-      timeout: this.config.timeout,
-      headers: {
-        Accept   : 'application/json',
-        AuthToken: this.config.authToken,
-      },
-    });
-  }
+  return request;
+});
 
-  static onRequestSuccess(response: ApiResponse<any>): { ApiResponse: any } | GeneralApiProblem {
-    if (!response.ok) {
-      const problem = getGeneralApiProblem(response);
+apiInstance.interceptors.response.use(onSuccess, onError);
 
-      throw problem || response.originalError;
-    }
-
-    return response.data;
-  }
-
-  static onRequestError(err: Error): Error {
-    reportCrash(err);
-
-    throw err;
-  }
-
-  async get(url, params = {}, config = {}) {
-    return this.apisauce.get(url, params, config)
-      .then(Api.onRequestSuccess)
-      .catch(Api.onRequestError);
-  }
-
-  async post(url, data, config?) {
-    return this.apisauce.post(url, data, config)
-      .then(Api.onRequestSuccess)
-      .catch(Api.onRequestError);
-  }
-}
-
-// Singleton instance of the API for convenience
-export const api = new Api();
+export default apiInstance;

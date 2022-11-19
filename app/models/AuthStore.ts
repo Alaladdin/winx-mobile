@@ -1,5 +1,7 @@
 import { Instance, SnapshotOut, types } from 'mobx-state-tree';
 import assign from 'lodash/assign';
+import api from '@/services/api';
+import { remove, saveString } from '@/utils/storage';
 
 const User = types.model('User', {
   token       : types.maybeNull(types.string),
@@ -38,13 +40,29 @@ export const AuthStoreModel = types
     },
   }))
   .actions((store) => ({
-    setUser(user) {
+    async setUser(user) {
       if (user) {
         store._user = assign({}, store._user, user);
         store._lastUsername = user.username;
+        await saveString('token', `Bearer ${store._user.token}`);
       } else {
         store._user = null;
+        await remove('token');
       }
+    },
+  }))
+  .actions((store) => ({
+    loadUser() {
+      return api.get('/auth/user')
+        .then((data) => {
+          store.setUser(data.user);
+
+          return data.user;
+        })
+        .catch((e) => {
+          if (e.kind === 'unauthorized')
+            store.setUser(null);
+        });
     },
   }));
 

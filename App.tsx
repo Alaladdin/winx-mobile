@@ -20,6 +20,7 @@ import Config from '@/config';
 import { ErrorBoundary } from '@/screens';
 import { RootStoreProvider, useInitialRootStore } from '@/models';
 import { setupReactotron } from '@/services/reactotron';
+import 'expo-dev-client';
 
 setupReactotron({
   clearOnLoad    : true,
@@ -53,7 +54,7 @@ export default function App() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        cacheTime: hour * 24,
+        cacheTime: hour * 24 * 3,
         staleTime: hour * 3,
       },
     },
@@ -63,6 +64,9 @@ export default function App() {
 
   const { rootStore, rehydrated } = useInitialRootStore(() => {
     SplashScreen.hideAsync();
+
+    if (rootStore.authStore.user.token)
+      rootStore.authStore.loadUser();
   });
 
   useEffect(() => {
