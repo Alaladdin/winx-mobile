@@ -6,7 +6,7 @@ interface IMarkdownViewerProps {
   children: string;
 }
 
-export default function ({ children }: IMarkdownViewerProps) {
+export function MarkdownViewer({ children }: IMarkdownViewerProps) {
   return (
     <Markdown style={ styles } mergeStyle={ false }>
       { children }

@@ -1,8 +1,9 @@
 const ru = {
   common: {
-    ok    : 'OK!',
-    cancel: 'Отмена',
-    back  : 'Назад',
+    ok     : 'OK!',
+    confirm: 'Да, мать его!',
+    cancel : 'Отмена',
+    back   : 'Назад',
   },
   mainNavigator: {
     scheduleTab : 'Расписание',
