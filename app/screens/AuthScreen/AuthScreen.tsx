@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-import { api } from '@/services/api';
 import { useStores } from '@/models';
 
 export function AuthScreen({ navigation }) {
@@ -19,11 +18,13 @@ export function AuthScreen({ navigation }) {
     setIsError(false);
   }, [username, password]);
 
-  const loginUser = () => {
+  const login = () => {
     setIsAuthenticating(true);
 
-    api.post('/auth/login', { username, password })
-      .then((result) => afterAuth(result.user))
+    authStore.loginUser({ username, password })
+      .then(() => {
+        navigation.navigate('profile');
+      })
       .catch(() => {
         setIsError(true);
       })
@@ -32,22 +33,19 @@ export function AuthScreen({ navigation }) {
       });
   };
 
-  const registerUser = () => {
+  const register = () => {
     setIsRegistering(true);
 
-    api.post('/auth/register', { username, password })
-      .then((result) => afterAuth(result.user))
+    authStore.registerUser({ username, password })
+      .then(() => {
+        navigation.navigate('profile');
+      })
       .catch(() => {
         setIsError(true);
       })
       .finally(() => {
         setIsRegistering(false);
       });
-  };
-
-  const afterAuth = (user) => {
-    authStore.setUser(user);
-    navigation.navigate('profile');
   };
 
   return (
@@ -78,7 +76,7 @@ export function AuthScreen({ navigation }) {
           style={ styles.element }
           loading={ isRegistering }
           disabled={ isButtonsDisabled }
-          onPress={ registerUser }
+          onPress={ register }
         >
           Register
         </Button>
@@ -87,7 +85,7 @@ export function AuthScreen({ navigation }) {
           style={ styles.element }
           loading={ isAuthenticating }
           disabled={ isButtonsDisabled }
-          onPress={ loginUser }
+          onPress={ login }
         >
           Login
         </Button>

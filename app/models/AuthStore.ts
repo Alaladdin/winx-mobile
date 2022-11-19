@@ -59,9 +59,36 @@ export const AuthStoreModel = types
 
           return data.user;
         })
-        .catch((e) => {
-          if (e.kind === 'unauthorized')
+        .catch((err) => {
+          if (err.kind === 'unauthorized')
             store.setUser(null);
+
+          throw err;
+        });
+    },
+    loginUser({ username, password }) {
+      return api.post('/auth/login', { username, password })
+        .then((data) => {
+          store.setUser(data.user);
+
+          return data.user;
+        });
+    },
+    registerUser({ username, password }) {
+      return api.post('/auth/register', { username, password })
+        .then((data) => {
+          store.setUser(data.user);
+
+          return data.user;
+        });
+    },
+    removeUser() {
+      return api.delete('/auth/removeUser', { data: { _id: store._user._id } })
+        .then((data) => {
+          store.setUser(null);
+          store._lastUsername = '';
+
+          return data;
         });
     },
   }));
