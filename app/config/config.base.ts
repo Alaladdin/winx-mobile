@@ -6,7 +6,7 @@ export interface ConfigBaseProps {
   exitRoutes: string[]
   apiUrl: string
   authToken: string
-  avatarBaseUrl: string
+  imageBaseUrl: string
   defaultDateFormat: string
   serverDateFormat: string
 }
@@ -19,7 +19,7 @@ const BaseConfig: ConfigBaseProps = {
   exitRoutes       : ['Schedule'],
   apiUrl           : API_URL,
   authToken        : AUTH_TOKEN,
-  avatarBaseUrl    : `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_webp,q_80,c_fill,r_max,w_1024,h_1024/`,
+  imageBaseUrl     : `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_webp,q_80,c_fill,w_1024,h_1024/`,
   defaultDateFormat: 'DD.MM',
   serverDateFormat : 'YYYY.MM.DD',
 };
