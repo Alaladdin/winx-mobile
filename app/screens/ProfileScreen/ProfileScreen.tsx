@@ -93,19 +93,24 @@ export function ProfileScreen({ navigation }) {
           />
         ))}
 
-        <Button
-          text="Remove account"
-          variant="danger"
-          loading={ isRemoving }
-          disabled={ isRemoving }
-          onPress={ () => setShowConfirmRemoveAccountModal(true) }
-        />
+        <View style={ { marginTop: 20, width: '100%' } }>
+          <Button
+            text="Remove account"
+            variant="danger"
+            loading={ isRemoving }
+            disabled={ isRemoving }
+            uppercase
+            onPress={ () => setShowConfirmRemoveAccountModal(true) }
+          />
 
-        <Button
-          text="Log out"
-          disabled={ isRemoving }
-          onPress={ logoutUser }
-        />
+          <Button
+            text="Log out"
+            style={ { marginTop: 10 } }
+            uppercase
+            disabled={ isRemoving }
+            onPress={ logoutUser }
+          />
+        </View>
       </ScrollView>
 
       <ConfirmActionDialog
