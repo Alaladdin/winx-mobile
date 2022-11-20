@@ -21,7 +21,7 @@ export const Header = observer((props: HeaderProps) => {
     <Avatar.Image
       size={ 24 }
       source={ {
-        uri   : `${config.avatarBaseUrl}${avatar}`,
+        uri   : `${config.imageBaseUrl}${avatar}`,
         width : 24,
         height: 24,
       } }

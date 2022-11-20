@@ -1,2 +1,4 @@
-export * from './api';
-export * from './api.types';
+import api from './api';
+
+export default api;
+export * from './api-problem.types';

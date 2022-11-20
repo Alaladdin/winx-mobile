@@ -1,17 +1,16 @@
-import { Button, List, Text } from 'react-native-paper';
+import { Button, List } from 'react-native-paper';
 import React, { useCallback, useMemo } from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import * as Notifications from 'expo-notifications';
-import crashlytics from '@react-native-firebase/crashlytics';
 import { ISettingSection } from './ISettingSection';
 import { reportCrash } from '@/utils/crash-reporting';
 import { clear } from '@/utils/storage';
 
-export function SettingsDev({ headingStyle, setSnackBarMessage }: ISettingSection) {
+export function SettingsDev({ setSnackBarMessage }: ISettingSection) {
   const sendNotification = async () => {
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: 'Гера воняет',
+        title: 'Дима воняет 😳',
         body : 'Притом жесска',
       },
       trigger: null,
@@ -30,11 +29,7 @@ export function SettingsDev({ headingStyle, setSnackBarMessage }: ISettingSectio
   }, []);
 
   const sendNotificationButton = useMemo(() => (
-    <Button onPress={ sendNotification }>Send notification</Button>
-  ), []);
-
-  const crashAppButton = useMemo(() => (
-    <Button onPress={ () => crashlytics().crash() }>Crash app</Button>
+    <Button onPress={ sendNotification }>Send</Button>
   ), []);
 
   const clearStorageButton = useMemo(() => (
@@ -43,22 +38,23 @@ export function SettingsDev({ headingStyle, setSnackBarMessage }: ISettingSectio
 
   return (
     <View>
-      <Text variant="headlineSmall" style={ headingStyle }>Dev</Text>
-
       <List.Item
         title="Notifications"
         right={ () => sendNotificationButton }
+        style={ styles.listItem }
       />
 
       <List.Item
-        title="Analytics"
-        right={ () => crashAppButton }
-      />
-
-      <List.Item
-        title="Storage"
+        title="App storage"
         right={ () => clearStorageButton }
+        style={ styles.listItem }
       />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  listItem: {
+    paddingHorizontal: 0,
+  },
+});

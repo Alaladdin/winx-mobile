@@ -1,8 +1,9 @@
 const en = {
   common: {
-    ok    : 'OK!',
-    cancel: 'Cancel',
-    back  : 'Back',
+    ok     : 'OK!',
+    confirm: 'Yes. Do it!',
+    cancel : 'Cancel',
+    back   : 'Back',
   },
   mainNavigator: {
     scheduleTab : 'Schedule',

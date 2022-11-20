@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Text, Snackbar, Modal, TouchableRipple } from 'react-native-paper';
-import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { Text, Snackbar, TouchableRipple, Dialog } from 'react-native-paper';
+import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import theme from '@/theme';
 import { version } from '@/../package.json';
 import { SettingsDev } from './SettingsDev';
@@ -18,7 +18,7 @@ export function SettingsScreen() {
   };
 
   return (
-    <SafeAreaView style={ styles.container }>
+    <SafeAreaView>
       <ScrollView>
         <SettingsNotifications { ...sectionProps } />
         <SettingsAppearance { ...sectionProps } />
@@ -34,14 +34,15 @@ export function SettingsScreen() {
         </TouchableRipple>
       </ScrollView>
 
-      <Modal
+      <Dialog
         visible={ isModalVisible }
         onDismiss={ () => setIsModalVisible(false) }
       >
-        <View style={ styles.modalContainer }>
+        <Dialog.Title>Dev settings</Dialog.Title>
+        <Dialog.Content>
           <SettingsDev { ...sectionProps } />
-        </View>
-      </Modal>
+        </Dialog.Content>
+      </Dialog>
 
       <Snackbar
         visible={ !!snackBarMessage }
@@ -55,13 +56,10 @@ export function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    minHeight: '100%',
-  },
   heading: {
-    marginTop   : 30,
-    marginBottom: 15,
-    paddingLeft : 15,
+    marginTop   : theme.spacing.extraLarge,
+    marginBottom: theme.spacing.medium,
+    paddingLeft : theme.spacing.medium,
   },
   footerContainer: {
     alignItems: 'center',
@@ -69,13 +67,5 @@ const styles = StyleSheet.create({
   },
   footerText: {
     color: theme.colors.neutral50,
-  },
-  modalContainer: {
-    alignSelf      : 'center',
-    padding        : theme.spacing.medium,
-    borderRadius   : 4,
-    width          : '95%',
-    minHeight      : '50%',
-    backgroundColor: theme.colors.elevation.level5,
   },
 });

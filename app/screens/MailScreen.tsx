@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import theme from '@/theme';
-import { EmptyState } from '@/components/EmptyState';
+import { EmptyState } from '@/components';
 
 export function MailScreen() {
   return (
