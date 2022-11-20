@@ -10,11 +10,16 @@ export interface IActuality {
   name: string;
   data: string;
   updatedAt: string;
-  updatedBy: IActualityUpdater | null
+  updatedBy: IActualityUpdater | null;
 }
 
 export interface IActualitySection {
   _id: string;
   actualities: [IActuality];
   name: string;
+}
+
+export interface IActualityBottomSheetProps {
+  actuality: IActuality;
+  onClose: () => void;
 }

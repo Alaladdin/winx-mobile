@@ -1,38 +1,24 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { List, Text, ActivityIndicator } from 'react-native-paper';
-import { ScrollView, StyleSheet, RefreshControl, View, Image } from 'react-native';
+import { useEffect, useMemo, useState } from 'react';
+import { List } from 'react-native-paper';
+import { ScrollView, StyleSheet, RefreshControl, View } from 'react-native';
 import { map, reject } from 'lodash/collection';
-import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useQuery } from '@tanstack/react-query';
-import { api } from '@/services/api';
-import { Icon, Loader } from '@/components';
-import { IActuality, IActualitySection } from './ActualityScreen.interfaces';
-import theme from '@/theme';
-import config from '@/config';
-import { EmptyState } from '@/components/EmptyState';
+import { Icon, Loader, EmptyState } from '@/components';
 import * as storage from '@/utils/storage';
+import { useStores } from '@/models';
+import { IActuality } from '@/screens/ActualityScreen/ActualityScreen.types';
+import ActualityBottomSheet from '@/screens/ActualityScreen/ActualityBottomSheet';
 
 const OPENED_ITEMS_KEY = 'opened_actualities_sections';
 
 const folderIcon = <Icon ripperStyle={ { padding: 15 } } size={ 20 } icon="folder" />;
 const loaderScreen = <Loader />;
-const loadActualitiesSections = (): Promise<IActualitySection[]> => api.get('/getActualitiesSections')
-  .then((data) => data.sections);
-
-const loadActuality = (actualityId): Promise<IActuality> => api.get('/getActuality', { actualityId })
-  .then((data) => data.actuality);
 
 export function ActualityScreen() {
-  const [openedItems, setOpenedItems] = useState([]);
-  const [actualityId, setActualityId] = useState(null);
-  const { data, refetch, isLoading, isRefetching, isError } = useQuery(['actualities_sections'], loadActualitiesSections);
-  const { data: actualityItem } = useQuery(
-    ['actuality_item', actualityId],
-    ({ queryKey }) => loadActuality(queryKey[1]),
-    { enabled: !!actualityId }
-  );
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['50%', '100%'], []);
+  const { actualityStore } = useStores();
+  const [openedItems, setOpenedItems] = useState<string[]>([]);
+  const [openedActuality, setOpenedActuality] = useState<IActuality>(null);
+  const { data, refetch, isLoading, isRefetching, isError } = useQuery(['actualities_sections'], actualityStore.loadActualitiesSections);
   const showLoader = useMemo(() => isLoading || isRefetching, [isLoading, isRefetching]);
   const showEmptyState = useMemo(() => !data || isError, [data, isError]);
 
@@ -42,27 +28,11 @@ export function ActualityScreen() {
       .then(setOpenedItems);
   }, []);
 
-  useEffect(() => {
-    if (actualityId)
-      bottomSheetRef.current.snapToIndex(0);
-  }, [actualityId]);
-
-  const renderBackdrop = useCallback(
-    (props) => (
-      <BottomSheetBackdrop
-        { ...props }
-        disappearsOnIndex={ -1 }
-        appearsOnIndex={ 1 }
-      />
-    ),
-    []
-  );
-
-  const toggleSection = (sectionIndex) => {
-    const isOpened = openedItems.includes(sectionIndex);
+  const toggleSection = (sectionId) => {
+    const isOpened = openedItems.includes(sectionId);
     const newOpenedItems = isOpened
-      ? reject(openedItems, (index) => index === sectionIndex)
-      : [...openedItems, sectionIndex];
+      ? reject(openedItems, (id) => id === sectionId)
+      : [...openedItems, sectionId];
 
     setOpenedItems(newOpenedItems);
     storage.save(OPENED_ITEMS_KEY, newOpenedItems);
@@ -81,19 +51,19 @@ export function ActualityScreen() {
         refreshControl={ <RefreshControl refreshing={ isRefetching } onRefresh={ refetch } /> }
       >
         <List.Section>
-          { map(data, (section, index) => (
+          { map(data, (section) => (
             <List.Accordion
-              key={ index }
+              key={ section._id }
               title={ section.name }
               left={ () => folderIcon }
-              expanded={ openedItems.includes(index) }
-              onPress={ () => toggleSection(index) }
+              expanded={ openedItems.includes(section._id) }
+              onPress={ () => toggleSection(section._id) }
             >
               { map(section.actualities, (actuality, childIndex) => (
                 <List.Item
                   key={ childIndex }
                   title={ actuality.name }
-                  onPress={ () => setActualityId(actuality._id) }
+                  onPress={ () => setOpenedActuality(actuality) }
                 />
               ))}
             </List.Accordion>
@@ -101,31 +71,10 @@ export function ActualityScreen() {
         </List.Section>
       </ScrollView>
 
-      <BottomSheet
-        ref={ bottomSheetRef }
-        index={ -1 }
-        snapPoints={ snapPoints }
-        backdropComponent={ renderBackdrop }
-        backgroundStyle={ styles.sheetBackgroundColor }
-        onClose={ () => setActualityId(null) }
-        enablePanDownToClose
-      >
-        {
-          actualityItem ? (
-            <BottomSheetScrollView style={ [styles.sheetContainer, styles.sheetBackgroundColor] }>
-              <View style={ styles.sheetHeader }>
-                <Text>{ actualityItem.updatedBy.displayName || actualityItem.updatedBy.username || 'DELETED' }</Text>
-                <Image source={ { uri: config.avatarBaseUrl + actualityItem.updatedBy.avatar, width: 32, height: 32 } } />
-              </View>
-              <Text>{ actualityItem.data || 'No content :(' }</Text>
-            </BottomSheetScrollView>
-          ) : (
-            <View style={ { marginTop: 150 } }>
-              <ActivityIndicator size="large" animating />
-            </View>
-          )
-        }
-      </BottomSheet>
+      <ActualityBottomSheet
+        actuality={ openedActuality }
+        onClose={ () => setOpenedActuality(null) }
+      />
     </View>
   );
 }
@@ -133,18 +82,5 @@ export function ActualityScreen() {
 const styles = StyleSheet.create({
   container: {
     height: '100%',
-  },
-  sheetContainer: {
-    padding     : 20,
-    marginBottom: 20,
-  },
-  sheetBackgroundColor: {
-    backgroundColor: theme.colors.elevation.level3,
-  },
-  sheetHeader: {
-    flexDirection : 'row',
-    justifyContent: 'space-between',
-    alignItems    : 'center',
-    marginBottom  : 20,
   },
 });

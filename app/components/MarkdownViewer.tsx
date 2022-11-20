@@ -1,14 +1,18 @@
 import Markdown from 'react-native-markdown-display';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, ViewStyle } from 'react-native';
+import { merge } from 'lodash';
 import theme from '@/theme';
 
 interface IMarkdownViewerProps {
   children: string;
+  style?: ViewStyle;
 }
 
-export function MarkdownViewer({ children }: IMarkdownViewerProps) {
+export function MarkdownViewer({ style, children }: IMarkdownViewerProps) {
+  const markdownStyles = merge({}, styles, { body: style });
+
   return (
-    <Markdown style={ styles } mergeStyle={ false }>
+    <Markdown style={ markdownStyles } mergeStyle={ false }>
       { children }
     </Markdown>
   );
