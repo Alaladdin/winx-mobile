@@ -3,17 +3,22 @@ import { StyleSheet, TextStyle } from 'react-native';
 import { useMemo } from 'react';
 import theme from '@/theme';
 
-export function BarsMark({ mark }) {
+interface IBarsMarkProps {
+  mark: string;
+}
+
+export function BarsMark({ mark }: IBarsMarkProps) {
   const markStyles = useMemo(() => {
+    const markInt = Math.round(parseInt(mark, 10)) || mark;
     const stylesList: TextStyle[] = [styles.markItem];
 
-    if (mark !== '⋆')
+    if (markInt !== '⋆')
       stylesList.push(styles.bgRed);
 
-    if (mark === 4)
+    if (markInt > 2)
       stylesList.push(styles.bgYellow);
 
-    if (mark === 5)
+    if (markInt > 3)
       stylesList.push(styles.bgGreen);
 
     return stylesList;
