@@ -70,7 +70,7 @@ export const BarsScreen = observer(() => {
     return <EmptyState buttonProps={ { onPress: refetch } } />;
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={ { flex: 1 } }>
       <ScrollView
         contentContainerStyle={ styles.container }
         refreshControl={ <RefreshControl refreshing={ isRefetching } onRefresh={ refetch } /> }

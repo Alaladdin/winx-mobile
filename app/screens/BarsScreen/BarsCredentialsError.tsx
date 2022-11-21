@@ -14,7 +14,7 @@ export function BarsCredentialsError({ onDeleteUser }) {
         </Text>
       </View>
       <Button mode="contained-tonal" onPress={ onDeleteUser }>
-        Delete user
+        Delete mpei user
       </Button>
     </View>
   );

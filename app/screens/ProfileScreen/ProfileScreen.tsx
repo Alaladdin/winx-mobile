@@ -95,7 +95,7 @@ export function ProfileScreen({ navigation }) {
 
         <View style={ { marginTop: 20, width: '100%' } }>
           <Button
-            text="Remove account"
+            text="Delete account"
             variant="danger"
             loading={ isRemoving }
             disabled={ isRemoving }
@@ -116,7 +116,7 @@ export function ProfileScreen({ navigation }) {
       <ConfirmActionDialog
         visible={ showConfirmRemoveAccountModal }
         title="Warning"
-        body="Are u sure want to delete your account?"
+        body="Are you sure want to delete your account?"
         onConfirm={ removeUser }
         onDismiss={ () => setShowConfirmRemoveAccountModal(false) }
       />
