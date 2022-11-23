@@ -55,10 +55,10 @@ const getScheduleRequestOptions = (): IRequestConfig => {
   const finish = moment().add(2, 'months').endOf('isoWeek').format(config.serverDateFormat);
 
   return {
-    method       : 'get',
-    url          : '/getSchedule',
-    params       : { start, finish },
-    afterResponse: formatScheduleData,
+    method    : 'get',
+    url       : '/getSchedule',
+    params    : { start, finish },
+    onResponse: formatScheduleData,
   };
 };
 

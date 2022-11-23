@@ -37,7 +37,7 @@ const getParsedError = (error: AxiosError): string | any => {
 
 export function getApiProblem(error: AxiosError): ApiProblem {
   const problem = getProblemFromError(error);
-  const { status } = error.response;
+  const { status } = error.response || {};
   const errorMessage = getParsedError(error);
 
   if (['NETWORK_ERROR', 'CONNECTION_ERROR'].includes(problem))

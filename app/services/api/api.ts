@@ -19,7 +19,7 @@ const onError = async (error: AxiosError): Promise<ApiProblem> => {
 
 const apiInstance = axios.create({
   baseURL: config.apiUrl,
-  timeout: 10000,
+  timeout: 20000,
   headers: {
     authToken: config.authToken,
   },

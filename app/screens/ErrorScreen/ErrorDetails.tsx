@@ -15,7 +15,7 @@ export function ErrorDetails({ error, errorInfo: { componentStack }, onReset }: 
   return (
     <View style={ $contentContainer }>
       <View style={ $topSection }>
-        <Icon ripperStyle={ $icon } icon="bug" size={ 64 } />
+        <Icon style={ $icon } icon="bug" size={ 64 } />
         <Text style={ $heading }>
           { translate('errorScreen.title') }
         </Text>
