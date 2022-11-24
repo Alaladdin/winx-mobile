@@ -17,24 +17,22 @@ const renderIcon = (params: { route, color: string, focused: boolean }) => {
   const { route, color } = params;
 
   return (
-    <View style={ styles.iconContainer }>
-      <Icon
-        icon={ route.icon }
-        color={ color }
-        size={ 16 }
-      />
-    </View>
+    <Icon
+      icon={ route.icon }
+      color={ color }
+      size={ 16 }
+    />
   );
 };
 
 export const MainScreen = observer(() => {
-  const { settingsStore } = useStores();
-  const { authStore } = useStores();
+  const { authStore, settingsStore } = useStores();
   const userScope = authStore.user.scope;
-  const currentRoutes = useMemo(
-    () => reject(routesList, ({ scope }) => scope && !userScope.includes(scope)),
-    [userScope]
-  );
+  const currentRoutes = useMemo(() => reject(routesList, ({ scope }) => {
+    if (!scope) return false;
+
+    return !userScope.includes(scope);
+  }), [userScope]);
 
   return (
     <Tab.Navigator

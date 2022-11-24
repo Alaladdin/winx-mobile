@@ -1,10 +1,8 @@
 import { useMemo } from 'react';
 import { Appbar, Avatar } from 'react-native-paper';
-import { observer } from 'mobx-react';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { StyleSheet, View } from 'react-native';
+import { applicationName } from 'expo-application';
 import config from '@/config';
-import appConfig from '../../app.config';
 import { Icon } from '@/components/Icon';
 
 export interface HeaderProps {
@@ -14,9 +12,8 @@ export interface HeaderProps {
   onAvatarPress?: () => void;
 }
 
-export const Header = observer((props: HeaderProps) => {
-  const { avatar, icon, onBackPress, onAvatarPress } = props;
-  const headerIcon = useMemo(() => <View style={ styles.iconContainer }><Icon icon={ icon } /></View>, [icon]);
+export function Header({ avatar, icon, onBackPress, onAvatarPress }: HeaderProps) {
+  const headerIcon = useMemo(() => <Icon icon={ icon } />, [icon]);
   const headerAvatar = useMemo(() => (
     <Avatar.Image
       size={ 24 }
@@ -28,29 +25,24 @@ export const Header = observer((props: HeaderProps) => {
     />
   ), [avatar]);
 
+  const headerAction = useMemo(() => {
+    if (!icon && !avatar) return null;
+
+    return (
+      <Appbar.Action
+        icon={ () => (avatar ? headerAvatar : headerIcon) }
+        onPress={ onAvatarPress }
+      />
+    );
+  }, [avatar, icon, headerAvatar, headerIcon, onAvatarPress]);
+
   return (
     <Appbar.Header statusBarHeight={ 0 } elevated>
       { !!onBackPress && (<Appbar.BackAction onPress={ onBackPress } />) }
 
-      <Appbar.Content title={ appConfig.name } />
+      <Appbar.Content title={ applicationName } />
 
-      {
-          (!!avatar || !!icon) && (
-          <Appbar.Action
-            icon={ () => (avatar ? headerAvatar : headerIcon) }
-            onPress={ onAvatarPress }
-          />
-          )
-        }
-
+      { headerAction }
     </Appbar.Header>
   );
-});
-
-const styles = StyleSheet.create({
-  iconContainer: {
-    flex          : 1,
-    justifyContent: 'center',
-    alignItems    : 'center',
-  },
-});
+}
