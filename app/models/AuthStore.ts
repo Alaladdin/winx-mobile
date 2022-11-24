@@ -8,7 +8,7 @@ const User = types.model('User', {
   _id         : types.identifier,
   username    : types.string,
   displayName : types.maybeNull(types.string),
-  avatar      : types.maybeNull(types.string),
+  avatar      : types.string,
   barsUser    : types.maybeNull(types.string),
   scope       : types.array(types.string),
   lastLoggedAt: types.maybeNull(types.string),

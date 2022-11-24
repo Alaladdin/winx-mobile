@@ -4,10 +4,10 @@ import moment from 'moment/moment';
 import api from '@/services/api';
 
 const Updater = types.model('ActualityUpdater', {
-  username   : types.string,
-  displayName: types.maybeNull(types.string),
+  username   : types.maybeNull(types.string),
+  displayName: types.string,
   avatar     : types.string,
-  scope      : types.array(types.string),
+  scope      : types.maybeNull(types.array(types.string)),
 });
 
 const Actuality = types.model('Actuality', {
@@ -15,13 +15,31 @@ const Actuality = types.model('Actuality', {
   name     : types.string,
   data     : types.string,
   updatedAt: types.string,
-  updatedBy: types.maybeNull(Updater),
+  updatedBy: Updater,
 });
 
 const ActualitySection = types.model('ActualitySection', {
   _id        : types.identifier,
   name       : types.string,
   actualities: types.array(Actuality),
+});
+
+const getFormattedActualtiesSections = (sections) => map(sections, (section) => {
+  const actualities = map(section.actualities, (actuality) => {
+    const { updatedAt, updatedBy } = actuality;
+
+    return {
+      ...actuality,
+      updatedAt: moment(updatedAt).format('DD.MM'),
+      updatedBy: {
+        ...updatedBy,
+        avatar     : updatedBy?.avatar || 'avatar/error.png',
+        displayName: updatedBy?.displayName || updatedBy?.username || 'DELETED',
+      },
+    };
+  });
+
+  return { ...section, actualities };
 });
 
 export const ActualityStoreModel = types
@@ -38,18 +56,7 @@ export const ActualityStoreModel = types
     loadActualitiesSections() {
       return api.get('/getActualitiesSections')
         .then((data) => {
-          const sections = map(data.sections, (section) => {
-            const actualities = map(section.actualities, (actuality) => ({
-              ...actuality,
-              updatedBy: {
-                ...actuality.updatedBy,
-                displayName: actuality.updatedBy?.displayName || actuality.updatedBy.username || 'DELETED',
-              },
-              updatedAt: moment(actuality.updatedAt).format('DD.mm'),
-            }));
-
-            return { ...section, actualities };
-          });
+          const sections = getFormattedActualtiesSections(data.sections);
 
           store.setActualitiesSections(sections);
 
