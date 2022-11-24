@@ -1,4 +1,3 @@
-import { StyleSheet, View } from 'react-native';
 import { observer } from 'mobx-react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { map, reject } from 'lodash/collection';
@@ -39,18 +38,16 @@ export const MainScreen = observer(() => {
       backBehavior="history"
       initialRouteName={ settingsStore.initialRoute }
     >
-      {
-            map(currentRoutes, (route) => (
-              <Tab.Screen
-                name={ route.title }
-                key={ route.name }
-                getComponent={ () => route.component }
-                options={ {
-                  tabBarIcon: (params) => renderIcon({ ...params, route }),
-                } }
-              />
-            ))
-        }
+      { map(currentRoutes, (route) => (
+        <Tab.Screen
+          key={ route.name }
+          name={ route.title }
+          getComponent={ () => route.component }
+          options={ {
+            tabBarIcon: (params) => renderIcon({ ...params, route }),
+          } }
+        />
+      )) }
     </Tab.Navigator>
   );
 });
@@ -87,11 +84,4 @@ export const MainNavigator = observer(() => {
       }
     </Stack.Navigator>
   );
-});
-
-const styles = StyleSheet.create({
-  iconContainer: {
-    flex          : 1,
-    justifyContent: 'center',
-  },
 });
