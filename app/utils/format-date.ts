@@ -1,20 +1,8 @@
-import { Locale, format, parseISO } from 'date-fns';
-import I18n from 'i18n-js';
-import en from 'date-fns/locale/en-US';
-import ru from 'date-fns/locale/ru';
+import moment from 'moment';
+import config from '@/config';
 
-type Options = Parameters<typeof format>[2]
+export const formatDate = (date?: string, dateFormat?:string, toFormat?:string): string => {
+  const outputFormat = toFormat || config.defaultDateFormat;
 
-const getLocale = (): Locale => {
-  const locale = I18n.currentLocale().split('-')[0];
-  return locale === 'ru' ? ru : en;
-};
-
-export const formatDate = (date: string, dateFormat?: string, options?: Options) => {
-  const locale = getLocale();
-  const dateOptions = {
-    ...options,
-    locale,
-  };
-  return format(parseISO(date), dateFormat ?? 'MMM dd, yyyy', dateOptions);
+  return moment(date, dateFormat).format(outputFormat);
 };
