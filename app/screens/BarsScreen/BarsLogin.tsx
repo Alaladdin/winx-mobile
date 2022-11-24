@@ -5,8 +5,13 @@ import theme from '@/theme';
 import { useStores } from '@/models';
 import { useRequest } from '@/hooks/useRequest';
 import { Icon } from '@/components';
+import { IBarsUser } from '@/screens/BarsScreen/BarsScreen.interfaces';
 
-export function BarsLogin() {
+interface IBarsLogin {
+  onLoginSuccess?: (data: IBarsUser) => void
+}
+
+export function BarsLogin({ onLoginSuccess }: IBarsLogin) {
   const { authStore } = useStores();
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -27,6 +32,7 @@ export function BarsLogin() {
     setBarsUser()
       .then((data) => {
         authStore.setUser({ barsUser: data.barsUser._id });
+        onLoginSuccess?.(data);
       })
       .catch(() => {
         setIsError(true);
@@ -43,7 +49,7 @@ export function BarsLogin() {
       </Text>
 
       <View style={ styles.banner }>
-        <Icon icon="info-circle" ripperStyle={ { marginRight: theme.spacing.extraSmall } } />
+        <Icon icon="info-circle" style={ { marginRight: theme.spacing.extraSmall } } />
         <Text>Your data will be encrypted</Text>
       </View>
 
