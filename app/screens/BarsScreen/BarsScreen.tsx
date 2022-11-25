@@ -28,7 +28,7 @@ export const BarsScreen = observer(() => {
   const { setSnackBarOptions } = useStores().mainStore;
   const refreshBarsUserData = useRequest({ method: 'post', url: '/bars/user/refreshMarks' });
   const removeBarsUser = useRequest({ method: 'delete', url: '/bars/user' });
-  const onRequestError = ({ message }) => setSnackBarOptions(message, 'error');
+  const onRequestError = useCallback(({ message }) => setSnackBarOptions(message, 'error'), [setSnackBarOptions]);
   const loadBarsUserData = useRequest({ method: 'get', url: '/bars/user', onResponse: formatBarsUserData, onError: onRequestError });
   const { data, refetch, isLoading, isRefetching, isError } = useQuery(['/bars/user', user.barsUser], {
     enabled: !!user.barsUser,
@@ -68,14 +68,17 @@ export const BarsScreen = observer(() => {
     setIsUpdating(true);
 
     refreshBarsUserData()
-      .catch(onRequestError);
-  }, [data, refreshBarsUserData]);
+      .catch((err) => {
+        onRequestError(err);
+        setIsUpdating(false);
+      });
+  }, [data, refreshBarsUserData, onRequestError]);
 
   const removeBarsUserData = useCallback(() => {
     removeBarsUser()
       .then(() => setUser({ barsUser: null }))
       .catch(onRequestError);
-  }, [setUser, removeBarsUser]);
+  }, [setUser, removeBarsUser, onRequestError]);
 
   if (!user.barsUser)
     return <BarsLogin onLoginSuccess={ () => setIsUpdating(true) } />;
