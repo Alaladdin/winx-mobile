@@ -4,17 +4,17 @@ import api from '@/services/api';
 import { remove, saveString } from '@/utils/storage';
 
 const User = types.model('User', {
-  token       : types.maybeNull(types.string),
+  token       : types.string,
   _id         : types.identifier,
   username    : types.string,
   displayName : types.maybeNull(types.string),
   avatar      : types.string,
   barsUser    : types.maybeNull(types.string),
   scope       : types.array(types.string),
-  lastLoggedAt: types.maybeNull(types.string),
-  lastOnline  : types.maybeNull(types.string),
-  createdAt   : types.maybeNull(types.string),
-  updatedAt   : types.maybeNull(types.string),
+  lastLoggedAt: types.string,
+  lastOnline  : types.string,
+  createdAt   : types.string,
+  updatedAt   : types.string,
 });
 
 export const AuthStoreModel = types
@@ -25,14 +25,14 @@ export const AuthStoreModel = types
   })
   .views((store) => ({
     get user() {
-      const currentUser = store._user || { scope: ['guest'] };
+      const { _id, scope } = store._user || {};
 
       return {
-        ...currentUser,
-        avatar    : currentUser.avatar || 'avatar/default',
-        isAdmin   : currentUser.scope.includes('admin') || currentUser.scope.includes('owner'),
-        isOwner   : currentUser.scope.includes('owner'),
-        isLoggedIn: !!currentUser._id,
+        scope     : ['guest'],
+        ...store._user,
+        isAdmin   : scope?.includes('admin') || scope?.includes('owner'),
+        isOwner   : scope?.includes('owner'),
+        isLoggedIn: !!_id,
       };
     },
     get lastUsername() {
