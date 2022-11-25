@@ -4,6 +4,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+import { observer } from 'mobx-react';
 import { MainNavigator } from '@/navigators';
 import theme from '@/theme';
 import Config from '@/config';
@@ -13,6 +14,7 @@ import { setupReactotron } from '@/services/reactotron';
 import 'expo-dev-client';
 import '@/utils/ignore-warnings';
 import { setupIcons, setupNotifications, setupReactQuery } from '@/setup';
+import { SnackBar } from '@/components';
 
 setupReactotron({
   clearOnLoad    : true,
@@ -24,14 +26,16 @@ setupReactotron({
 
 SplashScreen.preventAutoHideAsync();
 
-export default function App() {
-  const { queryClient, persisterStorage } = setupReactQuery();
+export default observer(() => {
   setupIcons();
   setupNotifications();
 
+  const { queryClient, persisterStorage } = setupReactQuery();
   const { rootStore, rehydrated } = useInitialRootStore(() => {
-    if (rootStore.authStore.user.token)
-      rootStore.authStore.loadUser();
+    const { authStore } = rootStore;
+
+    if (authStore.user.token)
+      authStore.loadUser();
 
     SplashScreen.hideAsync();
   });
@@ -55,13 +59,18 @@ export default function App() {
               <NavigationContainer theme={ theme }>
                 <MainNavigator />
               </NavigationContainer>
+              <SnackBar
+                style={ styles.snackBar }
+                { ...rootStore.mainStore.snackBarOptions }
+                onDismiss={ rootStore.mainStore.hideSnackBar }
+              />
             </ErrorBoundary>
           </PaperProvider>
         </GestureHandlerRootView>
       </RootStoreProvider>
     </PersistQueryClientProvider>
   );
-}
+});
 
 const styles = StyleSheet.create({
   statusBar: {
@@ -69,5 +78,8 @@ const styles = StyleSheet.create({
   },
   screen: {
     height: '100%',
+  },
+  snackBar: {
+    marginBottom: 90,
   },
 });

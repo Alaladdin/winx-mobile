@@ -7,10 +7,11 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { ISettingSection } from './ISettingSection';
 import { Icon } from '@/components';
 import { reportCrash } from '@/utils/crash-reporting';
+import { useStores } from '@/models';
 
 const parseUpdateError = (e) => {
   if (e.code === 'ERR_UPDATES_DISABLED')
-    return 'Updated disabled';
+    return 'Updates disabled';
 
   if (e.code === 'ERR_UPDATES_RELOAD')
     return 'App reload error';
@@ -24,7 +25,8 @@ const parseUpdateError = (e) => {
   return 'Unknown error';
 };
 
-export function SettingsUpdates({ headingStyle, setSnackBarMessage }: ISettingSection) {
+export function SettingsUpdates({ headingStyle }: ISettingSection) {
+  const { setSnackBarOptions } = useStores().mainStore;
   const [checkButtonText, setCheckButtonText] = useState<string>('check');
   const [checkButtonIcon, setCheckButtonIcon] = useState<IconProp>('sync');
   const [hasUpdates, setHasUpdates] = useState<boolean>(false);
@@ -59,10 +61,10 @@ export function SettingsUpdates({ headingStyle, setSnackBarMessage }: ISettingSe
         setHasUpdates(result.isAvailable);
 
         if (!result.isAvailable)
-          setSnackBarMessage('Last version installed already');
+          setSnackBarOptions('Last version installed already', 'success');
       })
       .catch((e) => {
-        setSnackBarMessage(parseUpdateError(e));
+        setSnackBarOptions(parseUpdateError(e), 'error');
         reportCrash(e);
       })
       .finally(() => {
@@ -76,7 +78,7 @@ export function SettingsUpdates({ headingStyle, setSnackBarMessage }: ISettingSe
     return Updates.fetchUpdateAsync()
       .then(Updates.reloadAsync)
       .catch((e) => {
-        setSnackBarMessage(parseUpdateError(e));
+        setSnackBarOptions(parseUpdateError(e), 'error');
         reportCrash(e);
       })
       .finally(() => {
