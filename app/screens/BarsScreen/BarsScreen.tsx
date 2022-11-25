@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import { Text, Snackbar, ProgressBar } from 'react-native-paper';
+import { Text, ProgressBar } from 'react-native-paper';
 import moment from 'moment';
 import { useQuery } from '@tanstack/react-query';
 import { observer } from 'mobx-react';
@@ -25,15 +25,15 @@ const formatBarsUserData = (data): IBarsUser => {
 
 export const BarsScreen = observer(() => {
   const { user, setUser } = useStores().authStore;
+  const { setSnackBarOptions } = useStores().mainStore;
   const refreshBarsUserData = useRequest({ method: 'post', url: '/bars/user/refreshMarks' });
   const removeBarsUser = useRequest({ method: 'delete', url: '/bars/user' });
-  const onRequestError = ({ message }) => setSnackBarMessage(message);
+  const onRequestError = ({ message }) => setSnackBarOptions(message, 'error');
   const loadBarsUserData = useRequest({ method: 'get', url: '/bars/user', onResponse: formatBarsUserData, onError: onRequestError });
   const { data, refetch, isLoading, isRefetching, isError } = useQuery(['/bars/user', user.barsUser], {
     enabled: !!user.barsUser,
     queryFn: loadBarsUserData,
   });
-  const [snackBarMessage, setSnackBarMessage] = useState<string>('');
   const [lastUpdatedAt, setLastUpdatedAt] = useState<string>(null);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [showConfirmRemoveAccountModal, setShowConfirmRemoveAccountModal] = useState<boolean>(false);
@@ -112,14 +112,6 @@ export const BarsScreen = observer(() => {
 
         <BarsMarksList marks={ data.marks } />
       </ScrollView>
-
-      <Snackbar
-        visible={ !!snackBarMessage }
-        duration={ 3000 }
-        onDismiss={ () => setSnackBarMessage('') }
-      >
-        { snackBarMessage }
-      </Snackbar>
 
       <ConfirmActionDialog
         visible={ showConfirmRemoveAccountModal }
