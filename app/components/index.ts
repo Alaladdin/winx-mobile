@@ -6,6 +6,7 @@ import { Select } from './Select';
 import { Loader } from './Loader';
 import { MarkdownViewer } from './MarkdownViewer';
 import { EmptyState } from './EmptyState';
+import { SnackBar } from './SnackBar';
 
 export {
   Header,
@@ -13,6 +14,7 @@ export {
   Icon,
   Select,
   Loader,
+  SnackBar,
   MarkdownViewer,
   EmptyState,
   ConfirmActionDialog

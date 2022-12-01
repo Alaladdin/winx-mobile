@@ -1,4 +1,3 @@
-import { StyleSheet, View } from 'react-native';
 import { observer } from 'mobx-react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { map, reject } from 'lodash/collection';
@@ -17,42 +16,38 @@ const renderIcon = (params: { route, color: string, focused: boolean }) => {
   const { route, color } = params;
 
   return (
-    <View style={ styles.iconContainer }>
-      <Icon
-        icon={ route.icon }
-        color={ color }
-        size={ 16 }
-      />
-    </View>
+    <Icon
+      icon={ route.icon }
+      color={ color }
+      size={ 16 }
+    />
   );
 };
 
 export const MainScreen = observer(() => {
-  const { settingsStore } = useStores();
-  const { authStore } = useStores();
+  const { authStore, settingsStore } = useStores();
   const userScope = authStore.user.scope;
-  const currentRoutes = useMemo(
-    () => reject(routesList, ({ scope }) => scope && !userScope.includes(scope)),
-    [userScope]
-  );
+  const currentRoutes = useMemo(() => reject(routesList, ({ scope }) => {
+    if (!scope) return false;
+
+    return !userScope.includes(scope);
+  }), [userScope]);
 
   return (
     <Tab.Navigator
       backBehavior="history"
       initialRouteName={ settingsStore.initialRoute }
     >
-      {
-            map(currentRoutes, (route) => (
-              <Tab.Screen
-                name={ route.title }
-                key={ route.name }
-                getComponent={ () => route.component }
-                options={ {
-                  tabBarIcon: (params) => renderIcon({ ...params, route }),
-                } }
-              />
-            ))
-        }
+      { map(currentRoutes, (route) => (
+        <Tab.Screen
+          key={ route.name }
+          name={ route.title }
+          getComponent={ () => route.component }
+          options={ {
+            tabBarIcon: (params) => renderIcon({ ...params, route }),
+          } }
+        />
+      )) }
     </Tab.Navigator>
   );
 });
@@ -89,11 +84,4 @@ export const MainNavigator = observer(() => {
       }
     </Stack.Navigator>
   );
-});
-
-const styles = StyleSheet.create({
-  iconContainer: {
-    flex          : 1,
-    justifyContent: 'center',
-  },
 });

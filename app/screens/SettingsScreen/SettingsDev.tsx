@@ -2,11 +2,12 @@ import { Button, List } from 'react-native-paper';
 import React, { useCallback, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import * as Notifications from 'expo-notifications';
-import { ISettingSection } from './ISettingSection';
 import { reportCrash } from '@/utils/crash-reporting';
 import { clear } from '@/utils/storage';
+import { useStores } from '@/models';
 
-export function SettingsDev({ setSnackBarMessage }: ISettingSection) {
+export function SettingsDev() {
+  const { setSnackBarOptions } = useStores().mainStore;
   const sendNotification = async () => {
     await Notifications.scheduleNotificationAsync({
       content: {
@@ -21,12 +22,12 @@ export function SettingsDev({ setSnackBarMessage }: ISettingSection) {
   const clearStorage = useCallback(() => {
     clear()
       .then(() => {
-        setSnackBarMessage('Now, you need to reload app');
+        setSnackBarOptions('Now, you need to reload app', 'success');
       })
       .catch(() => {
-        setSnackBarMessage('Storage clearing error');
+        setSnackBarOptions('Storage clearing error', 'error');
       });
-  }, []);
+  }, [setSnackBarOptions]);
 
   const sendNotificationButton = useMemo(() => (
     <Button onPress={ sendNotification }>Send</Button>
@@ -34,7 +35,7 @@ export function SettingsDev({ setSnackBarMessage }: ISettingSection) {
 
   const clearStorageButton = useMemo(() => (
     <Button onPress={ clearStorage }>Clear</Button>
-  ), []);
+  ), [clearStorage]);
 
   return (
     <View>

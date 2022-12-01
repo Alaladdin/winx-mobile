@@ -3,7 +3,7 @@ import { List } from 'react-native-paper';
 import { ScrollView, StyleSheet, RefreshControl, View } from 'react-native';
 import { map, reject } from 'lodash/collection';
 import { useQuery } from '@tanstack/react-query';
-import { Icon, Loader, EmptyState } from '@/components';
+import { Loader, EmptyState } from '@/components';
 import * as storage from '@/utils/storage';
 import { useStores } from '@/models';
 import { IActuality } from '@/screens/ActualityScreen/ActualityScreen.types';
@@ -11,14 +11,13 @@ import ActualityBottomSheet from '@/screens/ActualityScreen/ActualityBottomSheet
 
 const OPENED_ITEMS_KEY = 'opened_actualities_sections';
 
-const folderIcon = <Icon ripperStyle={ { padding: 15 } } size={ 20 } icon="folder" />;
 const loaderScreen = <Loader />;
 
 export function ActualityScreen() {
-  const { actualityStore } = useStores();
+  const { loadActualitiesSections } = useStores().actualityStore;
   const [openedItems, setOpenedItems] = useState<string[]>([]);
   const [openedActuality, setOpenedActuality] = useState<IActuality>(null);
-  const { data, refetch, isLoading, isRefetching, isError } = useQuery(['actualities_sections'], actualityStore.loadActualitiesSections);
+  const { data, refetch, isLoading, isRefetching, isError } = useQuery(['actualities_sections'], loadActualitiesSections);
   const showLoader = useMemo(() => isLoading || isRefetching, [isLoading, isRefetching]);
   const showEmptyState = useMemo(() => !data || isError, [data, isError]);
 
@@ -54,14 +53,14 @@ export function ActualityScreen() {
           { map(data, (section) => (
             <List.Accordion
               key={ section._id }
-              title={ section.name }
-              left={ () => folderIcon }
+              title={ `${section.name} (${section.actualities.length})` }
               expanded={ openedItems.includes(section._id) }
               onPress={ () => toggleSection(section._id) }
             >
               { map(section.actualities, (actuality, childIndex) => (
                 <List.Item
                   key={ childIndex }
+                  description={ `updated at ${actuality.updatedAt}` }
                   title={ actuality.name }
                   onPress={ () => setOpenedActuality(actuality) }
                 />

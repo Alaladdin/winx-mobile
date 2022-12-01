@@ -1,15 +1,22 @@
-import { Button as ButtonComponent, ButtonProps } from 'react-native-paper';
-import { useMemo } from 'react';
+import { Button as ButtonComponent, IconButton, ButtonProps, IconButtonProps } from 'react-native-paper';
+import { useCallback, useMemo } from 'react';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import theme from '@/theme';
+import { Icon } from '@/components/Icon';
 
-type IButtonVariant = 'danger'
+type ButtonVariant = 'danger'
 
-interface IButtonProps extends Omit<ButtonProps, 'theme' | 'children'> {
+interface IButtonProps extends Omit<ButtonProps, 'theme' | 'children' | 'icon'> {
   text: string;
-  variant?: IButtonVariant;
+  variant?: ButtonVariant;
 }
 
-export function Button({ text, variant, ...props }: IButtonProps) {
+interface IIconButtonProps extends Omit<IconButtonProps, 'theme' | 'icon'> {
+  icon?: IconProp;
+  variant?: ButtonVariant;
+}
+
+export function Button({ variant, icon, text, ...props }: IIconButtonProps| IButtonProps) {
   const variantStyle = useMemo(() => {
     const variantData = { color: '', buttonColor: '' };
 
@@ -18,6 +25,22 @@ export function Button({ text, variant, ...props }: IButtonProps) {
 
     return variantData;
   }, [variant]);
+
+  const buttonIcon = useCallback(({ color }) => {
+    if (!icon) return null;
+
+    return <Icon icon={ icon } color={ color } size={ 14 } />;
+  }, [icon]);
+
+  if (!text) {
+    return (
+      <IconButton
+        { ...props }
+        icon={ buttonIcon }
+        mode="contained"
+      />
+    );
+  }
 
   return (
     <ButtonComponent

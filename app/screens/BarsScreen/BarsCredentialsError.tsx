@@ -1,21 +1,18 @@
 import { StyleSheet, View } from 'react-native';
-import { Button, Text } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import React from 'react';
 import theme from '@/theme';
 import { Icon } from '@/components';
 
-export function BarsCredentialsError({ onDeleteUser }) {
+export function BarsCredentialsError() {
   return (
     <View style={ styles.errorContainer }>
       <View style={ styles.headerContainer }>
-        <Icon icon="triangle-exclamation" color={ theme.colors.rose[400] } ripperStyle={ styles.icon } />
+        <Icon icon="triangle-exclamation" color={ theme.colors.rose[400] } style={ styles.icon } />
         <Text variant="titleLarge" style={ { color: theme.colors.rose[400] } }>
           Credentials error
         </Text>
       </View>
-      <Button mode="contained-tonal" onPress={ onDeleteUser }>
-        Delete user
-      </Button>
     </View>
   );
 }

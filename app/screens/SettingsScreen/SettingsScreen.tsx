@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, Snackbar, TouchableRipple, Dialog } from 'react-native-paper';
+import { Text, TouchableRipple, Dialog } from 'react-native-paper';
 import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import theme from '@/theme';
 import { version } from '@/../package.json';
@@ -9,13 +9,8 @@ import { SettingsAppearance } from './SettingsAppearance';
 import { SettingsNotifications } from './SettingsNotifications';
 
 export function SettingsScreen() {
-  const [snackBarMessage, setSnackBarMessage] = useState<string>('');
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const closeSnackBar = () => setSnackBarMessage('');
-  const sectionProps = {
-    headingStyle: styles.heading,
-    setSnackBarMessage,
-  };
+  const sectionProps = { headingStyle: styles.heading };
 
   return (
     <SafeAreaView>
@@ -40,17 +35,9 @@ export function SettingsScreen() {
       >
         <Dialog.Title>Dev settings</Dialog.Title>
         <Dialog.Content>
-          <SettingsDev { ...sectionProps } />
+          <SettingsDev />
         </Dialog.Content>
       </Dialog>
-
-      <Snackbar
-        visible={ !!snackBarMessage }
-        duration={ 3000 }
-        onDismiss={ closeSnackBar }
-      >
-        { snackBarMessage }
-      </Snackbar>
     </SafeAreaView>
   );
 }

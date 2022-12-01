@@ -14,8 +14,8 @@ const en = {
   },
   emptyStateComponent: {
     generic: {
-      heading: 'So empty... so sad',
-      content: 'No data found yet. Try clicking the button to refresh or reload the app.',
+      heading: 'So empty... so lonely',
+      content: 'No data found. Try clicking the button to refresh',
       button : "Let's try this again",
     },
   },

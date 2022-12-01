@@ -1,11 +1,11 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import { Text, FAB, Snackbar } from 'react-native-paper';
+import { Text, ProgressBar } from 'react-native-paper';
 import moment from 'moment';
 import { useQuery } from '@tanstack/react-query';
 import { observer } from 'mobx-react';
 import theme from '@/theme';
-import { EmptyState, Loader } from '@/components';
+import { Button, ConfirmActionDialog, EmptyState, Loader } from '@/components';
 import { useRequest } from '@/hooks/useRequest';
 import { IBarsUser } from '@/screens/BarsScreen/BarsScreen.interfaces';
 import { BarsLogin } from './BarsLogin';
@@ -13,6 +13,7 @@ import { useStores } from '@/models';
 import { BarsCredentialsError } from '@/screens/BarsScreen/BarsCredentialsError';
 import { BarsMarksList } from '@/screens/BarsScreen/BarsMarksList';
 
+const loaderScreen = <Loader />;
 const formatBarsUserData = (data): IBarsUser => {
   const { barsUser } = data;
 
@@ -22,46 +23,65 @@ const formatBarsUserData = (data): IBarsUser => {
   };
 };
 
-const loaderScreen = <Loader />;
-
 export const BarsScreen = observer(() => {
   const { user, setUser } = useStores().authStore;
-  const [snackBarMessage, setSnackBarMessage] = useState<string>('');
-  const [isMenuOpened, setMenuOpened] = useState<boolean>(false);
+  const { setSnackBarOptions } = useStores().mainStore;
   const refreshBarsUserData = useRequest({ method: 'post', url: '/bars/user/refreshMarks' });
   const removeBarsUser = useRequest({ method: 'delete', url: '/bars/user' });
-  const loadBarsUserData = useRequest({ method: 'get', url: '/bars/user', afterResponse: formatBarsUserData });
+  const onRequestError = useCallback(({ message }) => setSnackBarOptions(message, 'error'), [setSnackBarOptions]);
+  const loadBarsUserData = useRequest({ method: 'get', url: '/bars/user', onResponse: formatBarsUserData, onError: onRequestError });
   const { data, refetch, isLoading, isRefetching, isError } = useQuery(['/bars/user', user.barsUser], {
     enabled: !!user.barsUser,
     queryFn: loadBarsUserData,
   });
-
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<string>(null);
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
+  const [showConfirmRemoveAccountModal, setShowConfirmRemoveAccountModal] = useState<boolean>(false);
   const showEmptyState = useMemo(() => !data || isError, [data, isError]);
-  const closeSnackBar = () => setSnackBarMessage('');
 
-  const refreshBarsData = useCallback(() => {
+  const checkForNewData = useCallback((tiresCount = 0) => {
+    setTimeout(() => {
+      refetch()
+        .then((res) => {
+          if (res.data.updatedAt === lastUpdatedAt) {
+            if (tiresCount > 3)
+              setIsUpdating(false);
+            else
+              checkForNewData(tiresCount + 1);
+          } else {
+            setLastUpdatedAt(res.data.updatedAt);
+            setIsUpdating(false);
+          }
+        })
+        .catch(() => {
+          setIsUpdating(false);
+        });
+    }, 5 * 1000);
+  }, [refetch]);
+
+  useEffect(() => {
+    if (isUpdating) checkForNewData();
+  }, [checkForNewData, isUpdating]);
+
+  const updateBarsData = useCallback(() => {
+    setLastUpdatedAt(data.updatedAt);
+    setIsUpdating(true);
+
     refreshBarsUserData()
-      .then(() => {
-        setTimeout(refetch, 7 * 1000);
-      })
-      .catch(setSnackBarMessage);
-  }, [refetch, refreshBarsUserData]);
+      .catch((err) => {
+        onRequestError(err);
+        setIsUpdating(false);
+      });
+  }, [data, refreshBarsUserData, onRequestError]);
 
   const removeBarsUserData = useCallback(() => {
     removeBarsUser()
-      .then(() => {
-        setUser({ barsUser: null });
-      })
-      .catch(setSnackBarMessage);
-  }, [setUser, removeBarsUser]);
-
-  const menuOptions = useMemo(() => ([
-    { label: 'Delete user', icon: 'trash-can-outline', onPress: removeBarsUserData },
-    { label: 'Refresh marks', icon: 'refresh', onPress: refreshBarsData },
-  ]), [removeBarsUserData, refreshBarsData]);
+      .then(() => setUser({ barsUser: null }))
+      .catch(onRequestError);
+  }, [setUser, removeBarsUser, onRequestError]);
 
   if (!user.barsUser)
-    return <BarsLogin />;
+    return <BarsLogin onLoginSuccess={ () => setIsUpdating(true) } />;
 
   if (isLoading)
     return loaderScreen;
@@ -70,42 +90,38 @@ export const BarsScreen = observer(() => {
     return <EmptyState buttonProps={ { onPress: refetch } } />;
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={ { flex: 1 } }>
+      <ProgressBar visible={ isUpdating } indeterminate />
       <ScrollView
         contentContainerStyle={ styles.container }
-        refreshControl={ <RefreshControl refreshing={ isRefetching } onRefresh={ refetch } /> }
+        refreshControl={ <RefreshControl refreshing={ !isUpdating && isRefetching } onRefresh={ refetch } /> }
       >
         <View style={ styles.header }>
-          <Text variant="titleMedium">
-            { data.username }
-          </Text>
-          <Text>
-            { data.updatedAt }
-          </Text>
+          <View>
+            <Text variant="titleMedium">
+              { data.username }
+            </Text>
+            <Text>
+              { data.updatedAt }
+            </Text>
+          </View>
+          <View style={ { flexDirection: 'row' } }>
+            <Button icon="rotate-right" disabled={ data.isCredentialsError || isUpdating } onPress={ updateBarsData } />
+            <Button icon="trash-can" disabled={ isUpdating } onPress={ () => setShowConfirmRemoveAccountModal(true) } />
+          </View>
         </View>
 
-        {
-          !!data.isCredentialsError && (
-            <BarsCredentialsError onDeleteUser={ removeBarsUserData } />
-          )
-        }
+        { !!data.isCredentialsError && <BarsCredentialsError /> }
 
         <BarsMarksList marks={ data.marks } />
       </ScrollView>
 
-      <Snackbar
-        visible={ !!snackBarMessage }
-        duration={ 3000 }
-        onDismiss={ closeSnackBar }
-      >
-        { snackBarMessage }
-      </Snackbar>
-      <FAB.Group
-        open={ isMenuOpened }
-        icon={ isMenuOpened ? 'dots-horizontal' : 'dots-vertical' }
-        actions={ menuOptions }
-        visible
-        onStateChange={ (e) => setMenuOpened(e.open) }
+      <ConfirmActionDialog
+        visible={ showConfirmRemoveAccountModal }
+        title="Warning"
+        body="Are you sure want to delete bars account?"
+        onConfirm={ removeBarsUserData }
+        onDismiss={ () => setShowConfirmRemoveAccountModal(false) }
       />
     </SafeAreaView>
   );

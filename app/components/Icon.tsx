@@ -1,31 +1,34 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { StyleProp, TouchableOpacityProps, ViewStyle } from 'react-native';
-import { TouchableRipple, TouchableRippleProps } from 'react-native-paper';
+import { StyleProp, StyleSheet, TouchableOpacityProps, View, ViewStyle } from 'react-native';
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 import theme from '@/theme';
 
 interface IconProps extends TouchableOpacityProps {
-  ripperProps?: TouchableRippleProps;
-  ripperStyle?: StyleProp<ViewStyle>;
+  style?: StyleProp<ViewStyle>;
   icon: IconProp;
   color?: string;
   size?: number;
-  onPress?: TouchableOpacityProps['onPress'];
 }
 
-// todo touachable wrapper add
-
 export function Icon(props: IconProps) {
-  const { ripperProps, ripperStyle, icon, color, size, onPress } = props;
+  const { style, icon, color, size } = props;
 
   return (
-    <TouchableRipple { ...ripperProps } style={ ripperStyle } onPress={ onPress }>
+    <View style={ styles.container }>
       <FontAwesomeIcon
+        style={ style }
         icon={ icon }
         color={ color || theme.colors.onBackground }
         size={ size }
       />
-    </TouchableRipple>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex          : 1,
+    justifyContent: 'center',
+  },
+});
