@@ -14,10 +14,10 @@ const OPENED_ITEMS_KEY = 'opened_actualities_sections';
 const loaderScreen = <Loader />;
 
 export function ActualityScreen() {
-  const { actualityStore } = useStores();
+  const { loadActualitiesSections } = useStores().actualityStore;
   const [openedItems, setOpenedItems] = useState<string[]>([]);
   const [openedActuality, setOpenedActuality] = useState<IActuality>(null);
-  const { data, refetch, isLoading, isRefetching, isError } = useQuery(['actualities_sections'], actualityStore.loadActualitiesSections);
+  const { data, refetch, isLoading, isRefetching, isError } = useQuery(['actualities_sections'], loadActualitiesSections);
   const showLoader = useMemo(() => isLoading || isRefetching, [isLoading, isRefetching]);
   const showEmptyState = useMemo(() => !data || isError, [data, isError]);
 

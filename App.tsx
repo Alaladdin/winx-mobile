@@ -36,8 +36,6 @@ export default observer(() => {
 
     if (authStore.user.token)
       authStore.loadUser();
-
-    SplashScreen.hideAsync();
   });
 
   if (!rehydrated) return null;
@@ -56,7 +54,7 @@ export default observer(() => {
             />
 
             <ErrorBoundary catchErrors={ Config.catchErrors }>
-              <NavigationContainer theme={ theme }>
+              <NavigationContainer theme={ theme } onReady={ SplashScreen.hideAsync }>
                 <MainNavigator />
               </NavigationContainer>
               <SnackBar
