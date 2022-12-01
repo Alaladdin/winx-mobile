@@ -1,6 +1,6 @@
 {
   "extends": "expo/tsconfig.base",
-  "include": ["App.tsx", "app", ".eslintrc.js", "babel.config.js"],
+  "include": ["App.tsx", "app", "*.js"],
   "compilerOptions": {
     "typeRoots": ["./app/types"],
     "allowJs": true,
