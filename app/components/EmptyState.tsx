@@ -1,17 +1,20 @@
 import { Image, StyleSheet, View } from 'react-native';
-import { Button, ButtonProps, Text } from 'react-native-paper';
+import { ButtonProps, Text } from 'react-native-paper';
 import { translate } from '@/i18n';
+import { Button } from '@/components';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const imageSource = require('../../assets/gifs/lazy_cat_sleeping.gif');
 
 interface IEmptyStateProps {
+  bodyText?: string;
   buttonProps?: Omit<ButtonProps, 'children' | 'theme'>;
 }
 
-export function EmptyState({ buttonProps }: IEmptyStateProps) {
+export function EmptyState({ buttonProps, bodyText }: IEmptyStateProps) {
   const headTitle = translate('emptyStateComponent.generic.heading');
-  const bodyText = translate('emptyStateComponent.generic.content');
+  const defaultBodyText = translate('emptyStateComponent.generic.content');
+  const defaultButtonText = translate('emptyStateComponent.generic.button');
 
   return (
     <View style={ styles.container }>
@@ -25,16 +28,15 @@ export function EmptyState({ buttonProps }: IEmptyStateProps) {
         buttonProps && (
         <>
           <Text variant="titleSmall" style={ styles.bodyText }>
-            { bodyText }
+            { bodyText || defaultBodyText }
           </Text>
 
           <Button
             style={ styles.button }
             mode="contained-tonal"
+            text={ defaultButtonText }
             { ...buttonProps }
-          >
-            { translate('emptyStateComponent.generic.button') }
-          </Button>
+          />
         </>
         )
       }

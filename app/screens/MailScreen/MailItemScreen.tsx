@@ -20,10 +20,10 @@ export function MailItemScreen({ route }) {
             <Text>{ `From: ${mail.from}` }</Text>
           </View>
           {
-          map(mail.attachments, (attach) => (
-            <View style={ styles.attachContainer }>
-              <Text style={ styles.fileName }>{ attach.name || 'unknown' }</Text>
-              <Icon color={ theme.colors.primary } icon="file" />
+          map(mail.attachments, (attach, index) => (
+            <View key={ index } style={ styles.attachContainer }>
+              <Text style={ styles.fileName }>{ attach.name }</Text>
+              <Icon color={ theme.colors.primary } icon={ attach.icon } />
             </View>
           ))
         }

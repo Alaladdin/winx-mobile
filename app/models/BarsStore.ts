@@ -16,14 +16,24 @@ const formatBarsUserData = (data) => {
 export const BarsStoreModel = types
   .model('BarsStore')
   .actions((store) => ({
-    loadUser() :Promise<IBarsUser> {
+    setUser(loginData): Promise<IBarsUser> {
+      const { authStore } = getRootStore(store);
+
+      return api.post('/bars/user', loginData)
+        .then((data) => {
+          authStore.setUser({ barsUser: data.barsUser._id });
+
+          return formatBarsUserData(data);
+        });
+    },
+    loadUser(): Promise<IBarsUser> {
       return api.get('/bars/user')
         .then(formatBarsUserData);
     },
     refreshMarks() {
       return api.post('/bars/user/refreshMarks');
     },
-    async removeUser() {
+    removeUser() {
       const { authStore } = getRootStore(store);
 
       return api.delete('/bars/user')

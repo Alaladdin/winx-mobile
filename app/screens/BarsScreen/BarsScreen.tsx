@@ -64,7 +64,7 @@ export const BarsScreen = observer(() => {
         onRequestError(err);
         setIsUpdating(false);
       });
-  }, [query.data.updatedAt, refreshMarks, onRequestError]);
+  }, [query.data, refreshMarks, onRequestError]);
 
   const removeBarsUser = useCallback(() => removeUser().catch(onRequestError), [removeUser, onRequestError]);
 
