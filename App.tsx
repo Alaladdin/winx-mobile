@@ -5,28 +5,22 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { observer } from 'mobx-react';
+import * as Sentry from 'sentry-expo';
 import { MainNavigator } from '@/navigators';
 import theme from '@/theme';
 import Config from '@/config';
 import { ErrorBoundary } from '@/screens';
 import { RootStoreProvider, useInitialRootStore } from '@/models';
-import { setupReactotron } from '@/services/reactotron';
 import 'expo-dev-client';
 import '@/utils/ignore-warnings';
 import { setupIcons, setupNotifications, setupReactQuery } from '@/setup';
 import { SnackBar } from '@/components';
-
-setupReactotron({
-  clearOnLoad    : true,
-  host           : 'localhost',
-  useAsyncStorage: true,
-  logInitialState: true,
-  logSnapshots   : false,
-});
+import { initCrashReporting } from '@/utils/crash-reporting';
 
 SplashScreen.preventAutoHideAsync();
 
-export default observer(() => {
+const App = observer(() => {
+  initCrashReporting();
   setupIcons();
   setupNotifications();
 
@@ -81,3 +75,5 @@ const styles = StyleSheet.create({
     marginBottom: 90,
   },
 });
+
+export default Sentry.Native.wrap(App);

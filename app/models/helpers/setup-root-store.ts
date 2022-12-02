@@ -12,6 +12,7 @@
 import { applySnapshot, IDisposer, onSnapshot } from 'mobx-state-tree';
 import type { RootStore } from '@/models';
 import * as storage from '@/utils/storage';
+import { reportCrash } from '@/utils/crash-reporting';
 
 /**
  * The key we'll be saving our state as within async storage.
@@ -31,8 +32,7 @@ export async function setupRootStore(rootStore: RootStore) {
     applySnapshot(rootStore, restoredState);
   } catch (e) {
     // if there's any problems loading, then inform the dev what happened
-    if (__DEV__)
-      console.tron.error(e.message, null);
+    reportCrash(e);
   }
 
   // stop tracking state changes if we've already setup
