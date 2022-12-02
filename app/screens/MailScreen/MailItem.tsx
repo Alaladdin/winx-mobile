@@ -31,7 +31,7 @@ export function MailItem({ mail, onPress }: IMailItemProps) {
 
     return (
       <View style={ styles.itemRight }>
-        { hasAttachments && (<Icon style={ styles.file } icon="file" />) }
+        { hasAttachments && (<Icon containerStyle={ styles.file } icon="file" />) }
         <Text>{ mail.receivedAt }</Text>
       </View>
     );
@@ -72,6 +72,6 @@ const styles = StyleSheet.create({
   },
   file: {
     flex       : 0,
-    marginRight: theme.spacing.large,
+    marginRight: theme.spacing.tiny,
   },
 });

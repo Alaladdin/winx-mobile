@@ -5,6 +5,7 @@ import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 import theme from '@/theme';
 
 interface IconProps extends TouchableOpacityProps {
+  containerStyle?: StyleProp<ViewStyle>;
   style?: StyleProp<ViewStyle>;
   icon: IconProp;
   color?: string;
@@ -12,10 +13,10 @@ interface IconProps extends TouchableOpacityProps {
 }
 
 export function Icon(props: IconProps) {
-  const { style, icon, color, size } = props;
+  const { containerStyle, style, icon, color, size } = props;
 
   return (
-    <View style={ styles.container }>
+    <View style={ [styles.container, containerStyle] }>
       <FontAwesomeIcon
         style={ style }
         icon={ icon }
