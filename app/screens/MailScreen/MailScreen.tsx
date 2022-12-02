@@ -1,12 +1,13 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { map } from 'lodash';
+import { filter, flatten, map } from 'lodash';
 import { Text, Searchbar, TouchableRipple, ProgressBar } from 'react-native-paper';
 import { observer } from 'mobx-react';
 import theme from '@/theme';
 import { Button, Loader, EmptyState, Icon, ConfirmActionDialog } from '@/components';
 import { useStores } from '@/models';
+import { IMail } from '@/screens/MailScreen/MailScreen.types';
 
 const loaderScreen = <Loader />;
 
@@ -22,6 +23,7 @@ export const MailScreen = observer(({ navigation }) => {
     enabled         : !!user.barsUser,
   });
   const [search, setSearch] = useState<string>('');
+  const [currentData, setCurrentData] = useState<IMail[]>(null);
   const [isMoreLoading, setIsMoreLoading] = useState<boolean>(false);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [showConfirmRemoveAccountModal, setShowConfirmRemoveAccountModal] = useState<boolean>(false);
@@ -41,8 +43,28 @@ export const MailScreen = observer(({ navigation }) => {
       onPress: user.barsUser ? query.refetch : () => navigation.navigate('Bars'),
     },
   }), [query, user]);
+  const flatRawData = useMemo(() => flatten(query.data.pages), [query.data]);
   const onRequestError = useCallback((message) => setSnackBarOptions(message, 'error'), [setSnackBarOptions]);
   const removeBarsUser = useCallback(() => removeUser().catch(onRequestError), [removeUser, onRequestError]);
+
+  useEffect(() => {
+    if (!query.isLoading && !query.isError) {
+      const searchVal = search.toLowerCase();
+      let newData = flatRawData;
+
+      if (search) {
+        newData = filter(newData, (item) => {
+          const title = item.title.toLowerCase();
+          const body = item.body?.toLowerCase();
+          const from = item.from.toLowerCase();
+
+          return title.includes(searchVal) || body?.includes(searchVal) || from.includes(searchVal);
+        });
+      }
+
+      setCurrentData(newData);
+    }
+  }, [search, query.data, query.isLoading, query.isError]);
 
   const updateMailData = useCallback(() => {
     setIsUpdating(true);
@@ -96,8 +118,12 @@ export const MailScreen = observer(({ navigation }) => {
 
       <ScrollView refreshControl={ refreshControl }>
         {
-        map(query.data.pages, (page) => map(page, (item) => (
-          <TouchableRipple key={ item._id } style={ styles.item } onPress={ () => openMail(item) }>
+        map(currentData, (item) => (
+          <TouchableRipple
+            key={ item._id }
+            style={ [styles.item, item.isRead && styles.itemRead] }
+            onPress={ () => openMail(item) }
+          >
             <View style={ styles.itemContainer }>
               <View>
                 <Text style={ styles.itemTitle }>
@@ -115,7 +141,7 @@ export const MailScreen = observer(({ navigation }) => {
               </View>
             </View>
           </TouchableRipple>
-        )))
+        ))
       }
         <Button
           style={ styles.loadMore }
@@ -164,6 +190,9 @@ const styles = StyleSheet.create({
   item: {
     padding        : theme.spacing.medium,
     backgroundColor: theme.colors.elevation.level3,
+  },
+  itemRead: {
+    opacity: 0.5,
   },
   itemContainer: {
     flexDirection : 'row',

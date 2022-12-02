@@ -10,4 +10,5 @@ export interface IMail {
   attachments: IMailAttachment[];
   from: string;
   receivedAt: string;
+  isRead: boolean;
 }
