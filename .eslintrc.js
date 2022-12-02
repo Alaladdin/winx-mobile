@@ -26,6 +26,7 @@ module.exports = {
     'import/extensions'   : ['error', 'never', {
       ignorePackages: true,
       pattern       : {
+        types: 'always',
         json: 'always',
       },
     }],
