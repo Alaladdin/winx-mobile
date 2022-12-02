@@ -2,13 +2,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { filter, flatten, map, noop } from 'lodash';
-import { Text, TouchableRipple, List, Avatar } from 'react-native-paper';
 import { observer } from 'mobx-react';
 import theme from '@/theme';
-import { Button, Loader, EmptyState, Icon, ConfirmActionDialog } from '@/components';
+import { Button, Loader, EmptyState, ConfirmActionDialog } from '@/components';
 import { useStores } from '@/models';
 import { IMail } from '@/screens/MailScreen/MailScreen.types';
 import { MailHeader } from '@/screens/MailScreen/MailHeader';
+import { MailItem } from '@/screens/MailScreen/MailItem';
 
 const loaderScreen = <Loader />;
 
@@ -111,41 +111,12 @@ export const MailScreen = observer(({ navigation }) => {
 
       <ScrollView refreshControl={ refreshControl }>
         {
-        map(currentData, (item) => (
-          <TouchableRipple
-            key={ item._id }
-            style={ styles.item }
-            borderless
-            onPress={ () => openMail(item) }
-          >
-            <List.Item
-              title={ item.title }
-              description={ `${item.from}${item.body ? `\n${item.body}` : ''}` }
-              left={ () => (
-                <View style={ { marginTop: theme.spacing.extraSmall, marginRight: theme.spacing.tiny } }>
-                  <Avatar.Text label={ item.from[0] } size={ 30 } />
-                </View>
-              ) }
-              right={ () => (
-                <View style={ {
-                  flexDirection : 'row',
-                  alignItems    : 'flex-start',
-                  justifyContent: 'flex-end',
-                  marginLeft    : theme.spacing.extraSmall,
-                  marginTop     : theme.spacing.extraSmall,
-                  width         : '20%',
-                } }
-                >
-                  {
-                    !!item.attachments?.length && (
-                      <Icon style={ { flex: 0, marginRight: theme.spacing.large } } icon="file" />
-                    )
-                  }
-                  <Text>{ item.receivedAt }</Text>
-                </View>
-              ) }
-            />
-          </TouchableRipple>
+        map(currentData, (mail) => (
+          <MailItem
+            key={ mail._id }
+            mail={ mail }
+            onPress={ openMail }
+          />
         ))
       }
         <Button
@@ -174,9 +145,6 @@ const styles = StyleSheet.create({
     width    : '100%',
     maxHeight: '100%',
     minHeight: '100%',
-  },
-  item: {
-    backgroundColor: theme.colors.elevation.level3,
   },
   loadMore: {
     borderRadius   : 0,

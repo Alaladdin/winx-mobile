@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { Button } from '@/components';
 import theme from '@/theme';
 
-interface IMailHeader {
+interface IMailHeaderProps {
   search: string;
   canUpdate?: boolean;
   isLoading?: boolean;
@@ -12,7 +12,7 @@ interface IMailHeader {
   onRemove: () => any;
 }
 
-export function MailHeader(props: IMailHeader) {
+export function MailHeader(props: IMailHeaderProps) {
   return (
     <View>
       <ProgressBar visible={ props.isLoading } indeterminate />
