@@ -6,6 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { observer } from 'mobx-react';
 import * as Sentry from 'sentry-expo';
+import { useCallback, useRef } from 'react';
 import { MainNavigator } from '@/navigators';
 import theme from '@/theme';
 import Config from '@/config';
@@ -20,7 +21,8 @@ import { initCrashReporting } from '@/utils/crash-reporting';
 SplashScreen.preventAutoHideAsync();
 
 const App = observer(() => {
-  initCrashReporting();
+  const navigation = useRef();
+  const { routingInstrumentation } = initCrashReporting();
   setupIcons();
   setupNotifications();
 
@@ -31,6 +33,11 @@ const App = observer(() => {
     if (authStore.user.token)
       authStore.loadUser();
   });
+
+  const onNavigationReady = useCallback(() => {
+    routingInstrumentation.registerNavigationContainer(navigation);
+    SplashScreen.hideAsync();
+  }, [routingInstrumentation]);
 
   if (!rehydrated) return null;
 
@@ -48,7 +55,7 @@ const App = observer(() => {
             />
 
             <ErrorBoundary catchErrors={ Config.catchErrors }>
-              <NavigationContainer theme={ theme } onReady={ SplashScreen.hideAsync }>
+              <NavigationContainer theme={ theme } onReady={ onNavigationReady }>
                 <MainNavigator />
               </NavigationContainer>
               <SnackBar
