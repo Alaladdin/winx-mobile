@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { filter, flatten, map } from 'lodash';
-import { Text, Searchbar, TouchableRipple, ProgressBar } from 'react-native-paper';
+import { filter, flatten, map, noop } from 'lodash';
+import { Text, Searchbar, TouchableRipple, ProgressBar, List, Avatar } from 'react-native-paper';
 import { observer } from 'mobx-react';
 import theme from '@/theme';
 import { Button, Loader, EmptyState, Icon, ConfirmActionDialog } from '@/components';
@@ -13,7 +13,7 @@ const loaderScreen = <Loader />;
 
 export const MailScreen = observer(({ navigation }) => {
   const { user } = useStores().authStore;
-  const { loadMail, clearMailCache } = useStores().mailStore;
+  const { loadMail, toggleRead, clearMailCache } = useStores().mailStore;
   const { removeUser } = useStores().barsStore;
   const { setSnackBarOptions } = useStores().mainStore;
   const query = useInfiniteQuery({
@@ -32,7 +32,6 @@ export const MailScreen = observer(({ navigation }) => {
     <RefreshControl
       refreshing={ canUpdate && query.isRefetching && !query.isFetchingNextPage }
       enabled={ canUpdate }
-      title="asdsad"
       onRefresh={ query.refetch }
     />
   ), [canUpdate, query]);
@@ -43,7 +42,7 @@ export const MailScreen = observer(({ navigation }) => {
       onPress: user.barsUser ? query.refetch : () => navigation.navigate('Bars'),
     },
   }), [query, user]);
-  const flatRawData = useMemo(() => flatten(query.data.pages), [query.data]);
+  const flatRawData = useMemo(() => flatten(query.data?.pages), [query.data]);
   const onRequestError = useCallback((message) => setSnackBarOptions(message, 'error'), [setSnackBarOptions]);
   const removeBarsUser = useCallback(() => removeUser().catch(onRequestError), [removeUser, onRequestError]);
 
@@ -93,6 +92,9 @@ export const MailScreen = observer(({ navigation }) => {
 
   const openMail = (mail) => {
     navigation.navigate('mail-item', { mail });
+
+    if (!mail.isRead)
+      toggleRead(mail).catch(noop);
   };
 
   return (
@@ -121,25 +123,37 @@ export const MailScreen = observer(({ navigation }) => {
         map(currentData, (item) => (
           <TouchableRipple
             key={ item._id }
-            style={ [styles.item, item.isRead && styles.itemRead] }
+            style={ styles.item }
+            borderless
             onPress={ () => openMail(item) }
           >
-            <View style={ styles.itemContainer }>
-              <View>
-                <Text style={ styles.itemTitle }>
-                  { item.title }
-                </Text>
-                <Text>{ item.from }</Text>
-              </View>
-              <View>
-                <Text>{ item.receivedAt }</Text>
-                {
-                !!item.attachments?.length && (
-                  <Icon style={ styles.itemFileIcon } icon="file" />
-                )
-              }
-              </View>
-            </View>
+            <List.Item
+              title={ item.title }
+              description={ `${item.from}${item.body ? `\n${item.body}` : ''}` }
+              left={ () => (
+                <View style={ { marginTop: theme.spacing.extraSmall, marginRight: theme.spacing.tiny } }>
+                  <Avatar.Text label={ item.from[0] } size={ 30 } />
+                </View>
+              ) }
+              right={ () => (
+                <View style={ {
+                  flexDirection : 'row',
+                  alignItems    : 'flex-start',
+                  justifyContent: 'flex-end',
+                  marginLeft    : theme.spacing.extraSmall,
+                  marginTop     : theme.spacing.extraSmall,
+                  width         : '20%',
+                } }
+                >
+                  {
+                    !!item.attachments?.length && (
+                      <Icon style={ { flex: 0, marginRight: theme.spacing.large } } icon="file" />
+                    )
+                  }
+                  <Text>{ item.receivedAt }</Text>
+                </View>
+              ) }
+            />
           </TouchableRipple>
         ))
       }
@@ -188,26 +202,7 @@ const styles = StyleSheet.create({
     height      : '80%',
   },
   item: {
-    padding        : theme.spacing.medium,
     backgroundColor: theme.colors.elevation.level3,
-  },
-  itemRead: {
-    opacity: 0.5,
-  },
-  itemContainer: {
-    flexDirection : 'row',
-    justifyContent: 'space-between',
-    alignItems    : 'center',
-    width         : '100%',
-  },
-  itemTitle: {
-    marginBottom: theme.spacing.extraSmall,
-    maxWidth    : '80%',
-    fontSize    : theme.spacing.medium,
-    fontWeight  : '600',
-  },
-  itemFileIcon: {
-    marginLeft: 'auto',
   },
   loadMore: {
     borderRadius   : 0,

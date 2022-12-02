@@ -1,5 +1,6 @@
 import { Instance, SnapshotOut, types } from 'mobx-state-tree';
 import assign from 'lodash/assign';
+import * as Sentry from 'sentry-expo';
 import api from '@/services/api';
 import { remove, saveString } from '@/utils/storage';
 
@@ -49,13 +50,15 @@ export const AuthStoreModel = types
         store._user = null;
         await remove('token');
       }
+
+      Sentry.Native.setUser(store._user);
     },
   }))
   .actions((store) => ({
     loadUser() {
       return api.get('/auth/user')
-        .then((data) => {
-          store.setUser(data.user);
+        .then(async (data) => {
+          await store.setUser(data.user);
 
           return data.user;
         })
@@ -68,24 +71,24 @@ export const AuthStoreModel = types
     },
     loginUser({ username, password }) {
       return api.post('/auth/login', { username, password })
-        .then((data) => {
-          store.setUser(data.user);
+        .then(async (data) => {
+          await store.setUser(data.user);
 
           return data.user;
         });
     },
     registerUser({ username, password }) {
       return api.post('/auth/register', { username, password })
-        .then((data) => {
-          store.setUser(data.user);
+        .then(async (data) => {
+          await store.setUser(data.user);
 
           return data.user;
         });
     },
     removeUser() {
       return api.delete('/auth/removeUser', { data: { _id: store._user._id } })
-        .then((data) => {
-          store.setUser(null);
+        .then(async (data) => {
+          await store.setUser(null);
           store._lastUsername = '';
 
           return data;

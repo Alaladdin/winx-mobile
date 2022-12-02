@@ -29,7 +29,7 @@ export const MailStoreModel = types
       return api.get('/mail', requestConfig)
         .then((data) => getFormattedMail(data.mail));
     },
-    toggleRead(mail) {
+    toggleRead(mail: IMail) {
       return api.post('/mail/read', { mail })
         .then(store.clearMailCache);
     },
