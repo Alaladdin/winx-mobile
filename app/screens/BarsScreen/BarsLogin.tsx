@@ -5,7 +5,7 @@ import theme from '@/theme';
 import { useStores } from '@/models';
 import { useRequest } from '@/hooks/useRequest';
 import { Icon } from '@/components';
-import { IBarsUser } from '@/screens/BarsScreen/BarsScreen.interfaces';
+import { IBarsUser } from '@/screens/BarsScreen/BarsScreen.types';
 
 interface IBarsLogin {
   onLoginSuccess?: (data: IBarsUser) => void

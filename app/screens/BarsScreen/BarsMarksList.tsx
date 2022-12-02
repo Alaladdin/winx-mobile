@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import React from 'react';
 import { BarsMark } from '@/screens/BarsScreen/BarsMark';
-import { IBarsMark } from '@/screens/BarsScreen/BarsScreen.interfaces';
+import { IBarsMark } from '@/screens/BarsScreen/BarsScreen.types';
 import theme from '@/theme';
 
 interface IBarsMarksList {

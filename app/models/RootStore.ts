@@ -4,13 +4,15 @@ import { SettingsStoreModel } from './SettingsStore';
 import { AuthStoreModel } from './AuthStore';
 import { ActualityStoreModel } from './ActualityStore';
 import { MailStoreModel } from './MailStore';
+import { BarsStoreModel } from './BarsStore';
 
 export const RootStoreModel = types.model('RootStore').props({
   mainStore     : types.optional(MainStoreModel, {}),
-  settingsStore : types.optional(SettingsStoreModel, {}),
   authStore     : types.optional(AuthStoreModel, {}),
+  settingsStore : types.optional(SettingsStoreModel, {}),
   actualityStore: types.optional(ActualityStoreModel, {}),
   mailStore     : types.optional(MailStoreModel, {}),
+  barsStore     : types.optional(BarsStoreModel, {}),
 });
 
 export type RootStore = Instance<typeof RootStoreModel>
