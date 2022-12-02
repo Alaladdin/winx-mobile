@@ -1,7 +1,7 @@
 import { Instance, SnapshotOut, types } from 'mobx-state-tree';
 import map from 'lodash/map';
-import moment from 'moment/moment';
 import api from '@/services/api';
+import { formatDate } from '@/utils/format-date';
 
 const Updater = types.model('ActualityUpdater', {
   username   : types.maybeNull(types.string),
@@ -30,7 +30,7 @@ const getFormattedActualtiesSections = (sections) => map(sections, (section) => 
 
     return {
       ...actuality,
-      updatedAt: moment(updatedAt).format('DD.MM'),
+      updatedAt: formatDate(updatedAt),
       updatedBy: {
         ...updatedBy,
         avatar     : updatedBy?.avatar || 'avatar/error.png',

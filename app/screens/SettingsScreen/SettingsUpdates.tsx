@@ -1,13 +1,13 @@
 import { Button, List, Text } from 'react-native-paper';
 import React, { useEffect, useMemo, useState } from 'react';
 import { View } from 'react-native';
-import moment from 'moment';
 import * as Updates from 'expo-updates';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { ISettingSection } from './ISettingSection';
 import { Icon } from '@/components';
 import { reportCrash } from '@/utils/crash-reporting';
 import { useStores } from '@/models';
+import { formatDate } from '@/utils/format-date';
 
 const parseUpdateError = (e) => {
   if (e.code === 'ERR_UPDATES_DISABLED')
@@ -33,6 +33,8 @@ export function SettingsUpdates({ headingStyle }: ISettingSection) {
   const [isChecking, setIsChecking] = useState<boolean>(false);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
 
+  const releaseDate = formatDate(Updates.createdAt, 'HH:mm DD.MM');
+
   useEffect(() => {
     let newButtonText = 'check';
     let newButtonIcon = 'sync';
@@ -52,7 +54,6 @@ export function SettingsUpdates({ headingStyle }: ISettingSection) {
     setCheckButtonIcon(newButtonIcon);
   }, [hasUpdates, isChecking, isUpdating]);
 
-  const releaseDate = moment(Updates.createdAt).format('HH:mm DD.MM');
   const checkUpdates = () => {
     setIsChecking(true);
 

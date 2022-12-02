@@ -10,10 +10,11 @@ import { IScheduleItem } from './IScheduleItem';
 import { useRequest, IRequestConfig } from '@/hooks/useRequest';
 import { ScheduleEmptyItem } from '@/screens/ScheduleScreen/ScheduleEmptyItem';
 import { ScheduleItem } from '@/screens/ScheduleScreen/ScheduleItem';
+import { formatDate } from '@/utils/format-date';
 
 const loaderScreen = <Loader />;
-const todayCompare = moment().format(config.serverDateFormat);
-const isDayBeforeToday = (date) => todayCompare > moment(date, config.defaultDateFormat).format(config.serverDateFormat);
+const todayCompare = formatDate(null, config.serverDateFormat);
+const isDayBeforeToday = (date) => todayCompare > moment(date, 'DD.MM').format(config.serverDateFormat);
 const renderSchedule = (schedule: IScheduleItem, key) => {
   if (schedule.isEmpty) {
     return (
@@ -35,7 +36,7 @@ const formatScheduleData = (data) => {
   const formattedSchedules = map(data.schedule, (i) => ({ ...i, dayOfWeekString: i.dayOfWeekString.toLowerCase() }));
   const groupedSchedules = groupBy(
     formattedSchedules,
-    ({ date }) => moment(date, config.defaultDateFormat)
+    ({ date }) => moment(date, 'DD.MM')
       .startOf('isoWeek')
       .format('MM_DD')
   );

@@ -1,13 +1,13 @@
 import { Instance, SnapshotOut, types } from 'mobx-state-tree';
 import map from 'lodash/map';
 import api from '@/services/api';
-import { formatDateCalendar } from '@/utils/format-date';
+import { formatDate } from '@/utils/format-date';
 import { IMail } from '@/screens/MailScreen/MailScreen.types';
 
 const getFormattedMail = (mail) => map(mail, (item) => ({
   ...item,
   title      : item.title || 'UNTITLED',
-  receivedAt : formatDateCalendar(item.receivedAt),
+  receivedAt : formatDate(item.receivedAt),
   attachments: map(item.attachments, (attach) => ({
     ...attach,
     name: attach.name || 'unknown',

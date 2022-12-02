@@ -26,16 +26,11 @@ export function MailItem({ mail, onPress }: IMailItemProps) {
     </View>
   ), [mail.from]);
 
-  const itemRight = useMemo(() => {
-    const hasAttachments = !!mail.attachments?.length;
-
-    return (
-      <View style={ styles.itemRight }>
-        { hasAttachments && (<Icon containerStyle={ styles.file } icon="file" />) }
-        <Text>{ mail.receivedAt }</Text>
-      </View>
-    );
-  }, [mail.attachments, mail.receivedAt]);
+  const itemRight = useMemo(() => (
+    <View style={ styles.itemRight }>
+      <Text>{ mail.receivedAt }</Text>
+    </View>
+  ), [mail.receivedAt]);
 
   return (
     <TouchableRipple
@@ -46,6 +41,7 @@ export function MailItem({ mail, onPress }: IMailItemProps) {
     >
       <List.Item
         title={ mail.title }
+        titleStyle={ { fontWeight: '600' } }
         description={ description }
         left={ () => avatarImage }
         right={ () => itemRight }
@@ -59,19 +55,14 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.elevation.level3,
   },
   itemRight: {
-    flexDirection : 'row',
-    alignItems    : 'flex-start',
-    justifyContent: 'flex-end',
+    alignItems    : 'flex-end',
+    justifyContent: 'flex-start',
     marginLeft    : theme.spacing.extraSmall,
     marginTop     : theme.spacing.extraSmall,
     width         : '20%',
   },
   avatarContainer: {
     marginTop  : theme.spacing.extraSmall,
-    marginRight: theme.spacing.tiny,
-  },
-  file: {
-    flex       : 0,
     marginRight: theme.spacing.tiny,
   },
 });

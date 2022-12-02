@@ -1,15 +1,15 @@
 import { Instance, SnapshotOut, types } from 'mobx-state-tree';
-import moment from 'moment/moment';
 import api from '@/services/api';
 import { IBarsUser } from '@/screens/BarsScreen/BarsScreen.types';
 import { getRootStore } from '@/models/helpers/get-root-store';
+import { formatDate } from '@/utils/format-date';
 
 const formatBarsUserData = (data) => {
   const { barsUser } = data;
 
   return {
     ...barsUser,
-    updatedAt: moment(barsUser.updatedAt).format('HH:mm — DD.MM'),
+    updatedAt: formatDate(barsUser.updatedAt, 'HH:mm — DD.MM'),
   };
 };
 
