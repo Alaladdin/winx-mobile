@@ -66,7 +66,6 @@ export function ScheduleScreen({ navigation }): JSX.Element {
   const pagerViewRef = useRef<PagerView>(null);
   const loadSchedule = useRequest(getScheduleRequestOptions());
   const { data, refetch, isLoading, isRefetching, isError } = useQuery(['schedule'], loadSchedule);
-  const showLoader = useMemo(() => isLoading || isRefetching, [isLoading, isRefetching]);
   const showEmptyState = useMemo(() => !data || isError, [data, isError]);
   const refresher = <RefreshControl refreshing={ isRefetching } onRefresh={ refetch } />;
 
@@ -74,7 +73,7 @@ export function ScheduleScreen({ navigation }): JSX.Element {
     pagerViewRef?.current?.setPage(0);
   }), [navigation]);
 
-  if (showLoader)
+  if (isLoading)
     return loaderScreen;
 
   if (showEmptyState)

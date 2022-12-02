@@ -10,7 +10,6 @@ import { IActuality } from '@/screens/ActualityScreen/ActualityScreen.types';
 import ActualityBottomSheet from '@/screens/ActualityScreen/ActualityBottomSheet';
 
 const OPENED_ITEMS_KEY = 'opened_actualities_sections';
-
 const loaderScreen = <Loader />;
 
 export function ActualityScreen() {
@@ -18,7 +17,6 @@ export function ActualityScreen() {
   const [openedItems, setOpenedItems] = useState<string[]>([]);
   const [openedActuality, setOpenedActuality] = useState<IActuality>(null);
   const { data, refetch, isLoading, isRefetching, isError } = useQuery(['actualities_sections'], loadActualitiesSections);
-  const showLoader = useMemo(() => isLoading || isRefetching, [isLoading, isRefetching]);
   const showEmptyState = useMemo(() => !data || isError, [data, isError]);
 
   useEffect(() => {
@@ -37,7 +35,7 @@ export function ActualityScreen() {
     storage.save(OPENED_ITEMS_KEY, newOpenedItems);
   };
 
-  if (showLoader)
+  if (isLoading)
     return loaderScreen;
 
   if (showEmptyState)
