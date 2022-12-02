@@ -21,11 +21,12 @@ export function SettingsDev() {
 
   const clearStorage = useCallback(() => {
     clear()
-      .then(() => {
-        setSnackBarOptions('Now, you need to reload app', 'success');
-      })
-      .catch(() => {
-        setSnackBarOptions('Storage clearing error', 'error');
+      .then((isCleared) => {
+        const options = isCleared
+          ? ['Now, you need to reload app', 'success']
+          : ['Storage clearing error', 'error'];
+
+        setSnackBarOptions(options[0], options[1]);
       });
   }, [setSnackBarOptions]);
 

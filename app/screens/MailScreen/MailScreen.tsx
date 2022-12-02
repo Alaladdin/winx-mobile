@@ -2,12 +2,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { filter, flatten, map, noop } from 'lodash';
-import { Text, Searchbar, TouchableRipple, ProgressBar, List, Avatar } from 'react-native-paper';
+import { Text, TouchableRipple, List, Avatar } from 'react-native-paper';
 import { observer } from 'mobx-react';
 import theme from '@/theme';
 import { Button, Loader, EmptyState, Icon, ConfirmActionDialog } from '@/components';
 import { useStores } from '@/models';
 import { IMail } from '@/screens/MailScreen/MailScreen.types';
+import { MailHeader } from '@/screens/MailScreen/MailHeader';
 
 const loaderScreen = <Loader />;
 
@@ -99,24 +100,14 @@ export const MailScreen = observer(({ navigation }) => {
 
   return (
     <View style={ styles.container }>
-      <ProgressBar visible={ isUpdating } indeterminate />
-      <View style={ styles.header }>
-        <Button
-          icon="rotate-right"
-          disabled={ !canUpdate }
-          onPress={ updateMailData }
-        />
-        <Searchbar
-          style={ styles.searchBar }
-          value={ search }
-          placeholder="Search"
-          onChangeText={ setSearch }
-        />
-        <Button
-          icon="trash-can"
-          onPress={ () => setShowConfirmRemoveAccountModal(true) }
-        />
-      </View>
+      <MailHeader
+        search={ search }
+        canUpdate={ canUpdate }
+        isLoading={ isUpdating }
+        onUpdate={ updateMailData }
+        onSearchChange={ setSearch }
+        onRemove={ () => setShowConfirmRemoveAccountModal(true) }
+      />
 
       <ScrollView refreshControl={ refreshControl }>
         {
@@ -183,23 +174,6 @@ const styles = StyleSheet.create({
     width    : '100%',
     maxHeight: '100%',
     minHeight: '100%',
-  },
-  header: {
-    flexDirection    : 'row',
-    justifyContent   : 'space-between',
-    alignItems       : 'center',
-    paddingHorizontal: theme.spacing.extraSmall,
-    paddingVertical  : theme.spacing.extraSmall,
-    backgroundColor  : theme.colors.elevation.level3,
-    zIndex           : 1,
-  },
-  headerButton: {
-    fontSize: 18,
-  },
-  searchBar: {
-    borderRadius: 100,
-    width       : '65%',
-    height      : '80%',
   },
   item: {
     backgroundColor: theme.colors.elevation.level3,
