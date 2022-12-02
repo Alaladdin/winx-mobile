@@ -2,51 +2,36 @@ import { Instance, SnapshotOut, types } from 'mobx-state-tree';
 import map from 'lodash/map';
 import api from '@/services/api';
 import { formatDateCalendar } from '@/utils/format-date';
+import { IMail } from '@/screens/MailScreen/MailScreen.types';
 
-const Attachment = types.model('MailAttachment', {
-  _id : types.identifier,
-  name: types.maybeNull(types.string),
-});
-
-const Mail = types.model('Mail', {
-  _id        : types.identifier,
-  title      : types.maybeNull(types.string),
-  body       : types.maybeNull(types.string),
-  attachments: types.array(Attachment),
-  from       : types.string,
-  receivedAt : types.string,
-});
+const getFormattedMail = (mail) => map(mail, (item) => ({
+  ...item,
+  title      : item.title || 'UNTITLED',
+  receivedAt : formatDateCalendar(item.receivedAt),
+  attachments: map(item.attachments, (attach) => ({
+    ...attach,
+    name: attach.name || 'unknown',
+    icon: 'file',
+  })),
+}));
 
 export const MailStoreModel = types
   .model('MailStore')
-  .props({
-    _mail: types.optional(types.array(Mail), []),
-  })
-  .actions((store) => ({
-    setMail(mail) {
-      store._mail = mail;
+  .actions(() => ({
+    clearMailCache() {
+      return api.delete('/mail');
     },
   }))
   .actions((store) => ({
-    loadMail() {
-      return api.get('/mail')
-        .then((data) => {
-          const mail = map(data.mail, (item) => ({
-            ...item,
-            title     : item.title || 'UNTITLED',
-            receivedAt: formatDateCalendar(item.receivedAt),
-            // attachments: map(item.attachments, (attach) => {
-            //   const fileExt = last(attach.name?.split('.'))
-            //   const fileIcon = localMetadata.fileIcons[fileExt] || localMetadata.fileIcons.default
-            //
-            //   return { ...attach, name: attach.name || 'unknown', icon: fileIcon }
-            // }),
-          }));
+    loadMail(params): Promise<IMail[]> {
+      const requestConfig = { params: { offset: params?.offset } };
 
-          store.setMail(mail);
-
-          return mail;
-        });
+      return api.get('/mail', requestConfig)
+        .then((data) => getFormattedMail(data.mail));
+    },
+    toggleRead(mail) {
+      return api.post('/mail/read', { mail })
+        .then(store.clearMailCache);
     },
   }));
 
