@@ -1,13 +1,15 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Text, DataTable } from 'react-native-paper';
 import { groupBy, map, keys } from 'lodash';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import theme from '@/theme';
 import { Icon } from '@/components';
 import { IMail, IMailAttachment } from '@/screens/MailScreen/MailScreen.types';
 
 export function MailItemScreen({ route }) {
   const { mail }: { mail: IMail } = route.params;
+  const mailBodyRef = useRef<ScrollView>(null);
+  const scrollToTop = useCallback(() => mailBodyRef?.current.scrollTo({ y: 0 }), []);
 
   const renderAttachCell = (attach?: IMailAttachment) => {
     if (!attach) return null;
@@ -48,11 +50,15 @@ export function MailItemScreen({ route }) {
 
   return (
     <View>
-      <View style={ styles.header }>
-        <Text variant="titleLarge">{ mail.title }</Text>
-      </View>
+      <Text
+        style={ styles.header }
+        variant="titleLarge"
+        onPress={ scrollToTop }
+      >
+        { mail.title }
+      </Text>
 
-      <ScrollView contentContainerStyle={ styles.bodyContainer }>
+      <ScrollView ref={ mailBodyRef } contentContainerStyle={ styles.bodyContainer }>
         <View style={ styles.bodyHeaderContainer }>
           <View style={ styles.bodyMeta }>
             <Text>{ `Received at: ${mail.receivedAtFull}` }</Text>
@@ -61,7 +67,7 @@ export function MailItemScreen({ route }) {
           { AttachmentsTag }
         </View>
 
-        <Text style={ styles.body }>
+        <Text style={ styles.body } selectable>
           { mail.body }
         </Text>
       </ScrollView>
@@ -75,16 +81,19 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.elevation.level2,
   },
   bodyContainer: {
+    paddingBottom  : theme.spacing.massive,
+    minHeight      : '91.4%',
     backgroundColor: theme.colors.elevation.level4,
   },
   bodyHeaderContainer: {
-    marginBottom: theme.spacing.medium,
+    paddingBottom: theme.spacing.medium,
   },
   bodyMeta: {
     padding: theme.spacing.medium,
   },
   body: {
-    padding: theme.spacing.medium,
+    paddingBottom    : theme.spacing.extraLarge,
+    paddingHorizontal: theme.spacing.medium,
   },
   fileName: {
     marginLeft: theme.spacing.medium,
