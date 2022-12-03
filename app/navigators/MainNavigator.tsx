@@ -8,6 +8,7 @@ import { routesList } from './routes';
 import { useStores } from '@/models';
 import { AuthScreen } from '@/screens/AuthScreen';
 import { ProfileScreen } from '@/screens/ProfileScreen';
+import { MailItemScreen } from '@/screens';
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -61,7 +62,7 @@ export const MainNavigator = observer(() => {
       screenOptions={ {
         animation: 'fade_from_bottom',
         header   : ({ navigation, route }) => {
-          const showBackButton = ['auth', 'profile'].includes(route.name);
+          const showBackButton = ['auth', 'profile', 'mail-item'].includes(route.name);
           const showAvatar = route.name !== 'profile' && isLoggedIn;
           const showLoginIcon = route.name !== 'auth' && !isLoggedIn;
 
@@ -79,8 +80,15 @@ export const MainNavigator = observer(() => {
       <Stack.Screen name="main" component={ MainScreen } />
       {
         isLoggedIn
-          ? (<Stack.Screen name="profile" component={ ProfileScreen } />)
-          : (<Stack.Screen name="auth" component={ AuthScreen } />)
+          ? (
+            <>
+              <Stack.Screen name="profile" component={ ProfileScreen } />
+              <Stack.Screen name="mail-item" component={ MailItemScreen } />
+            </>
+          )
+          : (
+            <Stack.Screen name="auth" component={ AuthScreen } />
+          )
       }
     </Stack.Navigator>
   );

@@ -6,7 +6,7 @@ const getConfig = () => {
 
   if (IS_DEV) {
     return {
-      name              : 'WINX (Dev)',
+      name              : 'WINX (dev)',
       icon              : './assets/app-icon-dev.png',
       splash            : './assets/splash-dev.png',
       packageName       : 'com.alaladdin.winx.dev',
@@ -16,7 +16,7 @@ const getConfig = () => {
 
   if (IS_BETA) {
     return {
-      name              : 'WINX (Beta)',
+      name              : 'WINX (beta)',
       icon              : './assets/app-icon-beta.png',
       splash            : './assets/splash-beta.png',
       packageName       : 'com.alaladdin.winx.beta',
@@ -62,8 +62,7 @@ export default {
     googleServicesFile: config.googleServicesFile,
   },
   plugins: [
-    '@react-native-firebase/app',
-    '@react-native-firebase/crashlytics',
+    'sentry-expo',
     ['expo-notifications', {
       icon : config.icon,
       color: '#ffffff',
@@ -73,6 +72,18 @@ export default {
       { ios: { useFrameworks: 'static' } },
     ],
   ],
+  hooks: {
+    postPublish: [
+      {
+        file  : 'sentry-expo/upload-sourcemaps',
+        config: {
+          organization: process.env.SENTRY_ORG,
+          project     : process.env.SENTRY_PROJECT,
+          authToken   : process.env.SENTRY_AUTH_TOKEN,
+        },
+      },
+    ],
+  },
   extra: {
     eas: {
       projectId: 'a9966b77-4fb0-48cd-b472-8df9d317ba42',

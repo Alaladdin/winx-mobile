@@ -7,7 +7,6 @@ export interface ConfigBaseProps {
   apiUrl: string
   authToken: string
   imageBaseUrl: string
-  defaultDateFormat: string
   serverDateFormat: string
 }
 
@@ -20,7 +19,6 @@ const BaseConfig: ConfigBaseProps = {
   apiUrl           : API_URL,
   authToken        : AUTH_TOKEN,
   imageBaseUrl     : `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_webp,q_80,c_fill,w_1024,h_1024/`,
-  defaultDateFormat: 'DD.MM',
   serverDateFormat : 'YYYY.MM.DD',
 };
 

@@ -17,6 +17,14 @@ export const setupReactQuery = (): ISetupReactQueryOutput => {
       queries: {
         cacheTime: hour * 24 * 3,
         staleTime: hour * 3,
+        retry    : (failureCount, error) => {
+          const { kind, temporary } = error || {};
+
+          if (kind && !temporary)
+            return false;
+
+          return true;
+        },
       },
     },
   });

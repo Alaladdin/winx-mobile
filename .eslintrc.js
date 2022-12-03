@@ -26,7 +26,8 @@ module.exports = {
     'import/extensions'   : ['error', 'never', {
       ignorePackages: true,
       pattern       : {
-        json: 'always',
+        types: 'always',
+        json : 'always',
       },
     }],
     'react/prop-types'            : 'off',
@@ -34,6 +35,7 @@ module.exports = {
     '@typescript-eslint/no-shadow': ['error'],
 
     // CUSTOM
+    'no-unused-expressions'       : 'off',
     'no-param-reassign'           : 'off',
     'global-require'              : 'off',
     'import/prefer-default-export': 'off',
@@ -64,6 +66,7 @@ module.exports = {
     }],
 
     // REACT
+    'react/destructuring-assignment'   : 'off',
     'react/require-default-props'      : 'off',
     'react/react-in-jsx-scope'         : 'off',
     'react/style-prop-object'          : 'off',

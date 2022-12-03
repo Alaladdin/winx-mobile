@@ -1,8 +1,12 @@
-import moment from 'moment';
-import config from '@/config';
+import moment, { MomentInput } from 'moment';
 
-export const formatDate = (date?: string, dateFormat?:string, toFormat?:string): string => {
-  const outputFormat = toFormat || config.defaultDateFormat;
+export const formatDate = (date?: MomentInput, toFormat?:string): string => moment(date).format(toFormat || 'DD.MM');
 
-  return moment(date, dateFormat).format(outputFormat);
-};
+export const formatDateCalendar = (date: MomentInput) => moment(date).calendar({
+  lastWeek: 'MMM DD',
+  lastDay : '[Yesterday]',
+  sameDay : 'LT',
+  nextDay : '[Tomorrow]',
+  nextWeek: 'MMM DD',
+  sameElse: 'DD.MM.YY',
+});

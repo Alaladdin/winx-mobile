@@ -1,47 +1,44 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { Text, ProgressBar } from 'react-native-paper';
-import moment from 'moment';
 import { useQuery } from '@tanstack/react-query';
 import { observer } from 'mobx-react';
 import theme from '@/theme';
 import { Button, ConfirmActionDialog, EmptyState, Loader } from '@/components';
-import { useRequest } from '@/hooks/useRequest';
-import { IBarsUser } from '@/screens/BarsScreen/BarsScreen.interfaces';
 import { BarsLogin } from './BarsLogin';
 import { useStores } from '@/models';
 import { BarsCredentialsError } from '@/screens/BarsScreen/BarsCredentialsError';
 import { BarsMarksList } from '@/screens/BarsScreen/BarsMarksList';
 
 const loaderScreen = <Loader />;
-const formatBarsUserData = (data): IBarsUser => {
-  const { barsUser } = data;
-
-  return {
-    ...barsUser,
-    updatedAt: moment(barsUser.updatedAt).format('HH:mm — DD.MM'),
-  };
-};
 
 export const BarsScreen = observer(() => {
-  const { user, setUser } = useStores().authStore;
   const { setSnackBarOptions } = useStores().mainStore;
-  const refreshBarsUserData = useRequest({ method: 'post', url: '/bars/user/refreshMarks' });
-  const removeBarsUser = useRequest({ method: 'delete', url: '/bars/user' });
+  const { user } = useStores().authStore;
+  const { loadUser, refreshMarks, removeUser } = useStores().barsStore;
   const onRequestError = useCallback(({ message }) => setSnackBarOptions(message, 'error'), [setSnackBarOptions]);
-  const loadBarsUserData = useRequest({ method: 'get', url: '/bars/user', onResponse: formatBarsUserData, onError: onRequestError });
-  const { data, refetch, isLoading, isRefetching, isError } = useQuery(['/bars/user', user.barsUser], {
-    enabled: !!user.barsUser,
-    queryFn: loadBarsUserData,
+  const query = useQuery({
+    queryKey: ['/bars/user', user.barsUser],
+    queryFn : loadUser,
+    onError : onRequestError,
+    enabled : !!user.barsUser,
   });
   const [lastUpdatedAt, setLastUpdatedAt] = useState<string>(null);
+  const [updateTimer, setUpdateTimer] = useState<number>(null);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [showConfirmRemoveAccountModal, setShowConfirmRemoveAccountModal] = useState<boolean>(false);
-  const showEmptyState = useMemo(() => !data || isError, [data, isError]);
+
+  const RefreshControlTag = useMemo(() => (
+    <RefreshControl
+      refreshing={ !isUpdating && query.isRefetching }
+      enabled={ !isUpdating }
+      onRefresh={ query.refetch }
+    />
+  ), [isUpdating, query.isRefetching]);
 
   const checkForNewData = useCallback((tiresCount = 0) => {
-    setTimeout(() => {
-      refetch()
+    const timer = setTimeout(() => {
+      query.refetch()
         .then((res) => {
           if (res.data.updatedAt === lastUpdatedAt) {
             if (tiresCount > 3)
@@ -57,70 +54,69 @@ export const BarsScreen = observer(() => {
           setIsUpdating(false);
         });
     }, 5 * 1000);
-  }, [refetch]);
+
+    setUpdateTimer(timer);
+  }, []);
 
   useEffect(() => {
     if (isUpdating) checkForNewData();
-  }, [checkForNewData, isUpdating]);
+    else clearTimeout(updateTimer);
+  }, [isUpdating]);
 
   const updateBarsData = useCallback(() => {
-    setLastUpdatedAt(data.updatedAt);
+    setLastUpdatedAt(query.data.updatedAt);
     setIsUpdating(true);
 
-    refreshBarsUserData()
+    refreshMarks()
       .catch((err) => {
         onRequestError(err);
         setIsUpdating(false);
       });
-  }, [data, refreshBarsUserData, onRequestError]);
+  }, [query.data, refreshMarks, onRequestError]);
 
-  const removeBarsUserData = useCallback(() => {
-    removeBarsUser()
-      .then(() => setUser({ barsUser: null }))
-      .catch(onRequestError);
-  }, [setUser, removeBarsUser, onRequestError]);
+  const removeBarsUser = useCallback(() => removeUser().catch(onRequestError), [removeUser, onRequestError]);
 
   if (!user.barsUser)
     return <BarsLogin onLoginSuccess={ () => setIsUpdating(true) } />;
 
-  if (isLoading)
+  if (query.isLoading)
     return loaderScreen;
 
-  if (showEmptyState)
-    return <EmptyState buttonProps={ { onPress: refetch } } />;
+  if (query.isError)
+    return <EmptyState buttonProps={ { onPress: query.refetch } } />;
 
   return (
     <SafeAreaView style={ { flex: 1 } }>
       <ProgressBar visible={ isUpdating } indeterminate />
       <ScrollView
         contentContainerStyle={ styles.container }
-        refreshControl={ <RefreshControl refreshing={ !isUpdating && isRefetching } onRefresh={ refetch } /> }
+        refreshControl={ RefreshControlTag }
       >
         <View style={ styles.header }>
           <View>
             <Text variant="titleMedium">
-              { data.username }
+              { query.data.username }
             </Text>
             <Text>
-              { data.updatedAt }
+              { query.data.updatedAt }
             </Text>
           </View>
           <View style={ { flexDirection: 'row' } }>
-            <Button icon="rotate-right" disabled={ data.isCredentialsError || isUpdating } onPress={ updateBarsData } />
+            <Button icon="rotate-right" disabled={ query.data.isCredentialsError || isUpdating } onPress={ updateBarsData } />
             <Button icon="trash-can" disabled={ isUpdating } onPress={ () => setShowConfirmRemoveAccountModal(true) } />
           </View>
         </View>
 
-        { !!data.isCredentialsError && <BarsCredentialsError /> }
+        { !!query.data.isCredentialsError && <BarsCredentialsError /> }
 
-        <BarsMarksList marks={ data.marks } />
+        <BarsMarksList marks={ query.data.marks } />
       </ScrollView>
 
       <ConfirmActionDialog
         visible={ showConfirmRemoveAccountModal }
         title="Warning"
-        body="Are you sure want to delete bars account?"
-        onConfirm={ removeBarsUserData }
+        body="Are you sure want to delete mpei account?"
+        onConfirm={ removeBarsUser }
         onDismiss={ () => setShowConfirmRemoveAccountModal(false) }
       />
     </SafeAreaView>

@@ -13,10 +13,11 @@ interface IButtonProps extends Omit<ButtonProps, 'theme' | 'children' | 'icon'> 
 
 interface IIconButtonProps extends Omit<IconButtonProps, 'theme' | 'icon'> {
   icon?: IconProp;
+  iconSize?: number;
   variant?: ButtonVariant;
 }
 
-export function Button({ variant, icon, text, ...props }: IIconButtonProps| IButtonProps) {
+export function Button({ variant, icon, text, iconSize, ...props }: IIconButtonProps| IButtonProps) {
   const variantStyle = useMemo(() => {
     const variantData = { color: '', buttonColor: '' };
 
@@ -29,8 +30,8 @@ export function Button({ variant, icon, text, ...props }: IIconButtonProps| IBut
   const buttonIcon = useCallback(({ color }) => {
     if (!icon) return null;
 
-    return <Icon icon={ icon } color={ color } size={ 14 } />;
-  }, [icon]);
+    return <Icon icon={ icon } color={ color } size={ iconSize || 14 } />;
+  }, [icon, iconSize]);
 
   if (!text) {
     return (

@@ -2,34 +2,30 @@ import { StatusBar, StyleSheet } from 'react-native';
 import { Provider as PaperProvider } from 'react-native-paper';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { NavigationContainer } from '@react-navigation/native';
+import { createNavigationContainerRef, NavigationContainer } from '@react-navigation/native';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { observer } from 'mobx-react';
+import * as Sentry from 'sentry-expo';
+import { useCallback } from 'react';
 import { MainNavigator } from '@/navigators';
 import theme from '@/theme';
 import Config from '@/config';
 import { ErrorBoundary } from '@/screens';
 import { RootStoreProvider, useInitialRootStore } from '@/models';
-import { setupReactotron } from '@/services/reactotron';
 import 'expo-dev-client';
 import '@/utils/ignore-warnings';
 import { setupIcons, setupNotifications, setupReactQuery } from '@/setup';
 import { SnackBar } from '@/components';
-
-setupReactotron({
-  clearOnLoad    : true,
-  host           : 'localhost',
-  useAsyncStorage: true,
-  logInitialState: true,
-  logSnapshots   : false,
-});
+import { initCrashReporting, routingInstrumentation } from '@/utils/crash-reporting';
 
 SplashScreen.preventAutoHideAsync();
 
-export default observer(() => {
+const App = observer(() => {
+  initCrashReporting();
   setupIcons();
   setupNotifications();
 
+  const navigationRef = createNavigationContainerRef();
   const { queryClient, persisterStorage } = setupReactQuery();
   const { rootStore, rehydrated } = useInitialRootStore(() => {
     const { authStore } = rootStore;
@@ -37,6 +33,11 @@ export default observer(() => {
     if (authStore.user.token)
       authStore.loadUser();
   });
+
+  const onNavigationReady = useCallback(() => {
+    SplashScreen.hideAsync();
+    routingInstrumentation.registerNavigationContainer(navigationRef);
+  }, [navigationRef]);
 
   if (!rehydrated) return null;
 
@@ -54,7 +55,11 @@ export default observer(() => {
             />
 
             <ErrorBoundary catchErrors={ Config.catchErrors }>
-              <NavigationContainer theme={ theme } onReady={ SplashScreen.hideAsync }>
+              <NavigationContainer
+                ref={ navigationRef }
+                theme={ theme }
+                onReady={ onNavigationReady }
+              >
                 <MainNavigator />
               </NavigationContainer>
               <SnackBar
@@ -81,3 +86,5 @@ const styles = StyleSheet.create({
     marginBottom: 90,
   },
 });
+
+export default Sentry.Native.wrap(App);
