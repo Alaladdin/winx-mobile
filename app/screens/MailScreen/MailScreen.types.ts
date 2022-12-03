@@ -1,6 +1,9 @@
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
+
 export interface IMailAttachment {
   _id: string;
   name: string;
+  icon: IconProp; // adds in store
 }
 
 export interface IMail {
@@ -10,5 +13,6 @@ export interface IMail {
   attachments: IMailAttachment[];
   from: string;
   receivedAt: string;
+  receivedAtFull: string; // adds in store
   isRead: boolean;
 }

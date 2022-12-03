@@ -1,7 +1,6 @@
 import { Avatar, List, Text, TouchableRipple } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 import React, { useMemo } from 'react';
-import { Icon } from '@/components';
 import theme from '@/theme';
 import { IMail } from './MailScreen.types';
 
@@ -41,7 +40,7 @@ export function MailItem({ mail, onPress }: IMailItemProps) {
     >
       <List.Item
         title={ mail.title }
-        titleStyle={ { fontWeight: '600' } }
+        titleStyle={ styles.itemTitle }
         description={ description }
         left={ () => avatarImage }
         right={ () => itemRight }
@@ -53,6 +52,9 @@ export function MailItem({ mail, onPress }: IMailItemProps) {
 const styles = StyleSheet.create({
   item: {
     backgroundColor: theme.colors.elevation.level3,
+  },
+  itemTitle: {
+    fontWeight: '600',
   },
   itemRight: {
     alignItems    : 'flex-end',

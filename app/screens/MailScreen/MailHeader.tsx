@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     flexDirection    : 'row',
     justifyContent   : 'space-between',
     alignItems       : 'center',
-    paddingHorizontal: theme.spacing.extraSmall,
+    paddingHorizontal: theme.spacing.tiny,
     paddingVertical  : theme.spacing.extraSmall,
     backgroundColor  : theme.colors.elevation.level3,
     zIndex           : 1,

@@ -6,9 +6,10 @@ import { IMail } from '@/screens/MailScreen/MailScreen.types';
 
 const getFormattedMail = (mail) => map(mail, (item) => ({
   ...item,
-  title      : item.title || 'UNTITLED',
-  receivedAt : formatDate(item.receivedAt),
-  attachments: map(item.attachments, (attach) => ({
+  title         : item.title || 'UNTITLED',
+  receivedAt    : formatDate(item.receivedAt),
+  receivedAtFull: formatDate(item.receivedAt, 'HH:mm - DD.MM.YYYY'),
+  attachments   : map(item.attachments, (attach) => ({
     ...attach,
     name: attach.name || 'unknown',
     icon: 'file',
