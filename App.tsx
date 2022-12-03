@@ -2,11 +2,11 @@ import { StatusBar, StyleSheet } from 'react-native';
 import { Provider as PaperProvider } from 'react-native-paper';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { NavigationContainer } from '@react-navigation/native';
+import { createNavigationContainerRef, NavigationContainer } from '@react-navigation/native';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { observer } from 'mobx-react';
 import * as Sentry from 'sentry-expo';
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 import { MainNavigator } from '@/navigators';
 import theme from '@/theme';
 import Config from '@/config';
@@ -16,16 +16,16 @@ import 'expo-dev-client';
 import '@/utils/ignore-warnings';
 import { setupIcons, setupNotifications, setupReactQuery } from '@/setup';
 import { SnackBar } from '@/components';
-import { initCrashReporting } from '@/utils/crash-reporting';
+import { initCrashReporting, routingInstrumentation } from '@/utils/crash-reporting';
 
 SplashScreen.preventAutoHideAsync();
 
 const App = observer(() => {
-  const navigation = useRef();
-  const { routingInstrumentation } = initCrashReporting();
+  initCrashReporting();
   setupIcons();
   setupNotifications();
 
+  const navigationRef = createNavigationContainerRef();
   const { queryClient, persisterStorage } = setupReactQuery();
   const { rootStore, rehydrated } = useInitialRootStore(() => {
     const { authStore } = rootStore;
@@ -35,9 +35,9 @@ const App = observer(() => {
   });
 
   const onNavigationReady = useCallback(() => {
-    routingInstrumentation.registerNavigationContainer(navigation);
     SplashScreen.hideAsync();
-  }, [routingInstrumentation]);
+    routingInstrumentation.registerNavigationContainer(navigationRef);
+  }, [navigationRef]);
 
   if (!rehydrated) return null;
 
@@ -55,7 +55,11 @@ const App = observer(() => {
             />
 
             <ErrorBoundary catchErrors={ Config.catchErrors }>
-              <NavigationContainer theme={ theme } onReady={ onNavigationReady }>
+              <NavigationContainer
+                ref={ navigationRef }
+                theme={ theme }
+                onReady={ onNavigationReady }
+              >
                 <MainNavigator />
               </NavigationContainer>
               <SnackBar
