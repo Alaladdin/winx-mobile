@@ -5,17 +5,23 @@ import { useCallback, useMemo, useRef } from 'react';
 import theme from '@/theme';
 import { Icon } from '@/components';
 import { IMail, IMailAttachment } from '@/screens/MailScreen/MailScreen.types';
+import { openLinkInBrowser } from '@/utils/open-link-in-browser';
+import config from '@/config';
+import { useStores } from '@/models';
 
 export function MailItemScreen({ route }) {
   const { mail }: { mail: IMail } = route.params;
+  const { user } = useStores().authStore;
   const mailBodyRef = useRef<ScrollView>(null);
   const scrollToTop = useCallback(() => mailBodyRef?.current.scrollTo({ y: 0 }), []);
 
   const renderAttachCell = (attach?: IMailAttachment) => {
     if (!attach) return null;
 
+    const linkToAttach = `${config.apiUrl}/mail/files/?mpeiUser=${user.barsUser}&messageId=${mail._id}&fileId=${attach._id}`;
+
     return (
-      <DataTable.Cell>
+      <DataTable.Cell onPress={ () => openLinkInBrowser(linkToAttach) }>
         <Icon
           style={ styles.fileIcon }
           color={ theme.colors.primary }
