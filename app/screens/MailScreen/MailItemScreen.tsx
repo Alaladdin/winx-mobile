@@ -22,14 +22,16 @@ export function MailItemScreen({ route }) {
 
     return (
       <DataTable.Cell onPress={ () => openLinkInBrowser(linkToAttach) }>
-        <Icon
-          style={ styles.fileIcon }
-          color={ theme.colors.primary }
-          icon={ attach.icon }
-        />
-        <Text style={ styles.fileName }>
-          { attach.name }
-        </Text>
+        <View style={ styles.fileContainer }>
+          <Icon
+            color={ theme.colors.primary }
+            icon={ attach.icon }
+            size={ 13 }
+          />
+          <Text style={ styles.fileName }>
+            { attach.name }
+          </Text>
+        </View>
       </DataTable.Cell>
     );
   };
@@ -101,12 +103,13 @@ const styles = StyleSheet.create({
     paddingBottom    : theme.spacing.extraLarge,
     paddingHorizontal: theme.spacing.medium,
   },
-  fileName: {
-    marginLeft: theme.spacing.medium,
-    color     : theme.colors.primary,
+  fileContainer: {
+    flexDirection: 'row',
+    alignItems   : 'center',
   },
-  fileIcon: {
-    marginRight: theme.spacing.tiny,
+  fileName: {
+    marginLeft: theme.spacing.extraSmall,
+    color     : theme.colors.primary,
   },
   fullWidth: {
     width: '100%',
