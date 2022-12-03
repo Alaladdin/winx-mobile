@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { Text, ProgressBar } from 'react-native-paper';
 import { useQuery } from '@tanstack/react-query';
@@ -27,6 +27,14 @@ export const BarsScreen = observer(() => {
   const [updateTimer, setUpdateTimer] = useState<number>(null);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [showConfirmRemoveAccountModal, setShowConfirmRemoveAccountModal] = useState<boolean>(false);
+
+  const RefreshControlTag = useMemo(() => (
+    <RefreshControl
+      refreshing={ !isUpdating && query.isRefetching }
+      enabled={ !isUpdating }
+      onRefresh={ query.refetch }
+    />
+  ), [isUpdating, query.isRefetching]);
 
   const checkForNewData = useCallback((tiresCount = 0) => {
     const timer = setTimeout(() => {
@@ -82,7 +90,7 @@ export const BarsScreen = observer(() => {
       <ProgressBar visible={ isUpdating } indeterminate />
       <ScrollView
         contentContainerStyle={ styles.container }
-        refreshControl={ <RefreshControl refreshing={ !isUpdating && query.isRefetching } onRefresh={ query.refetch } /> }
+        refreshControl={ RefreshControlTag }
       >
         <View style={ styles.header }>
           <View>
