@@ -1,11 +1,50 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { Text } from 'react-native-paper';
-import { map } from 'lodash';
+import { Text, DataTable } from 'react-native-paper';
+import { groupBy, map, keys } from 'lodash';
+import { useMemo } from 'react';
 import theme from '@/theme';
 import { Icon } from '@/components';
+import { IMail, IMailAttachment } from '@/screens/MailScreen/MailScreen.types';
 
 export function MailItemScreen({ route }) {
-  const { mail } = route.params;
+  const { mail }: { mail: IMail } = route.params;
+
+  const renderAttachCell = (attach?: IMailAttachment) => {
+    if (!attach) return null;
+
+    return (
+      <DataTable.Cell>
+        <Icon
+          style={ styles.fileIcon }
+          color={ theme.colors.primary }
+          icon={ attach.icon }
+        />
+        <Text style={ styles.fileName }>
+          { attach.name }
+        </Text>
+      </DataTable.Cell>
+    );
+  };
+
+  const AttachmentsTag = useMemo(() => {
+    const { attachments } = mail;
+    const attachmentsCols = groupBy(keys(attachments), (index) => {
+      const numIndex = parseInt(index, 10);
+
+      return Math.round((numIndex + 1) / 2);
+    });
+
+    return map(attachmentsCols, ([firstIndex, secondIndex]) => {
+      const uniqKey = [firstIndex, secondIndex].join('_');
+
+      return (
+        <DataTable.Row key={ uniqKey } borderless>
+          { renderAttachCell(attachments[firstIndex]) }
+          { renderAttachCell(attachments[secondIndex]) }
+        </DataTable.Row>
+      );
+    });
+  }, [mail.attachments]);
 
   return (
     <View>
@@ -13,20 +52,13 @@ export function MailItemScreen({ route }) {
         <Text variant="titleLarge">{ mail.title }</Text>
       </View>
 
-      <ScrollView style={ styles.bodyContainer } contentContainerStyle={ { paddingBottom: theme.spacing.huge } }>
+      <ScrollView contentContainerStyle={ styles.bodyContainer }>
         <View style={ styles.bodyHeaderContainer }>
-          <View style={ { marginBottom: theme.spacing.small } }>
-            <Text>{ `Received at: ${mail.receivedAt}` }</Text>
+          <View style={ styles.bodyMeta }>
+            <Text>{ `Received at: ${mail.receivedAtFull}` }</Text>
             <Text>{ `From: ${mail.from}` }</Text>
           </View>
-          {
-          map(mail.attachments, (attach, index) => (
-            <View key={ index } style={ styles.attachContainer }>
-              <Text style={ styles.fileName }>{ attach.name }</Text>
-              <Icon color={ theme.colors.primary } icon={ attach.icon } />
-            </View>
-          ))
-        }
+          { AttachmentsTag }
         </View>
 
         <Text style={ styles.body }>
@@ -43,22 +75,25 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.elevation.level2,
   },
   bodyContainer: {
-    // marginBottom   : theme.spacing.huge,
-    backgroundColor: theme.colors.elevation.level4,
-  },
-  body: {
-    padding        : theme.spacing.medium,
     backgroundColor: theme.colors.elevation.level4,
   },
   bodyHeaderContainer: {
     marginBottom: theme.spacing.medium,
-    padding     : theme.spacing.medium,
   },
-  attachContainer: {
-    flexDirection: 'row',
+  bodyMeta: {
+    padding: theme.spacing.medium,
+  },
+  body: {
+    padding: theme.spacing.medium,
   },
   fileName: {
-    marginRight: theme.spacing.extraSmall,
-    color      : theme.colors.primary,
+    marginLeft: theme.spacing.medium,
+    color     : theme.colors.primary,
+  },
+  fileIcon: {
+    marginRight: theme.spacing.tiny,
+  },
+  fullWidth: {
+    width: '100%',
   },
 });
