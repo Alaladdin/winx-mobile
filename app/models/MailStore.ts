@@ -19,11 +19,6 @@ const getFormattedMail = (mail) => map(mail, (item) => ({
 export const MailStoreModel = types
   .model('MailStore')
   .actions(() => ({
-    clearMailCache() {
-      return api.delete('/mail');
-    },
-  }))
-  .actions((store) => ({
     loadMail(params): Promise<IMail[]> {
       const requestConfig = { params: { offset: params?.offset } };
 
@@ -31,8 +26,10 @@ export const MailStoreModel = types
         .then((data) => getFormattedMail(data.mail));
     },
     toggleRead(mail: IMail) {
-      return api.post('/mail/read', { mail })
-        .then(store.clearMailCache);
+      return api.post('/mail/read', { mail });
+    },
+    clearMailCache() {
+      return api.delete('/mail');
     },
   }));
 
