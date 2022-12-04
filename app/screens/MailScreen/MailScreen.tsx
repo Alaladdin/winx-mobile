@@ -28,19 +28,31 @@ export const MailScreen = observer(({ navigation }) => {
   const [isMoreLoading, setIsMoreLoading] = useState<boolean>(false);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [showConfirmRemoveAccountModal, setShowConfirmRemoveAccountModal] = useState<boolean>(false);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const canUpdate = useMemo(() => !isUpdating && !isMoreLoading, [isUpdating, isMoreLoading]);
-  const refreshControl = useMemo(() => (
+
+  const refresh = useCallback(() => {
+    setIsRefreshing(true);
+
+    query.refetch()
+      .finally(() => {
+        setIsRefreshing(false);
+      });
+  }, [query.refetch]);
+
+  const RefreshControlTag = useMemo(() => (
     <RefreshControl
-      refreshing={ canUpdate && query.isRefetching && !query.isFetchingNextPage }
+      refreshing={ isRefreshing && !query.isFetchingNextPage }
       enabled={ canUpdate }
-      onRefresh={ query.refetch }
+      onRefresh={ refresh }
     />
-  ), [canUpdate, query]);
+  ), [refresh, canUpdate, isRefreshing]);
+
   const emptyStateProps = useMemo(() => ({
     bodyText   : !user.barsUser && 'Have no MPEI user found',
     buttonProps: {
       text   : !user.barsUser && 'Login',
-      onPress: user.barsUser ? query.refetch : () => navigation.navigate('Bars'),
+      onPress: user.barsUser ? refresh : () => navigation.navigate('Bars'),
     },
   }), [query, user]);
   const flatRawData = useMemo(() => flatten(query.data?.pages), [query.data]);
@@ -109,7 +121,7 @@ export const MailScreen = observer(({ navigation }) => {
         onRemove={ () => setShowConfirmRemoveAccountModal(true) }
       />
 
-      <ScrollView refreshControl={ refreshControl }>
+      <ScrollView refreshControl={ RefreshControlTag }>
         {
         map(currentData, (mail) => (
           <MailItem

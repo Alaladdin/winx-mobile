@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { List } from 'react-native-paper';
 import { ScrollView, StyleSheet, RefreshControl, View } from 'react-native';
 import { map, reject } from 'lodash/collection';
@@ -16,14 +16,31 @@ export function ActualityScreen() {
   const { loadActualitiesSections } = useStores().actualityStore;
   const [openedItems, setOpenedItems] = useState<string[]>([]);
   const [openedActuality, setOpenedActuality] = useState<IActuality>(null);
-  const { data, refetch, isLoading, isRefetching, isError } = useQuery(['actualities_sections'], loadActualitiesSections);
+  const { data, refetch, isLoading, isError } = useQuery(['actualities_sections'], loadActualitiesSections);
   const showEmptyState = useMemo(() => !data || isError, [data, isError]);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
   useEffect(() => {
     storage
       .load(OPENED_ITEMS_KEY, [])
       .then(setOpenedItems);
   }, []);
+
+  const refresh = useCallback(() => {
+    setIsRefreshing(true);
+
+    refetch()
+      .finally(() => {
+        setIsRefreshing(false);
+      });
+  }, [refetch]);
+
+  const RefreshControlTag = useMemo(() => (
+    <RefreshControl
+      refreshing={ isRefreshing }
+      onRefresh={ refresh }
+    />
+  ), [refresh, isRefreshing]);
 
   const toggleSection = (sectionId) => {
     const isOpened = openedItems.includes(sectionId);
@@ -39,13 +56,13 @@ export function ActualityScreen() {
     return loaderScreen;
 
   if (showEmptyState)
-    return <EmptyState buttonProps={ { onPress: refetch } } />;
+    return <EmptyState buttonProps={ { onPress: refresh } } />;
 
   return (
     <View style={ styles.container }>
       <ScrollView
         style={ { minHeight: '100%' } }
-        refreshControl={ <RefreshControl refreshing={ isRefetching } onRefresh={ refetch } /> }
+        refreshControl={ RefreshControlTag }
       >
         <List.Section>
           { map(data, (section) => (

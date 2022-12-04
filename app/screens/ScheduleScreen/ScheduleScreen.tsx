@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, RefreshControl } from 'react-native';
 import { each, groupBy, map, some } from 'lodash';
 import moment from 'moment';
@@ -11,6 +11,7 @@ import { useRequest, IRequestConfig } from '@/hooks/useRequest';
 import { ScheduleEmptyItem } from '@/screens/ScheduleScreen/ScheduleEmptyItem';
 import { ScheduleItem } from '@/screens/ScheduleScreen/ScheduleItem';
 import { formatDate } from '@/utils/format-date';
+import theme from '@/theme';
 
 const loaderScreen = <Loader />;
 const todayCompare = formatDate(null, config.serverDateFormat);
@@ -66,19 +67,35 @@ const getScheduleRequestOptions = (): IRequestConfig => {
 export function ScheduleScreen({ navigation }): JSX.Element {
   const pagerViewRef = useRef<PagerView>(null);
   const loadSchedule = useRequest(getScheduleRequestOptions());
-  const { data, refetch, isLoading, isRefetching, isError } = useQuery(['schedule'], loadSchedule);
+  const { data, refetch, isLoading, isError } = useQuery(['schedule'], loadSchedule);
   const showEmptyState = useMemo(() => !data || isError, [data, isError]);
-  const refresher = <RefreshControl refreshing={ isRefetching } onRefresh={ refetch } />;
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
   useEffect(() => navigation.addListener('tabPress', () => {
     pagerViewRef?.current?.setPage(0);
   }), [navigation]);
 
+  const refresh = useCallback(() => {
+    setIsRefreshing(true);
+
+    refetch()
+      .finally(() => {
+        setIsRefreshing(false);
+      });
+  }, [refetch]);
+
+  const RefreshControlTag = useMemo(() => (
+    <RefreshControl
+      refreshing={ isRefreshing }
+      onRefresh={ refresh }
+    />
+  ), [refresh, isRefreshing]);
+
   if (isLoading)
     return loaderScreen;
 
   if (showEmptyState)
-    return <EmptyState buttonProps={ { onPress: refetch } } />;
+    return <EmptyState buttonProps={ { onPress: refresh } } />;
 
   return (
     <PagerView
@@ -90,9 +107,9 @@ export function ScheduleScreen({ navigation }): JSX.Element {
       {
         map(data, (weeklySchedules, index) => (
           <ScrollView
-            refreshControl={ refresher }
-            contentContainerStyle={ { padding: 20 } }
             key={ index }
+            refreshControl={ RefreshControlTag }
+            contentContainerStyle={ { padding: theme.spacing.medium } }
           >
             { map(weeklySchedules, renderSchedule) }
           </ScrollView>

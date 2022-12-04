@@ -26,15 +26,25 @@ export const BarsScreen = observer(() => {
   const [lastUpdatedAt, setLastUpdatedAt] = useState<string>(null);
   const [updateTimer, setUpdateTimer] = useState<number>(null);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [showConfirmRemoveAccountModal, setShowConfirmRemoveAccountModal] = useState<boolean>(false);
+
+  const refresh = useCallback(() => {
+    setIsRefreshing(true);
+
+    query.refetch()
+      .finally(() => {
+        setIsRefreshing(false);
+      });
+  }, [query.refetch]);
 
   const RefreshControlTag = useMemo(() => (
     <RefreshControl
-      refreshing={ !isUpdating && query.isRefetching }
+      refreshing={ !isUpdating && isRefreshing }
       enabled={ !isUpdating }
-      onRefresh={ query.refetch }
+      onRefresh={ refresh }
     />
-  ), [isUpdating, query.isRefetching]);
+  ), [refresh, isUpdating, isRefreshing]);
 
   const checkForNewData = useCallback((tiresCount = 0) => {
     const timer = setTimeout(() => {
@@ -83,7 +93,7 @@ export const BarsScreen = observer(() => {
     return loaderScreen;
 
   if (query.isError)
-    return <EmptyState buttonProps={ { onPress: query.refetch } } />;
+    return <EmptyState buttonProps={ { onPress: refresh } } />;
 
   return (
     <SafeAreaView style={ { flex: 1 } }>
