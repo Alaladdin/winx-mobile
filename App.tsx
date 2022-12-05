@@ -7,6 +7,8 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 import { observer } from 'mobx-react';
 import * as Sentry from 'sentry-expo';
 import { useCallback } from 'react';
+import * as Updates from 'expo-updates';
+import noop from 'lodash/noop';
 import { MainNavigator } from '@/navigators';
 import theme from '@/theme';
 import Config from '@/config';
@@ -32,6 +34,12 @@ const App = observer(() => {
 
     if (authStore.user.token)
       authStore.loadUser();
+
+    Updates.checkForUpdateAsync()
+      .then((result) => {
+        rootStore.mainStore.setHasUpdate(result.isAvailable);
+      })
+      .catch(noop);
   });
 
   const onNavigationReady = useCallback(() => {

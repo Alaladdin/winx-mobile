@@ -26,7 +26,7 @@ const renderIcon = (params: { route, color: string, focused: boolean }) => {
 };
 
 export const MainScreen = observer(() => {
-  const { authStore, settingsStore } = useStores();
+  const { mainStore, authStore, settingsStore } = useStores();
   const userScope = authStore.user.scope;
   const currentRoutes = useMemo(() => reject(routesList, ({ scope }) => {
     if (!scope) return false;
@@ -45,7 +45,8 @@ export const MainScreen = observer(() => {
           name={ route.title }
           getComponent={ () => route.component }
           options={ {
-            tabBarIcon: (params) => renderIcon({ ...params, route }),
+            tabBarBadge: route.name === 'Settings' && mainStore.hasUpdates && 1,
+            tabBarIcon : (params) => renderIcon({ ...params, route }),
           } }
         />
       )) }

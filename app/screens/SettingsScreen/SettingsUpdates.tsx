@@ -26,10 +26,11 @@ const parseUpdateError = (e) => {
 };
 
 export function SettingsUpdates({ headingStyle }: ISettingSection) {
-  const { setSnackBarOptions } = useStores().mainStore;
+  const { mainStore } = useStores();
+  const { setSnackBarOptions } = mainStore;
   const [checkButtonText, setCheckButtonText] = useState<string>('check');
   const [checkButtonIcon, setCheckButtonIcon] = useState<IconProp>('sync');
-  const [hasUpdates, setHasUpdates] = useState<boolean>(false);
+  const [hasUpdates, setHasUpdates] = useState<boolean>(mainStore.hasUpdates);
   const [isChecking, setIsChecking] = useState<boolean>(false);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
 
