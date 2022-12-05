@@ -14,7 +14,7 @@ import { formatDate } from '@/utils/format-date';
 import theme from '@/theme';
 
 const loaderScreen = <Loader />;
-const todayCompare = formatDate(null, config.serverDateFormat);
+const todayCompare = formatDate(undefined, config.serverDateFormat);
 const isDayBeforeToday = (date) => todayCompare > moment(date, 'DD.MM').format(config.serverDateFormat);
 const renderSchedule = (schedule: IScheduleItem, key) => {
   if (schedule.isEmpty) {
