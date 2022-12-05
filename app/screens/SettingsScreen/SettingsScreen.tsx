@@ -7,6 +7,7 @@ import { SettingsDev } from './SettingsDev';
 import { SettingsUpdates } from './SettingsUpdates';
 import { SettingsAppearance } from './SettingsAppearance';
 import { SettingsNotifications } from './SettingsNotifications';
+import { SettingsInfo } from './SettingsInfo';
 
 export function SettingsScreen() {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
@@ -18,6 +19,7 @@ export function SettingsScreen() {
         <SettingsNotifications { ...sectionProps } />
         <SettingsAppearance { ...sectionProps } />
         <SettingsUpdates { ...sectionProps } />
+        <SettingsInfo { ...sectionProps } />
 
         <TouchableRipple
           style={ styles.footerContainer }

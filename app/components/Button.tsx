@@ -46,6 +46,7 @@ export function Button({ variant, icon, text, iconSize, ...props }: IIconButtonP
   return (
     <ButtonComponent
       { ...props }
+      icon={ icon && buttonIcon }
       textColor={ variantStyle.color }
     >
       { text }
