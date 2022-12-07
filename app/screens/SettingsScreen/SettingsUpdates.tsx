@@ -5,25 +5,9 @@ import * as Updates from 'expo-updates';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { ISettingSection } from './ISettingSection';
 import { Icon } from '@/components';
-import { reportCrash } from '@/utils/crash-reporting';
 import { useStores } from '@/models';
 import { formatDate } from '@/utils/format-date';
-
-const parseUpdateError = (e) => {
-  if (e.code === 'ERR_UPDATES_DISABLED')
-    return 'Updates disabled';
-
-  if (e.code === 'ERR_UPDATES_RELOAD')
-    return 'App reload error';
-
-  if (e.code === 'ERR_UPDATES_CHECK')
-    return e.message || 'Updates check error';
-
-  if (e.code === 'ERR_UPDATES_FETCH')
-    return e.message || 'Updated fetch error';
-
-  return 'Unknown error';
-};
+import { checkAppUpdates, updateApp } from '@/services/updates';
 
 export function SettingsUpdates({ headingStyle }: ISettingSection) {
   const { mainStore } = useStores();
@@ -38,7 +22,7 @@ export function SettingsUpdates({ headingStyle }: ISettingSection) {
 
   useEffect(() => {
     let newButtonText = 'check';
-    let newButtonIcon = 'sync';
+    let newButtonIcon: IconProp = 'sync';
 
     if (hasUpdates) {
       newButtonText = 'update';
@@ -58,16 +42,15 @@ export function SettingsUpdates({ headingStyle }: ISettingSection) {
   const checkUpdates = () => {
     setIsChecking(true);
 
-    Updates.checkForUpdateAsync()
+    checkAppUpdates()
       .then((result) => {
         setHasUpdates(result.isAvailable);
 
         if (!result.isAvailable)
           setSnackBarOptions('Last version installed already', 'success');
       })
-      .catch((e) => {
-        setSnackBarOptions(parseUpdateError(e), 'error');
-        reportCrash(e);
+      .catch((err) => {
+        setSnackBarOptions(err, 'error');
       })
       .finally(() => {
         setIsChecking(false);
@@ -77,11 +60,9 @@ export function SettingsUpdates({ headingStyle }: ISettingSection) {
   const downloadUpdate = () => {
     setIsUpdating(true);
 
-    return Updates.fetchUpdateAsync()
-      .then(Updates.reloadAsync)
-      .catch((e) => {
-        setSnackBarOptions(parseUpdateError(e), 'error');
-        reportCrash(e);
+    return updateApp()
+      .catch((err) => {
+        setSnackBarOptions(err, 'error');
       })
       .finally(() => {
         setIsUpdating(false);

@@ -7,7 +7,6 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 import { observer } from 'mobx-react';
 import * as Sentry from 'sentry-expo';
 import { useCallback } from 'react';
-import * as Updates from 'expo-updates';
 import noop from 'lodash/noop';
 import { MainNavigator } from '@/navigators';
 import theme from '@/theme';
@@ -16,16 +15,20 @@ import { ErrorBoundary } from '@/screens';
 import { RootStoreProvider, useInitialRootStore } from '@/models';
 import 'expo-dev-client';
 import '@/utils/ignore-warnings';
-import { setupIcons, setupNotifications, setupReactQuery } from '@/setup';
+import { setupIcons, setupReactQuery } from '@/setup';
+import { initScheduler } from '@/services/scheduler';
+import { initNotifications } from '@/services/notifications';
 import { SnackBar } from '@/components';
 import { initCrashReporting, routingInstrumentation } from '@/utils/crash-reporting';
+import { checkAppUpdates } from '@/services/updates';
 
 SplashScreen.preventAutoHideAsync();
+initScheduler();
 
 const App = observer(() => {
   initCrashReporting();
+  initNotifications();
   setupIcons();
-  setupNotifications();
 
   const navigationRef = createNavigationContainerRef();
   const { queryClient, persisterStorage } = setupReactQuery();
@@ -35,7 +38,7 @@ const App = observer(() => {
     if (authStore.user.token)
       authStore.loadUser();
 
-    Updates.checkForUpdateAsync()
+    checkAppUpdates()
       .then((result) => {
         rootStore.mainStore.setHasUpdate(result.isAvailable);
       })
