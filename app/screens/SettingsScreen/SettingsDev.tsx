@@ -1,6 +1,6 @@
 import { Button, List } from 'react-native-paper';
 import React, { useCallback, useMemo } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ToastAndroid } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import { reportCrash } from '@/utils/crash-reporting';
 import { clear } from '@/utils/storage';
@@ -34,6 +34,10 @@ export function SettingsDev() {
     <Button onPress={ sendNotification }>Send</Button>
   ), []);
 
+  const showToastButton = useMemo(() => (
+    <Button onPress={ () => ToastAndroid.show('Тут уже черт знает, кто воняет', ToastAndroid.LONG) }>Show</Button>
+  ), []);
+
   const clearStorageButton = useMemo(() => (
     <Button onPress={ clearStorage }>Clear</Button>
   ), [clearStorage]);
@@ -43,6 +47,12 @@ export function SettingsDev() {
       <List.Item
         title="Notifications"
         right={ () => sendNotificationButton }
+        style={ styles.listItem }
+      />
+
+      <List.Item
+        title="Toast"
+        right={ () => showToastButton }
         style={ styles.listItem }
       />
 

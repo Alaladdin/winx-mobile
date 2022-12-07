@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Text, TouchableRipple, Dialog } from 'react-native-paper';
 import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import { nativeApplicationVersion } from 'expo-application';
 import theme from '@/theme';
-import { version } from '@/../package.json';
 import { SettingsDev } from './SettingsDev';
 import { SettingsUpdates } from './SettingsUpdates';
 import { SettingsAppearance } from './SettingsAppearance';
@@ -26,7 +26,7 @@ export function SettingsScreen() {
           onPress={ () => setIsModalVisible(true) }
         >
           <Text style={ styles.footerText }>
-            { `v${version}` }
+            { `v ${nativeApplicationVersion}` }
           </Text>
         </TouchableRipple>
       </ScrollView>

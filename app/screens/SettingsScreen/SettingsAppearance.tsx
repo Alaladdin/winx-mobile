@@ -15,15 +15,24 @@ const languageOptions = [
 ];
 
 const InitialRouteSelect = observer(() => {
-  const { settingsStore } = useStores();
-  const initialPageOptions = useMemo(() => map(
-    reject(routesList, { name: 'Settings' }),
-    (route) => ({
+  const { authStore, settingsStore } = useStores();
+  const initialPageOptions = useMemo(() => {
+    const userScope = authStore.user?.scope || [];
+    const availableRoutes = reject(routesList, ({ name, scope }) => {
+      const rejectedRoutes = ['Settings'];
+
+      if (scope && !userScope.includes(scope))
+        rejectedRoutes.push(name);
+
+      return rejectedRoutes.includes(name);
+    });
+
+    return map(availableRoutes, (route) => ({
       title: route.title,
       value: route.name,
       icon : route.icon,
-    })
-  ), []);
+    }));
+  }, [authStore.user?.scope]);
 
   return (
     <Select
