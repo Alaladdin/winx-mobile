@@ -23,11 +23,12 @@ import { initCrashReporting, routingInstrumentation } from '@/utils/crash-report
 import { checkAppUpdates } from '@/services/updates';
 
 SplashScreen.preventAutoHideAsync();
+
 initScheduler();
+initNotifications();
 
 const App = observer(() => {
   initCrashReporting();
-  initNotifications();
   setupIcons();
 
   const navigationRef = createNavigationContainerRef();
