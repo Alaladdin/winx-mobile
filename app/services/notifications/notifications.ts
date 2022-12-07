@@ -1,5 +1,7 @@
 import * as Notifications from 'expo-notifications';
 import each from 'lodash/each';
+import { ISendNotificationProps } from './notifications.types';
+import { reportCrash } from '@/utils/crash-reporting';
 
 const notificationsChannelsOptions = [
   { id: 'schedule', name: 'Lessons' },
@@ -8,7 +10,7 @@ const notificationsChannelsOptions = [
   { id: 'bars', name: 'New bars marks' },
 ];
 
-export const setupNotifications = () => {
+export const initNotifications = () => {
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldShowAlert: true,
@@ -25,3 +27,19 @@ export const setupNotifications = () => {
     });
   });
 };
+
+export async function sendNotification(props: ISendNotificationProps) {
+  return Notifications.scheduleNotificationAsync({
+    identifier: props.identifier,
+    content   : {
+      title: props.title,
+      body : props.body,
+    },
+    trigger: props.trigger || null,
+  })
+    .catch((err) => {
+      reportCrash(err);
+
+      throw err;
+    });
+}
