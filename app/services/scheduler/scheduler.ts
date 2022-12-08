@@ -2,8 +2,7 @@ import * as BackgroundFetch from 'expo-background-fetch';
 import * as TaskManager from 'expo-task-manager';
 import each from 'lodash/each';
 import { SchedulerTask, Task } from '@/services/scheduler/scheduler.types';
-import { scheduleTask } from '@/services/scheduler/schedule-task';
-import { barsTask } from '@/services/scheduler/bars-task';
+import { scheduleTask, barsTask } from '@/services/scheduler/tasks';
 
 const tasks: SchedulerTask[] = [
   {
@@ -12,6 +11,7 @@ const tasks: SchedulerTask[] = [
   },
   {
     name    : 'BARS_TASK',
+    // hours
     executor: barsTask,
   },
 ];
