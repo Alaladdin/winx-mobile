@@ -8,11 +8,11 @@ import { reportCrash } from '@/utils/crash-reporting';
 import { useStores } from '@/models';
 import { Button } from '@/components';
 
-const toggleTask = async (taskName: Task, hours: number) => {
+const toggleTask = async (taskName: Task) => {
   const isRegistered = await isTaskEnabled(taskName);
   const action = isRegistered ? disableTask : enableTask;
 
-  return action(taskName, hours)
+  return action(taskName)
     .catch((err) => {
       reportCrash(err);
 
@@ -42,7 +42,7 @@ export function SettingsNotifications({ headingStyle }: ISettingSection) {
 
     setIsScheduleTaskEnabled(newValue);
 
-    toggleTask('SCHEDULE_TASK', 6)
+    toggleTask('SCHEDULE_TASK')
       .catch((err) => {
         setIsScheduleTaskEnabled(!newValue);
         onToggleError(err);
@@ -54,7 +54,7 @@ export function SettingsNotifications({ headingStyle }: ISettingSection) {
 
     setIsBarsTaskEnabled(newValue);
 
-    toggleTask('BARS_TASK', 3)
+    toggleTask('BARS_TASK')
       .catch((err) => {
         setIsBarsTaskEnabled(!newValue);
         onToggleError(err);

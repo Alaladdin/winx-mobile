@@ -1,17 +1,18 @@
 import * as BackgroundFetch from 'expo-background-fetch';
 import * as TaskManager from 'expo-task-manager';
-import each from 'lodash/each';
+import { each, find } from 'lodash/collection';
 import { SchedulerTask, Task } from '@/services/scheduler/scheduler.types';
 import { scheduleTask, barsTask } from '@/services/scheduler/tasks';
 
 const tasks: SchedulerTask[] = [
   {
     name    : 'SCHEDULE_TASK',
+    hours   : 6,
     executor: scheduleTask,
   },
   {
     name    : 'BARS_TASK',
-    // hours
+    hours   : 3,
     executor: barsTask,
   },
 ];
@@ -22,9 +23,11 @@ export const initScheduler = () => {
   });
 };
 
-export async function enableTask(taskName: Task, hours = 3) {
+export async function enableTask(taskName: Task) {
+  const taskConfig = find(tasks, { name: taskName });
+
   return BackgroundFetch.registerTaskAsync(taskName, {
-    minimumInterval: 60 * 60 * hours,
+    minimumInterval: 60 * 60 * taskConfig.hours,
     stopOnTerminate: false,
     startOnBoot    : true,
   });
