@@ -3,11 +3,16 @@ import * as TaskManager from 'expo-task-manager';
 import each from 'lodash/each';
 import { SchedulerTask, Task } from '@/services/scheduler/scheduler.types';
 import { scheduleTask } from '@/services/scheduler/schedule-task';
+import { barsTask } from '@/services/scheduler/bars-task';
 
 const tasks: SchedulerTask[] = [
   {
     name    : 'SCHEDULE_TASK',
     executor: scheduleTask,
+  },
+  {
+    name    : 'BARS_TASK',
+    executor: barsTask,
   },
 ];
 

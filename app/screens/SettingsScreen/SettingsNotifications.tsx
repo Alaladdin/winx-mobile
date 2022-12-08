@@ -21,26 +21,45 @@ const toggleTask = async (taskName: Task, hours: number) => {
 };
 export function SettingsNotifications({ headingStyle }: ISettingSection) {
   const { mainStore } = useStores();
-  const [isScheduleRegistered, setIsScheduleTaskRegistered] = useState<boolean>(false);
+  const [isScheduleTaskEnabled, setIsScheduleTaskEnabled] = useState<boolean>(false);
+  const [isBarsTaskEnabled, setIsBarsTaskEnabled] = useState<boolean>(false);
   const onToggleError = useCallback((err) => mainStore.setSnackBarOptions(err?.message || err, 'error'), [mainStore]);
 
   React.useEffect(() => {
     isTaskEnabled('SCHEDULE_TASK')
-      .then(setIsScheduleTaskRegistered)
+      .then(setIsScheduleTaskEnabled)
+      .catch(reportCrash);
+  }, []);
+
+  React.useEffect(() => {
+    isTaskEnabled('BARS_TASK')
+      .then(setIsBarsTaskEnabled)
       .catch(reportCrash);
   }, []);
 
   const toggleScheduleTask = useCallback(() => {
-    const newValue = !isScheduleRegistered;
+    const newValue = !isScheduleTaskEnabled;
 
-    setIsScheduleTaskRegistered(newValue);
+    setIsScheduleTaskEnabled(newValue);
 
     toggleTask('SCHEDULE_TASK', 6)
       .catch((err) => {
-        setIsScheduleTaskRegistered(!newValue);
+        setIsScheduleTaskEnabled(!newValue);
         onToggleError(err);
       });
-  }, [isScheduleRegistered, onToggleError]);
+  }, [isScheduleTaskEnabled, onToggleError]);
+
+  const toggleBarsTask = useCallback(() => {
+    const newValue = !isBarsTaskEnabled;
+
+    setIsBarsTaskEnabled(newValue);
+
+    toggleTask('BARS_TASK', 3)
+      .catch((err) => {
+        setIsBarsTaskEnabled(!newValue);
+        onToggleError(err);
+      });
+  }, [isBarsTaskEnabled, onToggleError]);
 
   const renderSwitch = useCallback((value: boolean, onChange: (newValue: boolean) => void) => (
     <Switch value={ value } onValueChange={ onChange } />
@@ -52,7 +71,12 @@ export function SettingsNotifications({ headingStyle }: ISettingSection) {
 
       <List.Item
         title="About daily lessons"
-        right={ () => renderSwitch(isScheduleRegistered, toggleScheduleTask) }
+        right={ () => renderSwitch(isScheduleTaskEnabled, toggleScheduleTask) }
+      />
+
+      <List.Item
+        title="About new bars marks"
+        right={ () => renderSwitch(isBarsTaskEnabled, toggleBarsTask) }
       />
 
       <Button
