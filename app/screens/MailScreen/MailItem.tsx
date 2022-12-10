@@ -33,7 +33,6 @@ export function MailItem({ mail, onPress }: IMailItemProps) {
 
   return (
     <TouchableRipple
-      key={ mail._id }
       style={ styles.item }
       borderless
       onPress={ () => onPress(mail) }

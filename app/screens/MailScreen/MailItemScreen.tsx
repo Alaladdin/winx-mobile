@@ -15,13 +15,13 @@ export function MailItemScreen({ route }) {
   const mailBodyRef = useRef<ScrollView>(null);
   const scrollToTop = useCallback(() => mailBodyRef?.current.scrollTo({ y: 0 }), []);
 
-  const renderAttachCell = (attach?: IMailAttachment) => {
+  const renderAttachCell = useCallback((attach?: IMailAttachment) => {
     if (!attach) return null;
 
     const linkToAttach = `${config.apiUrl}/mail/files/?mpeiUser=${user.barsUser}&messageId=${mail._id}&fileId=${attach._id}`;
 
     return (
-      <DataTable.Cell onPress={ () => openLinkInBrowser(linkToAttach) }>
+      <DataTable.Cell textStyle={ styles.attachCell } borderless onPress={ () => openLinkInBrowser(linkToAttach) }>
         <View style={ styles.fileContainer }>
           <Icon
             color={ theme.colors.primary }
@@ -34,7 +34,7 @@ export function MailItemScreen({ route }) {
         </View>
       </DataTable.Cell>
     );
-  };
+  }, [mail._id, user.barsUser]);
 
   const AttachmentsTag = useMemo(() => {
     const { attachments } = mail;
@@ -54,7 +54,7 @@ export function MailItemScreen({ route }) {
         </DataTable.Row>
       );
     });
-  }, [mail.attachments]);
+  }, [mail, renderAttachCell]);
 
   return (
     <View>
@@ -102,6 +102,9 @@ const styles = StyleSheet.create({
   body: {
     paddingBottom    : theme.spacing.extraLarge,
     paddingHorizontal: theme.spacing.medium,
+  },
+  attachCell: {
+    width: '200%',
   },
   fileContainer: {
     flexDirection: 'row',
