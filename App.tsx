@@ -16,7 +16,6 @@ import { RootStoreProvider, useInitialRootStore } from '@/models';
 import 'expo-dev-client';
 import '@/utils/ignore-warnings';
 import { setupIcons, setupReactQuery } from '@/setup';
-import { initScheduler } from '@/services/scheduler';
 import { initNotifications } from '@/services/notifications';
 import { SnackBar } from '@/components';
 import { initCrashReporting, routingInstrumentation } from '@/utils/crash-reporting';
@@ -24,7 +23,6 @@ import { checkAppUpdates } from '@/services/updates';
 
 SplashScreen.preventAutoHideAsync();
 
-initScheduler();
 initNotifications();
 
 const App = observer(() => {

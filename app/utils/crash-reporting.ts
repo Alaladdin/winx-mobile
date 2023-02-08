@@ -7,13 +7,11 @@ export const initCrashReporting = () => {
   Sentry.init({
     dsn                    : SENTRY_DSN,
     enableInExpoDevelopment: true,
-    // debug                  : true,
     enabled                : !__DEV__,
     tracesSampleRate       : 1.0,
     integrations           : [
       new Sentry.Native.ReactNativeTracing({
         routingInstrumentation,
-        tracingOrigins            : ['localhost', /^https:\/\//, /^\//],
         traceFetch                : true,
         traceXHR                  : true,
         enableAppStartTracking    : true,
@@ -29,3 +27,11 @@ export const reportCrash = (error: any) => {
   else
     Sentry.Native.captureException(error);
 };
+
+export const
+  reportMessage = (message: string, ctx: any) => {
+    if (__DEV__)
+      console.info(message);
+    else
+      Sentry.Native.captureMessage(message, { extra: ctx });
+  };

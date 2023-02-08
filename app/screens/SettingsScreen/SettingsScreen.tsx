@@ -6,7 +6,6 @@ import theme from '@/theme';
 import { SettingsDev } from './SettingsDev';
 import { SettingsUpdates } from './SettingsUpdates';
 import { SettingsAppearance } from './SettingsAppearance';
-import { SettingsNotifications } from './SettingsNotifications';
 import { SettingsInfo } from './SettingsInfo';
 
 export function SettingsScreen() {
@@ -16,7 +15,6 @@ export function SettingsScreen() {
   return (
     <SafeAreaView>
       <ScrollView>
-        <SettingsNotifications { ...sectionProps } />
         <SettingsAppearance { ...sectionProps } />
         <SettingsUpdates { ...sectionProps } />
         <SettingsInfo { ...sectionProps } />

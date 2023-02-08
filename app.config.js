@@ -6,29 +6,29 @@ const getConfig = () => {
 
   if (IS_DEV) {
     return {
-      name              : 'WINX (dev)',
+      name              : 'MPEIST (dev)',
       icon              : './assets/app-icon-dev.png',
       splash            : './assets/splash-dev.png',
-      packageName       : 'com.alaladdin.winx.dev',
+      packageName       : 'com.alaladdin.mpeist.dev',
       googleServicesFile: './conf/google-services.dev.json',
     };
   }
 
   if (IS_BETA) {
     return {
-      name              : 'WINX (beta)',
+      name              : 'MPEIST (beta)',
       icon              : './assets/app-icon-beta.png',
       splash            : './assets/splash-beta.png',
-      packageName       : 'com.alaladdin.winx.beta',
+      packageName       : 'com.alaladdin.mpeist.beta',
       googleServicesFile: './conf/google-services.beta.json',
     };
   }
 
   return {
-    name              : 'WINX',
+    name              : 'MPEIST',
     icon              : './assets/app-icon.png',
     splash            : './assets/splash.png',
-    packageName       : 'com.alaladdin.winx',
+    packageName       : 'com.alaladdin.mpeist',
     googleServicesFile: './conf/google-services.json',
   };
 };
@@ -37,8 +37,8 @@ const config = getConfig();
 
 export default {
   name           : config.name,
-  scheme         : 'winx',
-  slug           : 'winx-mobile',
+  scheme         : 'mpeist',
+  slug           : 'mpeist',
   version,
   orientation    : 'portrait',
   icon           : config.icon,
@@ -86,7 +86,7 @@ export default {
   },
   extra: {
     eas: {
-      projectId: 'a9966b77-4fb0-48cd-b472-8df9d317ba42',
+      projectId: '6a018905-82b5-4a59-b90d-d9d2cf02c76c',
     },
   },
 };
